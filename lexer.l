@@ -2,6 +2,7 @@
 #include<iostream>
 #include "parser.hh"
 
+
 %}
 
 %option noyywrap
