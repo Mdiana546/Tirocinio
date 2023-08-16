@@ -1,1 +1,6 @@
-{p1.a,p2.a,p3.a}
+ws2s;
+a,b
+c,d
+flag
+p1,p2,p3,p4,p5:
+ {p2.a,p4.a}

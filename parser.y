@@ -5,22 +5,14 @@
 #include<list>
 #include <fstream>
 #include "lexer.hh"
+#include "Expression.hpp"
+#include "HandleFiles.hpp"
 void yyerror(const char *msg);
 int count=0;
-struct expression
-{
-std::string name1;
-std::string name2;
-std::string operation;
-std::string value;
-
-expression(std::string name1,std::string name2):name1{name1},name2{name2}{  }
-expression(std::string operation):operation{operation} {   }
-expression(int value):value{std::to_string(value)} {   }
-};
-
+std::string ex;
+std::string smtLib;
 std::string str;
-std::list<Expression>*listExp=new std::list<Expression>() ;
+int counter=0;
 %}
 
 %union
@@ -76,12 +68,18 @@ std::string *st;
 
 %%
 
-start	: header declarations{std::cout<<str;}
+start	: header declarations{
+	
+		HandleFiles handleFile{};
+		handleFile.writeOnMonaFile(ex);
+		handleFile.writeOnSMTLIBFile(smtLib);
+
+		}
 	;
 
 header	:  tokWS1S tokSEMICOLON
 
-	| tokWS2S tokSEMICOLON {str+="ws2s";}
+	| tokWS2S tokSEMICOLON {ex+="ws2s;\n";}
 		
 	| tokM2LSTR tokSEMICOLON 
 		
@@ -142,11 +140,11 @@ declaration : tokASSERT exp tokSEMICOLON{}
 		
 	| tokTYPE name tokEQUAL variant_list tokSEMICOLON{}
 	
-        | tokINT {str+="\n int";}  name_where_list tokSEMICOLON {str+=" ;";}    //new rule
+        | tokINT {}  name_where_list tokSEMICOLON {ex+="\n";}    //new rule
       
-        | tokReal {str+="\n real";} name_where_list tokSEMICOLON {str+=" ;";}   //new rule
+        | tokReal {} name_where_list tokSEMICOLON {ex+="\n";}   //new rule
         
-        | tokBool {str+="\n bool";}name_where_list tokSEMICOLON {str+=" ;";} //new rule
+        | tokBool {}name_where_list tokSEMICOLON {ex+="\n";} //new rule
 	
 		
         ;
@@ -167,43 +165,15 @@ exp     : name
                
         | exp tokLESS
         {
-        if(!listExp->empty()){
-        	auto iterator=listExp->end();
-        	listExp->insert(iterator,*(new expression("<")));
-        	}
-        
+        	str+="<";
         }
         exp
         {
-        
-        	for(auto c: *listExp)
-        	{
-        		if(!c.operation.empty())
-        		std::cout<<c.operation<<std::endl;
-        	}
+        	Expression monaExpression{str};
+        	ex+=" "+monaExpression.returnMonaVersion();
+        	HandleFiles handleFile{};
+        	std::string smtLib=monaExpression.returnSMTLIBVersion()+"\n";
         	
-        	
-        
-        	/*
-        	if(!listExp()->empty()){
-			str+=setContraint();
-			writeContraint();
-			clearExpression();
-        	}
-        	
-        	/*
-        	if(flag==true){
-        		count++;
-        		str+="C"+std::to_string(count)+"{"+*$1+","+*$3+"}";
-        		flag=false;
-        	}
-        	else{
-        		
-        		str+=*$1+"<"+*$3;
-        	}
-        	*/
-        		
-        		
         }
                
         | exp tokLESSEQ exp {}
@@ -220,7 +190,7 @@ exp     : name
               
         | exp tokBIIMPL exp {} 
               
-        | exp tokAND{str+=" & ";} exp {}
+        | exp tokAND{} exp {}
               
         | exp tokOR exp {}
                
@@ -238,7 +208,7 @@ exp     : name
              
         | tokEX0 name_where_list tokCOLON exp {}
         
-        | tokEX1 {str+="\n ex1 ";} universe name_where_list tokCOLON {str+=" :\n";} exp {}
+        | tokEX1 {} universe name_where_list tokCOLON {ex+=":\n";} exp {}
                
         | tokEX2 universe name_where_list tokCOLON exp {}
               
@@ -266,8 +236,6 @@ exp     : name
              
         | exp tokPLUS
         {
-        	auto iterator=listExp->end();
-        	listExp->insert(iterator,*(new expression("+")));
         	
         } arith_exp {}
               
@@ -320,9 +288,6 @@ exp     : name
 	;
 	
 arith_exp: arith_exp tokPLUS {
-			
-		auto iterator=listExp->end();
-		listExp->insert(iterator,*(new expression("+")));
 		
 	} arith_exp {}
 		
@@ -336,8 +301,6 @@ arith_exp: arith_exp tokPLUS {
 	        
 	| tokINT
 	{
-		auto iterator=listExp->end();
-		listExp->insert(iterator,*(new expression($1)));
 	}
 	
 	| dotExp{}
@@ -346,12 +309,8 @@ arith_exp: arith_exp tokPLUS {
       
 	;
 
-dotExp:		name tokDOT name {
-        
-        	auto iterator=listExp->end();
-        	listExp->insert(iterator,*(new expression(*$1,*$3)));
-        }
-           
+dotExp:		name tokDOT name {str+=*$1+"."+*$3;}
+        ;
    
 
 par_list: tokVAR0 name tokCOMMA par_list {}
@@ -421,7 +380,7 @@ universe: tokLBRACKET name_list tokRBRACKET{}
 	
 	;
 
-name	: tokNAME
+name	: tokNAME{$$=$1;}
             
 	;
 
@@ -431,9 +390,9 @@ name_list: name tokCOMMA name_list{}
 		
 	;
 
-name_where_list: name where tokCOMMA{str+=" ,";} name_where_list{}
+name_where_list: name where tokCOMMA{ex+=*$1+",";} name_where_list{}
 		
-	| name where{} 
+	| name where{ex+=*$1;} 
 	
 	;
 
