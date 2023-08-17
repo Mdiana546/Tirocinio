@@ -112,7 +112,12 @@ void Expression::setVar(Node*node)
 {
 
         if(node->left ==nullptr){
-          expression+=","+node->data;
+                if(!isdigit(node->data[0]))
+                {
+                    size_t pos=node->data.find('.');
+                    string sub=node->data.substr(0,pos);
+                    expression+=","+sub;
+                }
           }
           else{
             setVar(node->left);

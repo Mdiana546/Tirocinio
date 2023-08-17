@@ -3,4 +3,4 @@ int a,b;
 real c,d;
 bool flag;
 ex1 p1, p2, p3, p4, p5:
-p2.a<p4.a;
+p4.a & p1.a<p2.a & p1.a<p5.a+1;

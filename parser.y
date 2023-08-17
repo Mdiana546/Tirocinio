@@ -8,6 +8,9 @@
 #include "Expression.hpp"
 #include "HandleFiles.hpp"
 void yyerror(const char *msg);
+void returnMonaSmtLibFormat();
+void addElementStringEx(std::string);
+void addOperatorStringStr(std::string);
 int count=0;
 std::string ex;
 std::string smtLib;
@@ -19,7 +22,6 @@ int counter=0;
 {
 int intval;
 std::string *st;
-
 }
 
 %start start
@@ -69,7 +71,7 @@ std::string *st;
 %%
 
 start	: header declarations{
-	
+		
 		HandleFiles handleFile{};
 		handleFile.writeOnMonaFile(ex);
 		handleFile.writeOnSMTLIBFile(smtLib);
@@ -165,14 +167,11 @@ exp     : name
                
         | exp tokLESS
         {
-        	str+="<";
+        	addOperatorStringStr("<");
         }
         exp
         {
-        	Expression monaExpression{str};
-        	ex+=" "+monaExpression.returnMonaVersion();
-        	HandleFiles handleFile{};
-        	std::string smtLib=monaExpression.returnSMTLIBVersion()+"\n";
+        	returnMonaSmtLibFormat();
         	
         }
                
@@ -190,7 +189,14 @@ exp     : name
               
         | exp tokBIIMPL exp {} 
               
-        | exp tokAND{} exp {}
+        | exp tokAND
+        {
+        	returnMonaSmtLibFormat();
+        	addElementStringEx("&");
+        } exp 
+        {
+        	returnMonaSmtLibFormat();	
+        }
               
         | exp tokOR exp {}
                
@@ -234,10 +240,7 @@ exp     : name
               
         | tokEMPTY tokLPAREN exp tokRPAREN {}
              
-        | exp tokPLUS
-        {
-        	
-        } arith_exp {}
+        | exp tokPLUS{str+="+"; } arith_exp {}
               
         | exp tokMINUS arith_exp {}
                
@@ -287,9 +290,7 @@ exp     : name
               
 	;
 	
-arith_exp: arith_exp tokPLUS {
-		
-	} arith_exp {}
+arith_exp: arith_exp tokPLUS {str+="+";} arith_exp {}
 		
 	| arith_exp tokMINUS arith_exp {}
 		
@@ -301,6 +302,7 @@ arith_exp: arith_exp tokPLUS {
 	        
 	| tokINT
 	{
+		str+=std::to_string($1);
 	}
 	
 	| dotExp{}
@@ -474,6 +476,30 @@ optstring: tokSTRING{}
          
      
 %%
+
+void returnMonaSmtLibFormat()
+{
+	if(!str.empty()){
+		Expression monaExpression{str};
+		ex+=monaExpression.returnMonaVersion();
+		smtLib+=monaExpression.returnSMTLIBVersion()+"\n";
+		str.clear();
+	}
+}
+
+void addOperatorStringStr(std::string op)
+{
+		if(!str.empty())
+        		str+=op;
+        	else
+        		addElementStringEx(op);
+}
+
+void addElementStringEx(std::string op)
+{
+	ex+=op;
+}
+
 int main(int argc, char **argv) {
    if (argc > 1) {
       yyin=fopen(argv[1],"r");;
