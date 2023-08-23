@@ -3,6 +3,7 @@
 #include<cstdio>
 #include <string>
 #include<list>
+#include <typeInfo>
 #include <fstream>
 #include "lexer.hh"
 #include "Expression.hpp"
@@ -15,6 +16,7 @@ int count=0;
 std::string ex;
 std::string smtLib;
 std::string str;
+std::list<Expression*> l;
 int counter=0;
 %}
 
@@ -22,6 +24,9 @@ int counter=0;
 {
 int intval;
 std::string *st;
+Node * node;
+Expression*expression;
+std::list<Name*>*lName;
 }
 
 %start start
@@ -47,9 +52,10 @@ std::string *st;
 %token  tokSTRING
 %token<intval> tokINT
 
-%type<st> name;
-%type<st> exp;
-
+%type<Expression> name;
+%type<Expression> exp;
+%type<expression> declarations
+%type<lName> name_where_list;
 
 %nonassoc LOW
 %nonassoc tokCOLON
@@ -72,10 +78,11 @@ std::string *st;
 
 start	: header declarations{
 		
-		HandleFiles handleFile{};
-		handleFile.writeOnMonaFile(ex);
-		handleFile.writeOnSMTLIBFile(smtLib);
-
+		//HandleFiles handleFile{};
+		//handleFile.writeOnMonaFile(ex);
+		//handleFile.writeOnSMTLIBFile(smtLib);
+		untypedAST = new MonaUntypedAST($2);
+		
 		}
 	;
 
@@ -91,9 +98,10 @@ header	:  tokWS1S tokSEMICOLON
     
 	;
 
-declarations : declaration declarations{}
+declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	      
-	| declaration {}
+	| declaration {$$ = new DeclarationList(); 
+	         	if ($1) $$->push_front($1);}
 	      
 	 ;
 declaration : tokASSERT exp tokSEMICOLON{}
@@ -110,9 +118,9 @@ declaration : tokASSERT exp tokSEMICOLON{}
              
         | tokVAR0 name_where_list tokSEMICOLON{}
                 
-        | tokVAR1 universe name_where_list tokSEMICOLON{}
+        | tokVAR1 universe name_where_list tokSEMICOLON{$$ = new Variable_Declaration(Varname1,$3);}
              
-        | tokVAR2 universe name_where_list tokSEMICOLON {}
+        | tokVAR2 universe name_where_list tokSEMICOLON {$$=new Declaration{Varname2,$3};}
               
 	| tokTREE universe name_where_list tokSEMICOLON {}
 		
@@ -128,7 +136,7 @@ declaration : tokASSERT exp tokSEMICOLON{}
              
         | tokMACRO name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON  {}
               
-        | exp tokSEMICOLON {}
+        | exp tokSEMICOLON {$$ = new Expression_Declaration($1);}
             
         | tokVERIFY optstring exp tokSEMICOLON {}
                
@@ -141,7 +149,7 @@ declaration : tokASSERT exp tokSEMICOLON{}
 	| tokALLPOS name tokSEMICOLON {}
 		
 	| tokTYPE name tokEQUAL variant_list tokSEMICOLON{}
-	
+	A name_where_lis
         | tokINT {}  name_where_list tokSEMICOLON {ex+="\n";}    //new rule
       
         | tokReal {} name_where_list tokSEMICOLON {ex+="\n";}   //new rule
@@ -151,7 +159,7 @@ declaration : tokASSERT exp tokSEMICOLON{}
 		
         ;
 
-exp     : name 
+exp     : name {$$ = new UntypedExp_Name($1);}
               
         | tokLPAREN exp tokRPAREN {}
          
@@ -165,15 +173,7 @@ exp     : name
              
         | tokMAX exp{}
                
-        | exp tokLESS
-        {
-        	addOperatorStringStr("<");
-        }
-        exp
-        {
-        	returnMonaSmtLibFormat();
-        	
-        }
+        | exp tokLESS  exp {$$ = new UntypedExp_Less($1, $3);}
                
         | exp tokLESSEQ exp {}
              
@@ -189,20 +189,13 @@ exp     : name
               
         | exp tokBIIMPL exp {} 
               
-        | exp tokAND
-        {
-        	returnMonaSmtLibFormat();
-        	addElementStringEx("&");
-        } exp 
-        {
-        	returnMonaSmtLibFormat();	
-        }
+        | exp tokAND exp {$$ = new UntypedExp_And($1, $3);}
               
         | exp tokOR exp {}
                
         | tokNOT exp {}
         
-  	| dotExp {}
+  	| dotExp {$$=new UntypedEp_DotName($1);}
   	
         | tokUNIVROOT tokLPAREN name tokRPAREN {}
               
@@ -214,7 +207,7 @@ exp     : name
              
         | tokEX0 name_where_list tokCOLON exp {}
         
-        | tokEX1 {} universe name_where_list tokCOLON {ex+=":\n";} exp {}
+        | tokEX1 universe name_where_list tokCOLON exp {$$ = new UntypedExp_Ex1($3, $5);}
                
         | tokEX2 universe name_where_list tokCOLON exp {}
               
@@ -240,7 +233,7 @@ exp     : name
               
         | tokEMPTY tokLPAREN exp tokRPAREN {}
              
-        | exp tokPLUS{str+="+"; } arith_exp {}
+        | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);}
               
         | exp tokMINUS arith_exp {}
                
@@ -290,7 +283,7 @@ exp     : name
               
 	;
 	
-arith_exp: arith_exp tokPLUS {str+="+";} arith_exp {}
+arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 		
 	| arith_exp tokMINUS arith_exp {}
 		
@@ -302,21 +295,21 @@ arith_exp: arith_exp tokPLUS {str+="+";} arith_exp {}
 	        
 	| tokINT
 	{
-		str+=std::to_string($1);
+		$$ = new ArithExp_Integer(atoi($1));
 	}
 	
-	| dotExp{}
+	| dotExp {$$=new ArithExp_Const($1);}
 	      
 	| tokLPAREN arith_exp tokRPAREN {}
       
 	;
 
-dotExp:		name tokDOT name {str+=*$1+"."+*$3;}
+dotExp:		name tokDOT name {$$=new DotName{$1,$2};}
         ;
    
 
 par_list: tokVAR0 name tokCOMMA par_list {}
-	      
+	    
 	| tokVAR1 name where tokCOMMA par_list{} 
 	      
 	| tokVAR2 name where tokCOMMA par_list{} 
@@ -382,7 +375,8 @@ universe: tokLBRACKET name_list tokRBRACKET{}
 	
 	;
 
-name	: tokNAME{$$=$1;}
+name	: tokNAME
+                {$$ = new Name($1);}
             
 	;
 
@@ -392,9 +386,12 @@ name_list: name tokCOMMA name_list{}
 		
 	;
 
-name_where_list: name where tokCOMMA{ex+=*$1+",";} name_where_list{}
-		
-	| name where{ex+=*$1;} 
+name_where_list: name where tokCOMMA name_where_list
+		{$4->push_front(new VarDecl($1)); 
+		 $$ = $4;} 
+	| name where
+		{$$ = new VarDeclList(); 
+		 $$->push_front(new VarDecl($1));}
 	
 	;
 
