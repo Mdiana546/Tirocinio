@@ -1,45 +1,76 @@
-#include <iostream>
-#include <unordered_map>
-using namespace std;
+#include<SymbolTable.hh>
 
-enum MonaTypeTag { 
-  Varname0, Varname1, Varname2, VarnameTree,
-  Parname0, Parname1, Parname2, ParnameU,
-  Univname, Predname, Constname, Statespacename,ymbolTable.insertVa
-  Typename,Integer,Boolean,Real;
-};
+void symbolTable::insert(symbolEntry*entry)
+{
 
+    if(!isPresentEntry(entry->name))
+    {
+            int key=hashValue(entry->name);
+            table[key].push_back(entry);
+    }
+    else
+        //handle this error
 
-class Name {
-public:
-  Name() {} // dummy
-  Name(string *s) :
-    str(s){}
-  Name(const Name& n) :
-    str(n.str){}
+}
 
-  string *str;
-};
+void symbolTable::remove(Name*name)
+{
+    if(isPresentEntry(name))
+    {
+        int key=hashValue(name);
+        table[key].remove(getElement(name));
+    }
+}
 
+bool symbolTable::isPresentEntry(Name*name)
+{
+      int key=hashValue(name);
+      list<symbolEntry*>& listEl=table[key];
+         if(!listEl.empty())
+           {
+                if(getElement(name)!=nullptr)
+                    return true;
+           }
+     return false;
+}
 
-class symbolTable {
-public:
+bool symbolTable::isPresentEntry(Dotname*dotName)
+{
+    return isPresentEntry(dotName->name1)&&isPresentEntry(dotName->name2);
+}
+symbolEntry* symbolTable::lookup(Name* name)
+{
+        if(isPresentEntry(name))
+        {
+            int key=hashValue(name);
+            return getElement(name);
+        }
+}
 
-unordered_map<int, symbolEntry*> table;
+symbolEntry* symbolTable::getElement(Name*name)
+{
 
-    class symbolEntry {
-        public:
-        Name*name;
-        MonaTypetag tag;
-    };
-virtual ~symbolTable();//it must delete symbolEntry for each entry
+ int key=hashValue(name);
+ for(symbolEntry* ent:table[key])
+ {
+    if(*(ent->name)==*name)
+        return ent;
+ }
+ return nullptr;
 
-    void insert(symbolEntry* entry);
-    void remove(Name*name);
-    bool isPresentEntry(Name *name);
-    void freeAll();
-    symbolEntry& lookup(Name*name);
-private:
-  int hashValue(Name* name);
-};
+}
 
+int symbolTable::hashValue(Name*name)
+{
+int hash;
+    for(char c:*name)
+    {
+        hash+=static_cast<int>(c);
+    }
+ return;
+}
+
+void symbolTable::freeAll()
+{
+
+}

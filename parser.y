@@ -298,13 +298,13 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 		$$ = new ArithExp_Integer(atoi($1));
 	}
 	
-	| dotExp {$$=new ArithExp_Const($1);}
+	| dotExp {$$=new ArithExp_Const($1->dotName);}
 	      
 	| tokLPAREN arith_exp tokRPAREN {}
       
 	;
 
-dotExp:		name tokDOT name {$$=new DotName{$1,$2};}
+dotExp:		name tokDOT name {$$=new UntypedExp_DotName{$1,$2};}
         ;
    
 

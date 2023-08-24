@@ -34,7 +34,7 @@ void insertDecInSymbolTable(VarDeclList*decls)
 {
    for(VarDecl*dec : *decls)
     {
-      symbleTable.insert(new symbolEntry{dec->name,dec->declKind});
+      symbleTable.insert(new symbolEntry{dec->name,declKind});
     }
 }
 
@@ -94,9 +94,57 @@ MonaTypeTag UntypedExp_And::chekType()
 
 }
 
-//I'm gonna have to hanlde the expression
+MonaTypeTag UntypedExp_Plus::chekType()
+{
+    MonaTypeTag e=exp->checkType();
+    MonaTypeTag ar=aexp->evaluate();
+
+    if(e==ar)
+    {
+        if(e==Integer || e==Real)
+            return dExpression,
+         else
+            //handle the error
+    }
+
+}
+
+MonaTypeTag ArithExp_Add::evaluate()
+{
+    MonaTypeTag ae1=aexp1->evaluate();
+    MonaTypeTag ae2=aexp2->evaluate();
+
+    if(ae1==ae2)
+    {
+        if(ae1==Integer || ae1==Real)
+            return ae1;
+    }
+    //handle the error
+}
+
+MonaTypeTag ArithExp_Integer::evaluate()
+{
+  return Integer;
+}
+
+MonaTypeTag ArithExp_Const::evaluate()
+{
+    return controlDotName(dotName)
+}
 
 
+MonaTypeTag UntypedExp_DotName::chekType()
+{
+     return controlDotName(dotName);
+}
+
+MonaTypeTag controlDotName(DotName*dotName)
+{
+   if(isPresentEntry(dotName))
+            return lookup(dotName)->tag;
+         else
+            //handle the error
+}
 
 
 

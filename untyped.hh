@@ -8,6 +8,10 @@
 using std::string;
 using std::list;
 
+void  insertDecInSymbolTable(VarDeclList*);
+void deleteElementSymbleTable(VarDeclList*);
+MonaTypeTag controlDotName(DotName*);
+
 
 enum UntypedExpNodeKind {
   uAll0, uAll1, uAll2, uAnd, uBiimpl, uCall, uDiv, uDot, uEmpty, 
@@ -16,7 +20,7 @@ enum UntypedExpNodeKind {
   uMax, uMin, uMinus, uMinusModulo, uMult, uName, uNot, uNotEqual, uNotIn,
   uOr, uPlus, uPlusModulo, uRoot, uSet, uSetminus, uSub, uRestrict,
   uTrue, uUnion, uUp, uImport, uExport, uPrefix, uRootPred, uInStateSpace,
-  uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot
+  uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName
 };
 
 
@@ -150,6 +154,17 @@ public:
   Name *name;
 };
 
+class UntypedExp_DotName: public UntypedExp {
+public:
+  UntypedExp_Name(DotName *n) :
+    UntypedExp(uDotName), dotName(n) {}
+  virtual ~UntypedExp_Name() {delete dotName;}
+
+  MonaTypeTag chekType() override;
+
+  DotName *dotName;
+};
+
 
 class Variable_Declaration: public Declaration {
 public:
@@ -176,6 +191,84 @@ public:
   
   DeclarationList *declarations;
 };
+
+class UntypedExp_par_ea: public UntypedExp {
+public:
+  UntypedExp_par_ea(UntypedExpNodeKind k,
+		    UntypedExp *e,
+		    ArithExp *ae) :
+    UntypedExp(k), exp(e), aexp(ae) {}
+  virtual ~UntypedExp_par_ea()
+  {delete exp; delete aexp;}
+
+  UntypedExp *exp;
+  ArithExp *aexp;
+};
+
+
+
+class UntypedExp_Plus: public UntypedExp_par_ea {
+public:
+  UntypedExp_Plus(UntypedExp *exp, ArithExp *aexp) :
+    UntypedExp_par_ea(uPlus, exp, aexp, p) {}
+
+  MonaTypeTag chekType() override;
+};
+enum ArithExpKind {
+  aAdd, aConst, aDiv, aInteger, aMult, aSubtr
+};
+class ArithExp {
+public:
+  ArithExp(ArithExpKind) :
+    kind(k) {}
+  virtual ~ArithExp() {};
+
+  virtual  MonaTypeTag evaluate() = 0;
+
+  ArithExpKind kind;
+};
+
+class ArithExp_par_aa: public ArithExp {
+public:
+  ArithExp_par_aa(ArithExpKind k, ArithExp *a1, ArithExp *a2) :
+    ArithExp(k), aexp1(a1), aexp2(a2) {}
+  virtual ~ArithExp_par_aa() {delete aexp1; delete aexp2;}
+
+  ArithExp *aexp1;
+  ArithExp *aexp2;
+};
+
+class ArithExp_Add: public ArithExp_par_aa {
+public:
+  ArithExp_Add(ArithExp *aexp1, ArithExp *aexp2) :
+    ArithExp_par_aa(aAdd, aexp1, aexp2) {}
+
+  MonaTypeTag evaluate();
+};
+
+
+class ArithExp_Integer: public ArithExp {
+public:
+  ArithExp_Integer(int c) :
+    ArithExp(aInteger), n(c) {}
+
+  MonaTypeTag evaluate();
+
+  int n;
+};
+
+class ArithExp_Const: public ArithExp {
+public:
+  ArithExp_Const(DotName *dotName,) :
+    ArithExp(aConst), dotName(dotName) {}
+  virtual ~ArithExp_Const() {delete dotName;}
+
+  MonaTypeTag evaluate();
+
+  DotName *dotName;
+};
+
+
 
 #endif
 
