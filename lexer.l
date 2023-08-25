@@ -1,7 +1,7 @@
 %{   
 #include<iostream>
+#include "untyped.hh"
 #include "parser.hh"
-
 
 %}
 

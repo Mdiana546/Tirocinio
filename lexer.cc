@@ -599,8 +599,8 @@ char *yytext;
 #line 1 "lexer.l"
 #line 2 "lexer.l"
 #include<iostream>
+#include "untyped.hh"
 #include "parser.hh"
-
 
 #line 606 "lexer.cc"
 #line 607 "lexer.cc"

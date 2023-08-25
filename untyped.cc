@@ -29,6 +29,7 @@ MonaTypeTag UntypedExp_Ex1::chekType()
  insertDecInSymbolTable();
   exp->chekType();
   deleteElementSymbleTable();
+  return nu;
 }
 
 void Variable_Declaration::insertDecInSymbolTable()
@@ -80,6 +81,7 @@ MonaTypeTag UntypedExp_Less::chekType()
         }
     }
    cout<<"error"<<endl;
+   return nu;
 }
 
 MonaTypeTag UntypedExp_Name::chekType()
@@ -88,6 +90,8 @@ MonaTypeTag UntypedExp_Name::chekType()
         {
             return (symbleTable.lookup(name))->tag;
         }
+        cout<<"error"<<endl;
+        return nu;
 }
 
 MonaTypeTag UntypedExp_And::chekType()
@@ -100,6 +104,7 @@ MonaTypeTag UntypedExp_And::chekType()
               return Boolean;
             }
            cout<<"error"<<endl;
+           return nu;
 
 }
 
@@ -112,10 +117,10 @@ MonaTypeTag UntypedExp_Plus::chekType()
     {
         if(e==Integer || e==Real)
             return e;
-         else{}
-            cout<<"error"<<endl;
+      
     }
-
+  cout<<"error"<<endl;
+  return nu;
 }
 
 MonaTypeTag ArithExp_Add::evaluate()
@@ -129,6 +134,7 @@ MonaTypeTag ArithExp_Add::evaluate()
             return ae1;
     }
     cout<<"error"<<endl;
+    return nu;
 }
 
 MonaTypeTag ArithExp_Integer::evaluate()
@@ -142,6 +148,7 @@ MonaTypeTag ArithExp_Const::evaluate()
                  return symbleTable.lookup(dotName)->tag;
               else{}  
                 cout<<"error"<<endl;
+                return nu;
 }
 
 
@@ -151,6 +158,7 @@ MonaTypeTag UntypedExp_DotName::chekType()
                  return symbleTable.lookup(dotName)->tag;
               else{}
                 cout<<"error"<<endl;
+                return nu;
 }
 
 

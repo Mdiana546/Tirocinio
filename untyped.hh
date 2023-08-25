@@ -8,6 +8,7 @@
 using std::string;
 using std::list;
 using std::cout;
+using std::endl;
 
 
 
@@ -21,6 +22,22 @@ enum UntypedExpNodeKind {
   uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName
 };
 
+enum DeclarationKind {
+  dAssertion,
+  dConstant,
+  dDefault,
+  dExpression, 
+  dGuide,
+  dMacro, 
+  dPredicate, 
+  dUniverse, 
+  dVariable, 
+  dLastPos,
+  dAllPos,
+  dExecute,
+  dType,
+  dVerify
+};
 
 
 
@@ -36,6 +53,16 @@ public:
   UntypedExpNodeKind kind;
 };
 
+class ArithExp {
+public:
+  ArithExp(MonaTypeTag k) :
+    kind(k) {}
+  virtual ~ArithExp() {};
+
+  virtual  MonaTypeTag evaluate() = 0;
+
+  MonaTypeTag kind;
+};
 
 class VarDecl {
 public:
@@ -46,6 +73,16 @@ public:
       
   Name *name;
   UntypedExp *where;
+};
+
+class Declaration {
+public:
+  Declaration() {}
+  Declaration(DeclarationKind k) :
+    kind(k) {}
+  virtual ~Declaration() {};
+		    	    
+  DeclarationKind  kind;
 };
 
 
@@ -122,32 +159,7 @@ public:
   UntypedExp *exp;
 };
 
-enum DeclarationKind {
-  dAssertion,
-  dConstant,
-  dDefault,
-  dExpression, 
-  dGuide,
-  dMacro, 
-  dPredicate, 
-  dUniverse, 
-  dVariable, 
-  dLastPos,
-  dAllPos,
-  dExecute,
-  dType,
-  dVerify
-};
 
-class Declaration {
-public:
-  Declaration() {}
-  Declaration(DeclarationKind k) :
-    kind(k) {}
-  virtual ~Declaration() {};
-		    	    
-  DeclarationKind  kind;
-};
 
 class DeclarationList: public list<Declaration*> {};
 
@@ -228,16 +240,6 @@ public:
 };
 
 
-class ArithExp {
-public:
-  ArithExp(MonaTypeTag k) :
-    kind(k) {}
-  virtual ~ArithExp() {};
-
-  virtual  MonaTypeTag evaluate() = 0;
-
-  MonaTypeTag kind;
-};
 
 class ArithExp_par_aa: public ArithExp {
 public:
@@ -279,8 +281,6 @@ public:
 
   DotName *dotName;
 };
-
-
 
 #endif
 
