@@ -1,19 +1,22 @@
-#include<SymbolTable.hh>
+#include "SymbolTable.hh"
+#include<iostream>
 
-void symbolTable::insert(symbolEntry*entry)
+void SymbolTable::insert(SymbolEntry* entry)
 {
+
 
     if(!isPresentEntry(entry->name))
     {
             int key=hashValue(entry->name);
             table[key].push_back(entry);
+
     }
-    else
+    else{}
         //handle this error
 
 }
 
-void symbolTable::remove(Name*name)
+void SymbolTable::remove(Name*name)
 {
     if(isPresentEntry(name))
     {
@@ -22,10 +25,10 @@ void symbolTable::remove(Name*name)
     }
 }
 
-bool symbolTable::isPresentEntry(Name*name)
+bool SymbolTable::isPresentEntry(Name*name)
 {
       int key=hashValue(name);
-      list<symbolEntry*>& listEl=table[key];
+      list<SymbolEntry*>& listEl=table[key];
          if(!listEl.empty())
            {
                 if(getElement(name)!=nullptr)
@@ -34,24 +37,35 @@ bool symbolTable::isPresentEntry(Name*name)
      return false;
 }
 
-bool symbolTable::isPresentEntry(Dotname*dotName)
+bool SymbolTable::isPresentEntry(DotName*dotName)
 {
-    return isPresentEntry(dotName->name1)&&isPresentEntry(dotName->name2);
+    return isPresentEntry(dotName->name1) && isPresentEntry(dotName->name2);
 }
-symbolEntry* symbolTable::lookup(Name* name)
+
+SymbolTable::SymbolEntry* SymbolTable::lookup(Name* name)
 {
         if(isPresentEntry(name))
         {
             int key=hashValue(name);
             return getElement(name);
         }
+    return nullptr;
 }
 
-symbolEntry* symbolTable::getElement(Name*name)
+SymbolTable::SymbolEntry* SymbolTable::lookup(DotName*dotName)
+{
+    if(isPresentEntry(dotName))
+        return lookup(dotName->name2);
+    
+    return nullptr;
+}
+
+SymbolTable::SymbolEntry* SymbolTable::getElement(Name*name)
 {
 
  int key=hashValue(name);
- for(symbolEntry* ent:table[key])
+ list<SymbolEntry*> l=table[key];
+ for(SymbolEntry* ent:l)
  {
     if(*(ent->name)==*name)
         return ent;
@@ -60,17 +74,12 @@ symbolEntry* symbolTable::getElement(Name*name)
 
 }
 
-int symbolTable::hashValue(Name*name)
+int SymbolTable::hashValue(Name*name)
 {
-int hash;
-    for(char c:*name)
-    {
-        hash+=static_cast<int>(c);
+ unsigned long hash = 5381; // Initial hash value
+string s=*(name->str);
+    for (char c :s ) {
+        hash = ((hash << 5) + hash) + c; // hash * 33 + c
     }
- return;
-}
-
-void symbolTable::freeAll()
-{
-
+ return hash;
 }

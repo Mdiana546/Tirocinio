@@ -25,12 +25,12 @@ void Variable_Declaration::insertDeclarationInSymbolTable()
 MonaTypeTag UntypedExp_Ex1::chekType()
 {
   
- insertDecInSymbolTable(nameList);
+ insertDecInSymbolTable();
   exp->chekType();
   deleteElementSymbleTable(nameList);
 }
 
-void insertDecInSymbolTable(VarDeclList*decls)
+void Variable_Declaration::insertDecInSymbolTable()
 {
    for(VarDecl*dec : *decls)
     {
@@ -38,11 +38,19 @@ void insertDecInSymbolTable(VarDeclList*decls)
     }
 }
 
-void deleteElementSymbleTable(VarDeclList*decls)
+void UntypedExp_Ex1::insertDecInSymbolTable()
 {
-   for(VarDecl*dec : *decls)
+    for(VarDecl*dec : *nameList)
+        {
+          symbolTable.insert(new symbolEntry{dec->name,Varname1});
+        }
+}
+
+void UntypedExp_Ex1:: deleteElementSymbleTable()
+{
+   for(VarDecl*dec : *nameList)
     {
-      symbleTable.remove(dec->name);
+      symbolTable.remove(dec->name);
     }
 }
 
@@ -75,9 +83,9 @@ MonaTypeTag UntypedExp_Less::chekType()
 
 MonaTypeTag UntypedExp_Name::chekType()
 {
-        if(isPresentEntry(name))
+        if(symbolTable.isPresentEntry(name))
         {
-            return (lookup(name))->tag;
+            return (symbolTable.lookup(name))->tag;
         }
 }
 
@@ -129,22 +137,19 @@ MonaTypeTag ArithExp_Integer::evaluate()
 
 MonaTypeTag ArithExp_Const::evaluate()
 {
-    return controlDotName(dotName)
+    return dotName->chekType;
 }
 
 
 MonaTypeTag UntypedExp_DotName::chekType()
 {
-     return controlDotName(dotName);
+     if(symbleTable.isPresentEntry(dotName))
+                 return *(symbleTable.lookup(dotName)->tag);
+              else
+                //handle the error
 }
 
-MonaTypeTag controlDotName(DotName*dotName)
-{
-   if(isPresentEntry(dotName))
-            return lookup(dotName)->tag;
-         else
-            //handle the error
-}
+
 
 
 

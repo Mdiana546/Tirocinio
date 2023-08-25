@@ -8,8 +8,6 @@
 using std::string;
 using std::list;
 
-void  insertDecInSymbolTable(VarDeclList*);
-void deleteElementSymbleTable(VarDeclList*);
 MonaTypeTag controlDotName(DotName*);
 
 
@@ -64,6 +62,10 @@ public:
 
   UntypedExp *exp;
   VarDeclList *nameList;
+
+    private:
+     deleteElementSymbleTable()=0;
+     insertDecInSymbolTable()=0;
 }
 
 class UntypedExp_par_ee: public UntypedExp {
@@ -85,6 +87,8 @@ public:
     UntypedExp_par_unpee(uEx1,d, exp) {}
 
    MonaTypeTag chekType() override;
+
+
 };
 
 
@@ -163,6 +167,7 @@ public:
   MonaTypeTag chekType() override;
 
   DotName *dotName;
+
 };
 
 
@@ -177,6 +182,9 @@ void insertDeclarationInSymbolTable();
   
   MonaTypeTag declKind;
   VarDeclList *decls;
+
+  private:
+  void insertDecInSymbolTable();
 };
 
 
