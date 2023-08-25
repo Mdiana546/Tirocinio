@@ -88,7 +88,7 @@ start	: header declarations{
 
 header	:  tokWS1S tokSEMICOLON
 
-	| tokWS2S tokSEMICOLON {ex+="ws2s;\n";}
+	| tokWS2S tokSEMICOLON {}
 		
 	| tokM2LSTR tokSEMICOLON 
 		

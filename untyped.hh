@@ -1,14 +1,14 @@
 #ifndef __UNTYPED_H
 #define __UNTYPED_H
 
-#include "symboltable.h"
+#include "SymbolTable.hh"
 #include<list>
 #include<string>
-
+#include<iostream>
 using std::string;
 using std::list;
+using std::cout;
 
-MonaTypeTag controlDotName(DotName*);
 
 
 enum UntypedExpNodeKind {
@@ -23,14 +23,15 @@ enum UntypedExpNodeKind {
 
 
 
+
 class UntypedExp {
 public:
   UntypedExp(UntypedExpNodeKind k) :
-    kind(k), {}
+    kind(k) {}
     
   virtual ~UntypedExp() {};
   
-   MonaTypeTag chekType() =0
+   virtual MonaTypeTag chekType() = 0;
 
   UntypedExpNodeKind kind;
 };
@@ -58,15 +59,15 @@ public:
 		       UntypedExp *e) :
     UntypedExp(k), exp(e), nameList(d) {}
   virtual ~UntypedExp_par_unpee() 
-  {delete nameList; delete exp}
+  {delete nameList; delete exp;}
 
   UntypedExp *exp;
   VarDeclList *nameList;
 
     private:
-     deleteElementSymbleTable()=0;
-     insertDecInSymbolTable()=0;
-}
+     virtual void deleteElementSymbleTable()=0;
+     virtual void insertDecInSymbolTable()=0;
+};
 
 class UntypedExp_par_ee: public UntypedExp {
 public:
@@ -87,6 +88,9 @@ public:
     UntypedExp_par_unpee(uEx1,d, exp) {}
 
    MonaTypeTag chekType() override;
+  private:
+  void insertDecInSymbolTable() override;
+  void deleteElementSymbleTable() override;
 
 
 };
@@ -103,7 +107,7 @@ public:
 class UntypedExp_And: public UntypedExp_par_ee {
 public:
   UntypedExp_And(UntypedExp *exp1, UntypedExp *exp2) :
-    UntypedExp_par_ee(uAnd, exp1, exp2, p) {}
+    UntypedExp_par_ee(uAnd, exp1, exp2) {}
 
    MonaTypeTag chekType() override;
 };
@@ -160,9 +164,9 @@ public:
 
 class UntypedExp_DotName: public UntypedExp {
 public:
-  UntypedExp_Name(DotName *n) :
+  UntypedExp_DotName(DotName *n) :
     UntypedExp(uDotName), dotName(n) {}
-  virtual ~UntypedExp_Name() {delete dotName;}
+  virtual ~UntypedExp_DotName() {delete dotName;}
 
   MonaTypeTag chekType() override;
 
@@ -173,10 +177,10 @@ public:
 
 class Variable_Declaration: public Declaration {
 public:
-  Variable_Declaration(VarDeclKind k, VarDeclList *d) :,
+  Variable_Declaration(MonaTypeTag k, VarDeclList *d) :
     Declaration(dVariable), declKind(k), decls(d) {}
   virtual ~Variable_Declaration() 
-  {delete univs; delete decls;}
+  {delete decls;}
 
 void insertDeclarationInSymbolTable();
   
@@ -218,27 +222,27 @@ public:
 class UntypedExp_Plus: public UntypedExp_par_ea {
 public:
   UntypedExp_Plus(UntypedExp *exp, ArithExp *aexp) :
-    UntypedExp_par_ea(uPlus, exp, aexp, p) {}
+    UntypedExp_par_ea(uPlus, exp, aexp) {}
 
   MonaTypeTag chekType() override;
 };
-enum ArithExpKind {
-  aAdd, aConst, aDiv, aInteger, aMult, aSubtr
-};
+
+
 class ArithExp {
 public:
-  ArithExp(ArithExpKind) :
+  ArithExp(MonaTypeTag k) :
     kind(k) {}
   virtual ~ArithExp() {};
 
   virtual  MonaTypeTag evaluate() = 0;
 
-  ArithExpKind kind;
+  MonaTypeTag kind;
 };
 
 class ArithExp_par_aa: public ArithExp {
 public:
-  ArithExp_par_aa(ArithExpKind k, ArithExp *a1, ArithExp *a2) :
+
+  ArithExp_par_aa(MonaTypeTag k, ArithExp *a1, ArithExp *a2) :
     ArithExp(k), aexp1(a1), aexp2(a2) {}
   virtual ~ArithExp_par_aa() {delete aexp1; delete aexp2;}
 
@@ -246,12 +250,12 @@ public:
   ArithExp *aexp2;
 };
 
-class ArithExp_Add: public ArithExp_par_aa {
+class ArithExp_Add: public ArithExp_par_aa  {
 public:
   ArithExp_Add(ArithExp *aexp1, ArithExp *aexp2) :
-    ArithExp_par_aa(aAdd, aexp1, aexp2) {}
+   ArithExp_par_aa(aAdd, aexp1, aexp2) {}
 
-  MonaTypeTag evaluate();
+  MonaTypeTag evaluate() override;
 };
 
 
@@ -267,8 +271,8 @@ public:
 
 class ArithExp_Const: public ArithExp {
 public:
-  ArithExp_Const(DotName *dotName,) :
-    ArithExp(aConst), dotName(dotName) {}
+  ArithExp_Const(DotName *dotName) :
+    ArithExp(aConst), dotName{dotName} {}
   virtual ~ArithExp_Const() {delete dotName;}
 
   MonaTypeTag evaluate();

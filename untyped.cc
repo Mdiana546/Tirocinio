@@ -1,8 +1,9 @@
-#include<untyped.hh>
+#include "untyped.hh"
+SymbolTable symbleTable{};
 
 void MonaUntypedAST::typeCheckDeclarations()
 {
-  for(Declaration * dec: declarations)
+  for(Declaration * dec:*declarations)
   {
     switch(dec->kind)
     {
@@ -19,7 +20,7 @@ void MonaUntypedAST::typeCheckDeclarations()
 void Variable_Declaration::insertDeclarationInSymbolTable()
 {
 
-    insertDecInSymbolTable(decls);
+    insertDecInSymbolTable();
 }
 
 MonaTypeTag UntypedExp_Ex1::chekType()
@@ -27,14 +28,14 @@ MonaTypeTag UntypedExp_Ex1::chekType()
   
  insertDecInSymbolTable();
   exp->chekType();
-  deleteElementSymbleTable(nameList);
+  deleteElementSymbleTable();
 }
 
 void Variable_Declaration::insertDecInSymbolTable()
 {
    for(VarDecl*dec : *decls)
     {
-      symbleTable.insert(new symbolEntry{dec->name,declKind});
+      symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,declKind});
     }
 }
 
@@ -42,7 +43,7 @@ void UntypedExp_Ex1::insertDecInSymbolTable()
 {
     for(VarDecl*dec : *nameList)
         {
-          symbolTable.insert(new symbolEntry{dec->name,Varname1});
+          symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,Varname1});
         }
 }
 
@@ -50,7 +51,7 @@ void UntypedExp_Ex1:: deleteElementSymbleTable()
 {
    for(VarDecl*dec : *nameList)
     {
-      symbolTable.remove(dec->name);
+      symbleTable.remove(dec->name);
     }
 }
 
@@ -74,18 +75,18 @@ MonaTypeTag UntypedExp_Less::chekType()
                 return Boolean;
               break;
             default:
-                //lounch a error
+                cout<<"error"<<endl;
               break;
         }
     }
-   //lounch a error
+   cout<<"error"<<endl;
 }
 
 MonaTypeTag UntypedExp_Name::chekType()
 {
-        if(symbolTable.isPresentEntry(name))
+        if(symbleTable.isPresentEntry(name))
         {
-            return (symbolTable.lookup(name))->tag;
+            return (symbleTable.lookup(name))->tag;
         }
 }
 
@@ -98,21 +99,21 @@ MonaTypeTag UntypedExp_And::chekType()
             {
               return Boolean;
             }
-           //lounch a error
+           cout<<"error"<<endl;
 
 }
 
 MonaTypeTag UntypedExp_Plus::chekType()
 {
-    MonaTypeTag e=exp->checkType();
+    MonaTypeTag e=exp->chekType();
     MonaTypeTag ar=aexp->evaluate();
 
     if(e==ar)
     {
         if(e==Integer || e==Real)
-            return dExpression,
-         else
-            //handle the error
+            return e;
+         else{}
+            cout<<"error"<<endl;
     }
 
 }
@@ -127,7 +128,7 @@ MonaTypeTag ArithExp_Add::evaluate()
         if(ae1==Integer || ae1==Real)
             return ae1;
     }
-    //handle the error
+    cout<<"error"<<endl;
 }
 
 MonaTypeTag ArithExp_Integer::evaluate()
@@ -137,16 +138,19 @@ MonaTypeTag ArithExp_Integer::evaluate()
 
 MonaTypeTag ArithExp_Const::evaluate()
 {
-    return dotName->chekType;
+ if(symbleTable.isPresentEntry(dotName))
+                 return symbleTable.lookup(dotName)->tag;
+              else{}  
+                cout<<"error"<<endl;
 }
 
 
 MonaTypeTag UntypedExp_DotName::chekType()
 {
      if(symbleTable.isPresentEntry(dotName))
-                 return *(symbleTable.lookup(dotName)->tag);
-              else
-                //handle the error
+                 return symbleTable.lookup(dotName)->tag;
+              else{}
+                cout<<"error"<<endl;
 }
 
 
