@@ -10,6 +10,7 @@
 
 name		[a-zA-Z0-9_'\$]+
 whitespace	[ \t\r\n\f]+
+RealNumeral [1-9]+","[0-9]+
 numeral		[0-9]+
 %%
 
@@ -99,7 +100,7 @@ numeral		[0-9]+
 "int"           return tokINT;  //new rule
 "real"          return tokReal; //new rule
 "bool"          return tokBool;  //nu rule
-
+{RealNumeral}   {yylval.doubleVal=std::stod(yytext);return tokReal;}
 {numeral}      	{yylval.intval=std::stoi(yytext);return tokINT;}
 {name}		{yylval.st=new std::string(yytext);return tokNAME;}
 {whitespace}    ;/* ignore */

@@ -6,8 +6,9 @@
 #include <fstream>
 #include "lexer.hh"
 #include "untyped.hh"
-#include "Expression.hpp"
-#include "HandleFiles.hpp"
+#include "Expression.hh"
+#include "HandleFiles.hh"
+
 void yyerror(const char *msg);
 void returnMonaSmtLibFormat();
 void addElementStringEx(std::string);
@@ -23,6 +24,7 @@ int counter=0;
 %union
 {
 int intval;
+double doubleVal;
 std::string *st;
 DeclarationList* declList;
 Declaration *declaration;
@@ -31,7 +33,6 @@ ArithExp *arithExp;
 Name *name;
 UntypedExp_DotName*UntypedExpDotName;
 VarDeclList *varDeclList;
-
 }
 
 
@@ -94,6 +95,7 @@ start	: header declarations{
 		//handleFile.writeOnSMTLIBFile(smtLib);
 		 MonaUntypedAST* untypedAST=new MonaUntypedAST($2);
 		 untypedAST->typeCheckDeclarations();
+		 
 		
 		}
 	;
@@ -162,11 +164,11 @@ declaration : tokASSERT exp tokSEMICOLON{}
 			
 		|tokTYPE name tokEQUAL variant_list tokSEMICOLON{}
 		
-		| tokINT {}  name_where_list tokSEMICOLON {ex+="\n";}    //new rule
+		| tokINT name_where_list tokSEMICOLON {$$ = new Variable_Declaration(Integer,$2);}    //new rule
 		
-		| tokReal {} name_where_list tokSEMICOLON {ex+="\n";}   //new rule
+		| tokReal name_where_list tokSEMICOLON {$$ = new Variable_Declaration(Real,$2);}   //new rule
 			
-		| tokBool {}name_where_list tokSEMICOLON {ex+="\n";} //new rule
+		| tokBool {}name_where_list tokSEMICOLON {} //new rule
 	
 		
         ;
@@ -207,7 +209,7 @@ exp     : name {$$ = new UntypedExp_Name($1);}
                
         | tokNOT exp {}
         
-  	| dotExp {/*$$=new UntypedEp_DotName($1);*/}
+  		| dotExp {$$=$1;}
   	
         | tokUNIVROOT tokLPAREN name tokRPAREN {}
               
@@ -245,7 +247,7 @@ exp     : name {$$ = new UntypedExp_Name($1);}
               
         | tokEMPTY tokLPAREN exp tokRPAREN {}
              
-        | exp tokPLUS arith_exp {/*$$ = new UntypedExp_Plus($1, $3);*/}
+        | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);}
               
         | exp tokMINUS arith_exp {}
                
@@ -295,7 +297,7 @@ exp     : name {$$ = new UntypedExp_Name($1);}
               
 	;
 	
-arith_exp: arith_exp tokPLUS arith_exp {/*$$ = new ArithExp_Add($1, $3);*/}
+arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 		
 	| arith_exp tokMINUS arith_exp {}
 		
@@ -307,16 +309,18 @@ arith_exp: arith_exp tokPLUS arith_exp {/*$$ = new ArithExp_Add($1, $3);*/}
 	        
 	| tokINT
 	{
-		//$$ = new ArithExp_Integer(atoi($1));
+		$$ = new ArithExp_Integer();
 	}
+
+	| tokReal{$$=new ArithExp_Real{};}
 	
-	| dotExp {/*$$=new ArithExp_Const($1->dotName);*/}
+	| dotExp {$$=new ArithExp_Const{$1->dotName};}
 	      
 	| tokLPAREN arith_exp tokRPAREN {}
       
 	;
 
-dotExp:		name tokDOT name {/*$$=new UntypedExp_DotName{$1,$2};*/}
+dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};}
         ;
    
 

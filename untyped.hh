@@ -263,12 +263,19 @@ public:
 
 class ArithExp_Integer: public ArithExp {
 public:
-  ArithExp_Integer(int c) :
-    ArithExp(aInteger), n(c) {}
+  ArithExp_Integer() :
+    ArithExp(aInteger) {}
+
+  MonaTypeTag evaluate();
+};
+
+class ArithExp_Real:public ArithExp
+{
+  public:
+  ArithExp_Real():ArithExp{aReal}{}
 
   MonaTypeTag evaluate();
 
-  int n;
 };
 
 class ArithExp_Const: public ArithExp {

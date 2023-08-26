@@ -76,11 +76,11 @@ MonaTypeTag UntypedExp_Less::chekType()
                 return Boolean;
               break;
             default:
-                cout<<"error"<<endl;
+                cout<<"error: error type less"<<endl;
               break;
         }
     }
-   cout<<"error"<<endl;
+   cout<<"error: error type less"<<endl;
    return nu;
 }
 
@@ -90,7 +90,7 @@ MonaTypeTag UntypedExp_Name::chekType()
         {
             return (symbleTable.lookup(name))->tag;
         }
-        cout<<"error"<<endl;
+        cout<<"error:element don't present in a symble table"<<endl;
         return nu;
 }
 
@@ -103,7 +103,7 @@ MonaTypeTag UntypedExp_And::chekType()
             {
               return Boolean;
             }
-           cout<<"error"<<endl;
+           cout<<"error:error type AND"<<endl;
            return nu;
 
 }
@@ -119,7 +119,7 @@ MonaTypeTag UntypedExp_Plus::chekType()
             return e;
       
     }
-  cout<<"error"<<endl;
+  cout<<"error:type of plus"<<endl;
   return nu;
 }
 
@@ -133,13 +133,18 @@ MonaTypeTag ArithExp_Add::evaluate()
         if(ae1==Integer || ae1==Real)
             return ae1;
     }
-    cout<<"error"<<endl;
+    cout<<"error:error on add"<<endl;
     return nu;
 }
-
 MonaTypeTag ArithExp_Integer::evaluate()
 {
   return Integer;
+}
+
+MonaTypeTag ArithExp_Real::evaluate()
+{
+
+  return Real;
 }
 
 MonaTypeTag ArithExp_Const::evaluate()
@@ -157,7 +162,7 @@ MonaTypeTag UntypedExp_DotName::chekType()
      if(symbleTable.isPresentEntry(dotName))
                  return symbleTable.lookup(dotName)->tag;
               else{}
-                cout<<"error"<<endl;
+                cout<<"error:dotName element isn't present"<<endl;
                 return nu;
 }
 
