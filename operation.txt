@@ -1,6 +1,4 @@
 ws2s; 
 var1 myVar;
-int a;
-real b;
 ex1 p1, p2, p3, p4, p5:
-p1.a<p2.a+1 & p3<p4;
+p1<p2 & p3<p4;

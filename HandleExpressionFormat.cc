@@ -1,10 +1,10 @@
 /*I see where insert const*/
 // I must see where insert const element Expression
-#include "Expression.hh"
+#include "HandleExpressionFormat.hh"
 
 
 
-bool Expression::isMSODExpression()
+bool HanldeExpressionFormat::isMSODExpression()
 {
     if(expression.find('.')!=string::npos)
       return true;
@@ -12,12 +12,12 @@ bool Expression::isMSODExpression()
     return false;
 }
 
-void Expression::setP()
+void HanldeExpressionFormat::setP()
 {
   p['<']=p['>']=p['=']=p[lessEqual]=p[greaterEqual]=1,p['+'] = p['-']=2, p['/'] = p['*'] =p['%']= 3;
 }
 
-void Expression::replaceOperator(string oldSubStr,char c)
+void HanldeExpressionFormat::replaceOperator(string oldSubStr,char c)
 {
   size_t pos=0;
    while ((pos = expression.find(oldSubStr, pos)) != string::npos) {
@@ -27,7 +27,7 @@ void Expression::replaceOperator(string oldSubStr,char c)
     
 }
 
-bool Expression::isOperator(char c)
+bool HanldeExpressionFormat::isOperator(char c)
 {
        if(c=='<' || c=='>' || c=='=' || c==lessEqual || c==greaterEqual || c=='+' || c=='-'|| c=='%' || c=='/' || c=='*')
         return true;
@@ -35,7 +35,7 @@ bool Expression::isOperator(char c)
       return false;
 }
 
-string Expression::returnNameVar(string& str,int& index){
+string HanldeExpressionFormat::returnNameVar(string& str,int& index){
 
 std::string rstring;
       while(!isOperator(str[index]) && index<str.size() && str[index]!=')')
@@ -48,7 +48,7 @@ std::string rstring;
   
 }
 
-void Expression::creatElementsN()
+void HanldeExpressionFormat::creatElementsN()
 {
 Node*t,*t1,*t2;
 char op;
@@ -66,7 +66,7 @@ char op;
 
 }
 
-void Expression::buildTree()
+void HanldeExpressionFormat::buildTree()
 {
 sC.push('(');
     for(int i=0;i<expression.length();i++)
@@ -95,7 +95,7 @@ root=sN.top();
 }
 
 
-Expression::Expression(string expression):expression{expression},root{nullptr}
+HanldeExpressionFormat::HanldeExpressionFormat(string expression):expression{expression},root{nullptr}
 {
   if(isMSODExpression())
   {
@@ -108,7 +108,7 @@ Expression::Expression(string expression):expression{expression},root{nullptr}
 
 }
 
-void Expression::setVar(Node*node)
+void HanldeExpressionFormat::setVar(Node*node)
 {
 
         if(node->left ==nullptr){
@@ -125,7 +125,7 @@ void Expression::setVar(Node*node)
           }
 }
 
-void Expression::setMonaExpression()
+void HanldeExpressionFormat::setMonaExpression()
 {
 size_t pos=expression.find(",");
 if(pos!=string::npos)
@@ -133,7 +133,7 @@ if(pos!=string::npos)
   
 }
 
-string  Expression::returnMonaVersion(){  
+string  HanldeExpressionFormat::returnMonaVersion(){  
 
       if(root!=nullptr){
         expression.clear();
@@ -147,7 +147,7 @@ string  Expression::returnMonaVersion(){
 }
 
 
-string Expression:: checkOperator(string& c)
+string HanldeExpressionFormat:: checkOperator(string& c)
 {
 
 
@@ -160,7 +160,7 @@ string Expression:: checkOperator(string& c)
       
 }
 
-string Expression::generateSMTLIB(Node*node)
+string HanldeExpressionFormat::generateSMTLIB(Node*node)
 { 
     	if(node->left ==nullptr && node->right == nullptr)
 	  return node->data;
@@ -171,24 +171,24 @@ string Expression::generateSMTLIB(Node*node)
 	return "("+ checkOperator(node->data)+ " " + leftExpr+" "+rightExpr+")";
 }
 
-string  Expression:: returnSMTLIBVersion()
+string  HanldeExpressionFormat:: returnSMTLIBVersion()
 {
     if(root!=nullptr)
       return generateSMTLIB(root);
   return "";   
 }
 
-Expression::~Expression()
+HanldeExpressionFormat::~HanldeExpressionFormat()
 {
   delete root;
 }
 
 
 /*struct node*/
-Expression::Node::Node(string data):data{data},left{nullptr},right{nullptr}
+HanldeExpressionFormat::Node::Node(string data):data{data},left{nullptr},right{nullptr}
 {}
 
-Expression::Node::~Node()
+HanldeExpressionFormat::Node::~Node()
 {
   delete left;
   delete right;

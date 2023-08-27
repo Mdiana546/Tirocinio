@@ -8,7 +8,7 @@
 using std::stack;
 using std::string;
 
-class Expression
+class HanldeExpressionFormat
 {
 
 private:
@@ -44,7 +44,7 @@ public:
   I must initialize root, if string is a MSOD_VERSION
   I must initialize p if string is MSOD_VERSION*/
   
-	Expression(string );
+	HanldeExpressionFormat(string );
 /*
 	I execute build if, root is differen
 	t of null,otherwise I return string expression*/
@@ -55,7 +55,7 @@ public:
 
 	string returnSMTLIBVersion();
 	
-virtual ~Expression();
+virtual ~HanldeExpressionFormat();
 
 
 };

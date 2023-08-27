@@ -1,5 +1,8 @@
 #include "untyped.hh"
 SymbolTable symbleTable{};
+string MFormat;
+string smT;
+int count=1;
 
 void MonaUntypedAST::typeCheckDeclarations()
 {
@@ -17,11 +20,63 @@ void MonaUntypedAST::typeCheckDeclarations()
   }
 }
 
+void MonaUntypedAST::createStrings()
+{
+    for(Declaration * dec:*declarations)
+     {
+      switch(dec->kind)
+      {
+        case dVariable:
+        (static_cast<Variable_Declaration*>(dec))->insertDeclarationInString();
+        break;
+        case dExpression:
+          (static_cast<Expression_Declaration*>(dec))->exp->setExpressionInString();
+        break;
+      }
+  }
+}
+
 void Variable_Declaration::insertDeclarationInSymbolTable()
 {
 
     insertDecInSymbolTable();
 }
+
+void Variable_Declaration::insertDeclarationInString()
+{
+  string type;
+
+      switch(declKind)
+      {
+
+          case Varname1:
+            type="var1";
+            break;
+          case Varname2:
+            type="var2";
+            break;
+          case Varname0:
+            type="var0";
+            break;
+          case Integer:
+            type="int";
+            break;
+          case Real:
+            type="real";
+            break;
+          case Boolean:
+            type="bool";
+           break;
+      }
+      MFormat+=type;
+
+    for(VarDecl*dec : *decls)
+    {
+      MFormat+=" "+*(dec->name->str); //TODO I must handel semicolon problem;
+    }
+    MFormat+="\n";
+}
+
 
 MonaTypeTag UntypedExp_Ex1::chekType()
 {
@@ -30,6 +85,20 @@ MonaTypeTag UntypedExp_Ex1::chekType()
   exp->chekType();
   deleteElementSymbleTable();
   return nu;
+}
+
+string UntypedExp_Ex1::setExpressionInString()
+{
+  insertDeclarationInString();
+  MFormat=":"+MFormat+"\n"+exp->setExpressionInString();
+  return "";
+}
+
+void UntypedExp_Ex1::insertDeclarationInString()
+{
+  MFormat="ex1";
+    for(VarDecl*dec:*nameList)
+      MFormat+=" "+*(dec->name->str); //TODO I must hanlde problem semicolon
 }
 
 void Variable_Declaration::insertDecInSymbolTable()
@@ -55,6 +124,8 @@ void UntypedExp_Ex1:: deleteElementSymbleTable()
       symbleTable.remove(dec->name);
     }
 }
+
+
 
 
 MonaTypeTag UntypedExp_Less::chekType()
@@ -84,6 +155,26 @@ MonaTypeTag UntypedExp_Less::chekType()
    return nu;
 }
 
+string UntypedExp_Less::setExpressionInString()
+{
+    string e1=exp1->setExpressionInString();
+    string e2=exp2->setExpressionInString();
+    string e3=e1+" < "+e2;
+    HanldeExpressionFormat Hexp{e3};
+    string smt=Hexp.returnSMTLIBVersion();
+    if(!smt.empty())
+    { 
+      smt+="define-fun"+to_string(count);
+      smT+="\n"+smt;
+      return to_string(count)+Hexp.returnMonaVersion();
+      count++;
+    }
+    return Hexp.returnMonaVersion();
+
+
+}
+
+
 MonaTypeTag UntypedExp_Name::chekType()
 {
         if(symbleTable.isPresentEntry(name))
@@ -93,6 +184,13 @@ MonaTypeTag UntypedExp_Name::chekType()
         cout<<"error:element don't present in a symble table"<<endl;
         return nu;
 }
+
+string UntypedExp_Name::setExpressionInString()
+{
+  return *(name->str);
+}
+
+
 
 MonaTypeTag UntypedExp_And::chekType()
 {
@@ -106,6 +204,13 @@ MonaTypeTag UntypedExp_And::chekType()
            cout<<"error:error type AND"<<endl;
            return nu;
 
+}
+
+string UntypedExp_And::setExpressionInString()
+{
+    string e1=exp1->setExpressionInString();
+    string e2=exp2->setExpressionInString();
+    return e1+" & "+e2;
 }
 
 MonaTypeTag UntypedExp_Plus::chekType()
@@ -166,7 +271,11 @@ MonaTypeTag UntypedExp_DotName::chekType()
                 return nu;
 }
 
-
+string UntypedExp_DotName::setExpressionInString()
+{
+  string retString=*(dotName->name1->str)+"."+*(dotName->name2->str);
+  return retString;
+}
 
 
 

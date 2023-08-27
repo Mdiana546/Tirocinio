@@ -5,10 +5,12 @@
 #include<list>
 #include<string>
 #include<iostream>
+#include"HandleExpressionFormat.hh"
 using std::string;
 using std::list;
 using std::cout;
 using std::endl;
+
 
 
 
@@ -49,6 +51,7 @@ public:
   virtual ~UntypedExp() {};
   
    virtual MonaTypeTag chekType() = 0;
+   virtual string setExpressionInString()=0;
 
   UntypedExpNodeKind kind;
 };
@@ -101,9 +104,6 @@ public:
   UntypedExp *exp;
   VarDeclList *nameList;
 
-    private:
-     virtual void deleteElementSymbleTable()=0;
-     virtual void insertDecInSymbolTable()=0;
 };
 
 class UntypedExp_par_ee: public UntypedExp {
@@ -125,9 +125,12 @@ public:
     UntypedExp_par_unpee(uEx1,d, exp) {}
 
    MonaTypeTag chekType() override;
+   string setExpressionInString() override ;
+
   private:
-  void insertDecInSymbolTable() override;
-  void deleteElementSymbleTable() override;
+  void insertDecInSymbolTable() ;
+  void deleteElementSymbleTable() ;
+  void insertDeclarationInString();
 
 
 };
@@ -139,6 +142,7 @@ public:
     UntypedExp_par_ee(uLess, exp1, exp2) {}
   
   MonaTypeTag chekType() override;
+  string setExpressionInString()override;
 };
 
 class UntypedExp_And: public UntypedExp_par_ee {
@@ -147,6 +151,7 @@ public:
     UntypedExp_par_ee(uAnd, exp1, exp2) {}
 
    MonaTypeTag chekType() override;
+   string setExpressionInString() override;
 };
 
 
@@ -156,6 +161,7 @@ public:
     Declaration(dExpression), exp(e) {}
   virtual ~Expression_Declaration() {delete exp;}
   
+
   UntypedExp *exp;
 };
 
@@ -170,6 +176,7 @@ public:
   virtual ~UntypedExp_Name() {delete name;}
   
   MonaTypeTag chekType() override;
+  string setExpressionInString() override;
   
   Name *name;
 };
@@ -181,6 +188,7 @@ public:
   virtual ~UntypedExp_DotName() {delete dotName;}
 
   MonaTypeTag chekType() override;
+  string setExpressionInString()override;
 
   DotName *dotName;
 
@@ -195,7 +203,8 @@ public:
   {delete decls;}
 
 void insertDeclarationInSymbolTable();
-  
+void insertDeclarationInString();
+
   MonaTypeTag declKind;
   VarDeclList *decls;
 
@@ -212,7 +221,8 @@ public:
   ~MonaUntypedAST() {delete declarations;}
 
   void typeCheckDeclarations();
-  
+  void createStrings();
+
   DeclarationList *declarations;
 };
 

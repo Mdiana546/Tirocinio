@@ -6,19 +6,12 @@
 #include <fstream>
 #include "lexer.hh"
 #include "untyped.hh"
-#include "Expression.hh"
 #include "HandleFiles.hh"
 
 void yyerror(const char *msg);
-void returnMonaSmtLibFormat();
-void addElementStringEx(std::string);
-void addOperatorStringStr(std::string);
-int count=0;
-std::string ex;
-std::string smtLib;
-std::string str;
-std::list<Expression*> l;
-int counter=0;
+extern string MFormat;
+extern string smT;
+extern int count;
 %}
 
 %union
@@ -90,19 +83,19 @@ VarDeclList *varDeclList;
 
 start	: header declarations{
 		
-		//HandleFiles handleFile{};
-		//handleFile.writeOnMonaFile(ex);
-		//handleFile.writeOnSMTLIBFile(smtLib);
 		 MonaUntypedAST* untypedAST=new MonaUntypedAST($2);
 		 untypedAST->typeCheckDeclarations();
-		 
+		 untypedAST->createStrings();
+		 HandleFiles handleFile{};
+		handleFile.writeOnMonaFile(MFormat);
+		handleFile.writeOnSMTLIBFile(smT);
 		
 		}
 	;
 
 header	:  tokWS1S tokSEMICOLON
 
-	| tokWS2S tokSEMICOLON {ex+="ws2s;\n";}
+	| tokWS2S tokSEMICOLON {}
 		
 	| tokM2LSTR tokSEMICOLON {}
 		
@@ -247,7 +240,7 @@ exp     : name {$$ = new UntypedExp_Name($1);}
               
         | tokEMPTY tokLPAREN exp tokRPAREN {}
              
-        | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);}
+        | exp tokPLUS arith_exp {/*$$ = new UntypedExp_Plus($1, $3);*/}
               
         | exp tokMINUS arith_exp {}
                
@@ -489,30 +482,6 @@ optstring: tokSTRING{}
          
      
 %%
-
-void returnMonaSmtLibFormat()
-{
-	if(!str.empty()){
-		Expression monaExpression{str};
-		ex+=monaExpression.returnMonaVersion();
-		smtLib+=monaExpression.returnSMTLIBVersion()+"\n";
-		str.clear();
-	}
-}
-
-void addOperatorStringStr(std::string op)
-{
-		if(!str.empty())
-        		str+=op;
-        	else
-        		addElementStringEx(op);
-}
-
-void addElementStringEx(std::string op)
-{
-	ex+=op;
-}
-
 int main(int argc, char **argv) {
    if (argc > 1) {
       yyin=fopen(argv[1],"r");;
