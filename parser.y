@@ -11,7 +11,7 @@
 void yyerror(const char *msg);
 extern string MFormat;
 extern string smT;
-extern int count;
+extern int count; 
 %}
 
 %union
@@ -25,11 +25,11 @@ UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
 UntypedExp_DotName*UntypedExpDotName;
-VarDeclList *varDeclList;
+VarDeclList *varDeclList; 
 }
 
 
-/* Terminals */
+/* Terminals */ 
 %start start
 %token tokALL0 tokALL1 tokALL2 tokAND tokARROW tokASSERT
 %token tokBIIMPL tokCOLON tokCOMMA 
@@ -49,9 +49,9 @@ VarDeclList *varDeclList;
 %token tokINSTATESPACE tokEXECUTE tokTYPE tokSOMETYPE tokVARIANT tokSUCC
 %token tokWS1S tokWS2S tokTREEROOT tokCONSTTREE tokALLPOS
 %token<st> tokNAME
-%token tokReal tokBool
+%token <doubleVal>tokReal tokBool
 %token  tokSTRING
-%token tokINT
+%token <intval> tokINT
 
 %type <declList> declarations;
 %type <declaration> declaration
@@ -93,17 +93,8 @@ start	: header declarations{
 		}
 	;
 
-header	:  tokWS1S tokSEMICOLON
-
-	| tokWS2S tokSEMICOLON {}
-		
-	| tokM2LSTR tokSEMICOLON {}
-		
-	| tokM2LTREE tokSEMICOLON{}
-	
-	| /* empty */{}
-    
-	;
+header	: tokWS2S tokSEMICOLON {}
+		;
 
 declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	      
@@ -240,7 +231,7 @@ exp     : name {$$ = new UntypedExp_Name($1);}
               
         | tokEMPTY tokLPAREN exp tokRPAREN {}
              
-        | exp tokPLUS arith_exp {/*$$ = new UntypedExp_Plus($1, $3);*/}
+        | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);}
               
         | exp tokMINUS arith_exp {}
                
@@ -302,10 +293,10 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 	        
 	| tokINT
 	{
-		$$ = new ArithExp_Integer();
+		$$ = new ArithExp_Integer($1);
 	}
 
-	| tokReal{$$=new ArithExp_Real{};}
+	| tokReal{$$=new ArithExp_Real{$1};}
 	
 	| dotExp {$$=new ArithExp_Const{$1->dotName};}
 	      

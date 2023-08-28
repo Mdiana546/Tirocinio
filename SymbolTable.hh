@@ -1,3 +1,6 @@
+#ifndef __SYMBLE_TABLE_H
+#define __SYMBLE_TABLE_H
+
 #include <unordered_map>
 #include<list>
 #include<string>
@@ -7,7 +10,7 @@ enum MonaTypeTag {
   Varname0, Varname1, Varname2, VarnameTree,
   Parname0, Parname1, Parname2, ParnameU,
   Univname, Predname, Constname, Statespacename,Integer,Boolean,Real,
-  aAdd,aInteger,aReal,aConst,nu
+  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul
 };
 
 
@@ -56,3 +59,4 @@ private:
   int hashValue(Name* name);
   SymbolEntry*getElement(Name*name);
 };
+#endif

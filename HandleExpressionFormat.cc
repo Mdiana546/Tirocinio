@@ -4,9 +4,9 @@
 
 
 
-bool HanldeExpressionFormat::isMSODExpression()
+bool HanldeExpressionFormat::isMSODExpression(string &str)
 {
-    if(expression.find('.')!=string::npos)
+    if(str.find('.')!=string::npos)
       return true;
     
     return false;
@@ -97,7 +97,7 @@ root=sN.top();
 
 HanldeExpressionFormat::HanldeExpressionFormat(string expression):expression{expression},root{nullptr}
 {
-  if(isMSODExpression())
+  if(isMSODExpression(expression))
   {
     replaceOperator("<=",lessEqual);
     replaceOperator(">=",greaterEqual);
@@ -163,7 +163,7 @@ string HanldeExpressionFormat:: checkOperator(string& c)
 string HanldeExpressionFormat::generateSMTLIB(Node*node)
 { 
     	if(node->left ==nullptr && node->right == nullptr)
-	  return node->data;
+	        return changePointWithSpace(node->data);
 	  
 	string leftExpr=generateSMTLIB(node->left);
 	string rightExpr=generateSMTLIB(node->right);
@@ -176,6 +176,14 @@ string  HanldeExpressionFormat:: returnSMTLIBVersion()
     if(root!=nullptr)
       return generateSMTLIB(root);
   return "";   
+}
+
+string HanldeExpressionFormat::changePointWithSpace(string str)
+{
+  auto index=str.find(".");
+  if(index!=string::npos)
+    return str.replace(index,1," ");
+  return str;
 }
 
 HanldeExpressionFormat::~HanldeExpressionFormat()
@@ -193,5 +201,4 @@ HanldeExpressionFormat::Node::~Node()
   delete left;
   delete right;
 }
-
 

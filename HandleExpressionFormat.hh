@@ -27,7 +27,7 @@ stack<char> sC;
 Node * root;
 int p[123];
 		
-bool isMSODExpression();
+bool isMSODExpression(string& );
 void replaceOperator(string, char);
 bool isOperator(char );
 void setP();
@@ -38,6 +38,7 @@ void setVar(Node*);
 string returnNameVar(string&,int&);
 string checkOperator(string& );
 void setMonaExpression();
+string changePointWithSpace(string);
 public:
 
 /*

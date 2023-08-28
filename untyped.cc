@@ -1,8 +1,9 @@
 #include "untyped.hh"
 SymbolTable symbleTable{};
-string MFormat;
+string MFormat="ws2s; \n";
+HandleDeclarationFormat Hdeclaration{};
 string smT;
-int count=1;
+int count=0;
 
 void MonaUntypedAST::typeCheckDeclarations()
 {
@@ -18,6 +19,7 @@ void MonaUntypedAST::typeCheckDeclarations()
       break;
     }
   }
+
 }
 
 void MonaUntypedAST::createStrings()
@@ -34,6 +36,12 @@ void MonaUntypedAST::createStrings()
         break;
       }
   }
+   if(Hdeclaration.isADeclarationPresent())
+  {
+    string smtLibDeclaration=Hdeclaration.returnSmtLibDeclaration();
+    smtLibDeclaration+="\n"+smT;
+    smT=smtLibDeclaration;
+  }
 }
 
 void Variable_Declaration::insertDeclarationInSymbolTable()
@@ -45,7 +53,7 @@ void Variable_Declaration::insertDeclarationInSymbolTable()
 void Variable_Declaration::insertDeclarationInString()
 {
   string type;
-
+  string listELements;
       switch(declKind)
       {
 
@@ -59,26 +67,29 @@ void Variable_Declaration::insertDeclarationInString()
             type="var0";
             break;
           case Integer:
+              Hdeclaration.addDeclList(decls);
             type="int";
             break;
           case Real:
+            Hdeclaration.addDeclList(decls);
             type="real";
             break;
+              Hdeclaration.addDeclList(decls);
           case Boolean:
             type="bool";
            break;
       }
-      MFormat+=type;
 
     for(VarDecl*dec : *decls)
     {
-      MFormat+=" "+*(dec->name->str); //TODO I must handel semicolon problem;
+      listELements+=","+*(dec->name->str);
     }
-    MFormat+="\n";
+    listELements.erase(0,1); //I delete the first colon
+    MFormat+=type+" "+listELements+";\n";
 }
 
 
-MonaTypeTag UntypedExp_Ex1::chekType()
+MonaTypeTag UntypedExp_par_unpee::chekType()
 {
   
  insertDecInSymbolTable();
@@ -87,18 +98,43 @@ MonaTypeTag UntypedExp_Ex1::chekType()
   return nu;
 }
 
-string UntypedExp_Ex1::setExpressionInString()
+string UntypedExp_par_unpee::setExpressionInString()
 {
   insertDeclarationInString();
-  MFormat=":"+MFormat+"\n"+exp->setExpressionInString();
+  MFormat+=":\n"+exp->setExpressionInString()+";";
   return "";
 }
 
-void UntypedExp_Ex1::insertDeclarationInString()
+void UntypedExp_par_unpee::insertDeclarationInString()
 {
-  MFormat="ex1";
+    switch(kind)
+    {
+      case ex1:
+        MFormat+="ex1";
+      break;
+      case ex2:
+        MFormat+="ex2";
+      break;
+      case ex0:
+        MFormat+="ex0";
+        break;
+      case all0:
+        MFormat+="all0";
+      case all1:
+        MFormat+="all1";
+      break;
+      case all2:
+        MFormat+="all2";
+      break;
+    }
+  string listElements;
     for(VarDecl*dec:*nameList)
-      MFormat+=" "+*(dec->name->str); //TODO I must hanlde problem semicolon
+      listElements+=","+*(dec->name->str); 
+
+     listElements.erase(0,1); //I delete the first colon
+     MFormat+=" "+listElements;
+
+
 }
 
 void Variable_Declaration::insertDecInSymbolTable()
@@ -109,7 +145,7 @@ void Variable_Declaration::insertDecInSymbolTable()
     }
 }
 
-void UntypedExp_Ex1::insertDecInSymbolTable()
+void UntypedExp_par_unpee::insertDecInSymbolTable()
 {
     for(VarDecl*dec : *nameList)
         {
@@ -117,7 +153,7 @@ void UntypedExp_Ex1::insertDecInSymbolTable()
         }
 }
 
-void UntypedExp_Ex1:: deleteElementSymbleTable()
+void UntypedExp_par_unpee:: deleteElementSymbleTable()
 {
    for(VarDecl*dec : *nameList)
     {
@@ -128,7 +164,7 @@ void UntypedExp_Ex1:: deleteElementSymbleTable()
 
 
 
-MonaTypeTag UntypedExp_Less::chekType()
+MonaTypeTag UntypedExp_par_ee_two::chekType()
 {
     MonaTypeTag e1=exp1->chekType();
     MonaTypeTag e2=exp2->chekType();
@@ -147,6 +183,18 @@ MonaTypeTag UntypedExp_Less::chekType()
                 return Boolean;
               break;
             default:
+                if(kind==uEqual || kind==uNotEqual)
+                {
+                  switch(e1)
+                  {
+                    case Varname2:
+                      return Boolean;
+                    break;
+                    case Boolean:
+                    return Boolean;
+                  }
+                }
+                   
                 cout<<"error: error type less"<<endl;
               break;
         }
@@ -155,22 +203,43 @@ MonaTypeTag UntypedExp_Less::chekType()
    return nu;
 }
 
-string UntypedExp_Less::setExpressionInString()
+string UntypedExp_par_ee_two::setExpressionInString()
 {
+  string smtFile,e3;
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
-    string e3=e1+" < "+e2;
+
+    switch(kind)
+    {
+      case uLess:
+        e3=e1+"<"+e2;
+      break;
+      case uLessEq:
+        e3=e1+"<="+e2;
+        break;
+      case uGreater:
+        e3=e1+">"+e2;
+      break;
+      case uGreaterEq:
+        e3=e1+">="+e2;
+      break;
+      case uEqual:
+        e3=e1+"="+e2; 
+      break;
+      case uNotEqual:
+         e3=e1+"!="+e2; //TODO i must implement it in HandleExpressionFormat
+        break;
+    }
     HanldeExpressionFormat Hexp{e3};
-    string smt=Hexp.returnSMTLIBVersion();
-    if(!smt.empty())
-    { 
-      smt+="define-fun"+to_string(count);
-      smT+="\n"+smt;
-      return to_string(count)+Hexp.returnMonaVersion();
+    smtFile=Hexp.returnSMTLIBVersion();
+
+    if(!smtFile.empty())
+    {
       count++;
+      smT+="(define-fun C"+to_string(count)+smtFile+")\n";
+      return "C"+to_string(count)+Hexp.returnMonaVersion();
     }
     return Hexp.returnMonaVersion();
-
 
 }
 
@@ -192,7 +261,7 @@ string UntypedExp_Name::setExpressionInString()
 
 
 
-MonaTypeTag UntypedExp_And::chekType()
+MonaTypeTag UntypedExp_par_ee::chekType()
 {
         MonaTypeTag e1=exp1->chekType();
         MonaTypeTag e2=exp2->chekType();
@@ -206,14 +275,25 @@ MonaTypeTag UntypedExp_And::chekType()
 
 }
 
-string UntypedExp_And::setExpressionInString()
+string UntypedExp_par_ee::setExpressionInString()
 {
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
-    return e1+" & "+e2;
+    switch(kind)
+    {
+      case uAnd:
+        return e1+"&"+e2;
+      break;
+      case uOr:
+        return e1+"|"+e2;
+      break;
+      //TODO I muste see how implement not
+    }
+  cout<<"error "<<endl;
+  return "";
 }
 
-MonaTypeTag UntypedExp_Plus::chekType()
+MonaTypeTag UntypedExp_par_ea::chekType()
 {
     MonaTypeTag e=exp->chekType();
     MonaTypeTag ar=aexp->evaluate();
@@ -224,11 +304,39 @@ MonaTypeTag UntypedExp_Plus::chekType()
             return e;
       
     }
-  cout<<"error:type of plus"<<endl;
+  cout<<"error:type of UntypedExp_par_ea "<<endl;
   return nu;
 }
 
-MonaTypeTag ArithExp_Add::evaluate()
+string UntypedExp_par_ea::setExpressionInString()
+{
+      string e=exp->setExpressionInString();
+      string ar=aexp->setArithString();
+      switch(kind)
+      {
+        case uPlus:
+           return e+"+"+ar;
+        break;
+        case uMinus:
+         return e+"-"+ar;
+        break;
+        case uMult:
+          return e+"*"+ar;
+        break;
+        case uDiv:
+          return  e+"/"+ar;
+        break;
+        case uModul:
+          return e+"%"+ar;
+        break;
+        default:
+          return "";
+      }
+
+  
+}
+
+MonaTypeTag ArithExp_par_aa::evaluate()
 {
     MonaTypeTag ae1=aexp1->evaluate();
     MonaTypeTag ae2=aexp2->evaluate();
@@ -241,10 +349,47 @@ MonaTypeTag ArithExp_Add::evaluate()
     cout<<"error:error on add"<<endl;
     return nu;
 }
+
+string ArithExp_par_aa::setArithString()
+{
+
+    string ae1=aexp1->setArithString();
+    string ae2=aexp2->setArithString();
+    switch(kind)
+    {
+      case aAdd:
+          return ae1+"+"+ae2;
+      break;
+      case aSubtr:
+        return ae1+"-"+ae2;
+      break;
+      case aMult:
+        return ae1+"*"+ae2;
+      break;
+      case aDiv:
+        return ae1+"/"+ae2;
+      break; aModul:
+        return ae1+"%"+ae2;
+      break;
+      default:
+        return "";
+    }
+}
 MonaTypeTag ArithExp_Integer::evaluate()
 {
   return Integer;
 }
+
+string ArithExp_Integer::setArithString()
+{
+  return to_string(n);
+}
+
+string ArithExp_Real::setArithString()
+ {
+  return to_string(n);
+ }
+
 
 MonaTypeTag ArithExp_Real::evaluate()
 {
@@ -260,7 +405,10 @@ MonaTypeTag ArithExp_Const::evaluate()
                 cout<<"error"<<endl;
                 return nu;
 }
-
+string ArithExp_Const::setArithString()
+{
+  return *(dotName->name1->str)+"."+*(dotName->name2->str);
+}
 
 MonaTypeTag UntypedExp_DotName::chekType()
 {
@@ -273,9 +421,47 @@ MonaTypeTag UntypedExp_DotName::chekType()
 
 string UntypedExp_DotName::setExpressionInString()
 {
-  string retString=*(dotName->name1->str)+"."+*(dotName->name2->str);
-  return retString;
+  return *(dotName->name1->str)+"."+*(dotName->name2->str);
 }
+
+
+void HandleDeclarationFormat::addDeclList(VarDeclList*varDeclList)
+{
+    decl.push_back(varDeclList);
+}
+bool HandleDeclarationFormat::isADeclarationPresent()
+{
+    return !decl.empty();
+}
+string HandleDeclarationFormat::returnSmtLibDeclaration()
+{
+    string smtLibFormat;
+    for(VarDeclList*varDeclarationList:decl)
+    {
+        for(VarDecl*v:*varDeclarationList)
+        {
+            string name=*(v->name->str);
+            string type;
+            switch (symbleTable.lookup(v->name)->tag)
+            {
+                case Integer:
+                    type="Int";
+                break;
+                case Real:
+                    type="Real";
+                break;
+                case Boolean:
+                    type="Bool";
+                break;
+            }
+            smtLibFormat+=" ("+name+" "+type+") ";
+        }
+    }
+    string deD="(declare-datatypes () ((Data (mk-state";
+    return deD+smtLibFormat+"))))";
+
+}
+
 
 
 

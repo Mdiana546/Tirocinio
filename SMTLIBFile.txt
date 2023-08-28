@@ -1,1 +1,3 @@
+(declare-datatypes () ((Data (mk-state (a Int)  (b Int)  (c Int)  (d Real)  (e Real)  (f Real) ))))
+(define-fun C1(< (+ (+ p1 a 1) 2) (+ p2 a 1)))
 

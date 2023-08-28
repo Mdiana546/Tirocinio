@@ -1,2 +1,6 @@
-:ex1 p1 p2 p3 p4 p5
-p1 < p2 & p3 < p4
+ws2s; 
+var1 myVar;
+int a,b,c;
+real d,e,f;
+ex1 p1,p2,p3,p4,p5:
+C1{p1,p2}&p3<p4;

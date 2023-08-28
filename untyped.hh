@@ -15,11 +15,11 @@ using std::endl;
 
 
 enum UntypedExpNodeKind {
-  uAll0, uAll1, uAll2, uAnd, uBiimpl, uCall, uDiv, uDot, uEmpty, 
-  uEmptyPred, uEqual, uEx0, uEx1, uEx2, uFalse, uGreater, uGreaterEq, 
+  all0, all1, all2, uAnd, uBiimpl, uCall, uDiv, uDot, uEmpty, 
+  uEmptyPred, uEqual, ex0, ex1, ex2, uFalse, uGreater, uGreaterEq, 
   uImpl, uIn, uInt, uInter, uInterval, uLess, uLessEq, uLet0, uLet1, uLet2,
   uMax, uMin, uMinus, uMinusModulo, uMult, uName, uNot, uNotEqual, uNotIn,
-  uOr, uPlus, uPlusModulo, uRoot, uSet, uSetminus, uSub, uRestrict,
+  uOr, uPlus, uPlusModulo, uRoot, uSet, uSetminus, uSub, uRestrict,uModul,
   uTrue, uUnion, uUp, uImport, uExport, uPrefix, uRootPred, uInStateSpace,
   uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName
 };
@@ -63,6 +63,7 @@ public:
   virtual ~ArithExp() {};
 
   virtual  MonaTypeTag evaluate() = 0;
+  virtual string setArithString()=0;
 
   MonaTypeTag kind;
 };
@@ -91,6 +92,18 @@ public:
 
 class VarDeclList: public list<VarDecl*> {};
 
+class HandleDeclarationFormat
+{
+public:
+list<VarDeclList*>decl;
+
+
+    void addDeclList(VarDeclList*);
+    bool isADeclarationPresent();;
+    string returnSmtLibDeclaration();
+
+};
+
 
 class UntypedExp_par_unpee: public UntypedExp  {
 public:
@@ -100,6 +113,15 @@ public:
     UntypedExp(k), exp(e), nameList(d) {}
   virtual ~UntypedExp_par_unpee() 
   {delete nameList; delete exp;}
+
+  protected:
+
+  void insertDecInSymbolTable();
+  void deleteElementSymbleTable();
+  void insertDeclarationInString();
+  string setExpressionInString() override;
+  MonaTypeTag chekType() override;
+  
 
   UntypedExp *exp;
   VarDeclList *nameList;
@@ -114,35 +136,42 @@ public:
     UntypedExp(k), exp1(e1), exp2(e2) {}
   virtual ~UntypedExp_par_ee() {delete exp1; delete exp2;}
 
+  string setExpressionInString() override;
+  MonaTypeTag chekType() override;
+
   UntypedExp *exp1;
   UntypedExp *exp2;
+};
+
+class UntypedExp_par_ee_two: public UntypedExp_par_ee
+{
+  public:
+    UntypedExp_par_ee_two(UntypedExpNodeKind k, 
+		    UntypedExp *e1, 
+		    UntypedExp *e2):UntypedExp_par_ee{k,e1,e2}{}
+
+  string setExpressionInString() override;
+  MonaTypeTag chekType() override;
+
+
 };
 
 class UntypedExp_Ex1: public UntypedExp_par_unpee  {
 public:
   UntypedExp_Ex1(VarDeclList *d,
 		 UntypedExp *exp) :
-    UntypedExp_par_unpee(uEx1,d, exp) {}
-
-   MonaTypeTag chekType() override;
-   string setExpressionInString() override ;
+    UntypedExp_par_unpee(ex1,d, exp) {}
 
   private:
-  void insertDecInSymbolTable() ;
-  void deleteElementSymbleTable() ;
-  void insertDeclarationInString();
 
 
 };
 
 
-class UntypedExp_Less: public UntypedExp_par_ee {
+class UntypedExp_Less: public UntypedExp_par_ee_two {
 public:
   UntypedExp_Less(UntypedExp *exp1, UntypedExp *exp2) : 
-    UntypedExp_par_ee(uLess, exp1, exp2) {}
-  
-  MonaTypeTag chekType() override;
-  string setExpressionInString()override;
+    UntypedExp_par_ee_two(uLess, exp1, exp2) {}
 };
 
 class UntypedExp_And: public UntypedExp_par_ee {
@@ -150,8 +179,6 @@ public:
   UntypedExp_And(UntypedExp *exp1, UntypedExp *exp2) :
     UntypedExp_par_ee(uAnd, exp1, exp2) {}
 
-   MonaTypeTag chekType() override;
-   string setExpressionInString() override;
 };
 
 
@@ -235,6 +262,8 @@ public:
   virtual ~UntypedExp_par_ea()
   {delete exp; delete aexp;}
 
+  string setExpressionInString() override;
+   MonaTypeTag chekType() override;
   UntypedExp *exp;
   ArithExp *aexp;
 };
@@ -246,7 +275,7 @@ public:
   UntypedExp_Plus(UntypedExp *exp, ArithExp *aexp) :
     UntypedExp_par_ea(uPlus, exp, aexp) {}
 
-  MonaTypeTag chekType() override;
+
 };
 
 
@@ -257,6 +286,9 @@ public:
   ArithExp_par_aa(MonaTypeTag k, ArithExp *a1, ArithExp *a2) :
     ArithExp(k), aexp1(a1), aexp2(a2) {}
   virtual ~ArithExp_par_aa() {delete aexp1; delete aexp2;}
+  
+  string setArithString() override;
+  MonaTypeTag evaluate() override;
 
   ArithExp *aexp1;
   ArithExp *aexp2;
@@ -267,24 +299,27 @@ public:
   ArithExp_Add(ArithExp *aexp1, ArithExp *aexp2) :
    ArithExp_par_aa(aAdd, aexp1, aexp2) {}
 
-  MonaTypeTag evaluate() override;
 };
 
 
 class ArithExp_Integer: public ArithExp {
 public:
-  ArithExp_Integer() :
-    ArithExp(aInteger) {}
+  ArithExp_Integer(int n) :
+    ArithExp(aInteger),n{n}{}
 
-  MonaTypeTag evaluate();
+  MonaTypeTag evaluate()override;
+  string setArithString() override;
+  int n;
 };
 
 class ArithExp_Real:public ArithExp
 {
   public:
-  ArithExp_Real():ArithExp{aReal}{}
+  ArithExp_Real(double n):ArithExp{aReal},n{n} {}
 
-  MonaTypeTag evaluate();
+  MonaTypeTag evaluate()override;
+  string setArithString() override;
+  double n;
 
 };
 
@@ -294,7 +329,8 @@ public:
     ArithExp(aConst), dotName{dotName} {}
   virtual ~ArithExp_Const() {delete dotName;}
 
-  MonaTypeTag evaluate();
+  MonaTypeTag evaluate()override;
+  string setArithString() override;
 
   DotName *dotName;
 };
