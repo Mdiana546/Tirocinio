@@ -1320,7 +1320,7 @@ YY_RULE_SETUP
 case 88:
 YY_RULE_SETUP
 #line 104 "lexer.l"
-{yylval.intval=std::stoi(yytext);return tokINT;}
+{yylval.st=new std::string(yytext);return tokINT;}
 	YY_BREAK
 case 89:
 YY_RULE_SETUP

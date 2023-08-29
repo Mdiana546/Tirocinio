@@ -12,6 +12,15 @@ void yyerror(const char *msg);
 extern string MFormat;
 extern string smT;
 extern int count; 
+
+
+void check_bits(string s)
+{
+  int i;
+  for (i = 0; s[i] != '\0'; i++)
+    if (s[i] != '0' && s[i] != '1')
+		yyerror("erro parser");
+}
 %}
 
 %union
@@ -24,8 +33,9 @@ Declaration *declaration;
 UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
-UntypedExp_DotName*UntypedExpDotName;
-VarDeclList *varDeclList; 
+UntypedExp_Dot*UntypedExpDotName;
+VarDeclList *varDeclList;   
+
 }
 
 
@@ -51,7 +61,7 @@ VarDeclList *varDeclList;
 %token<st> tokNAME
 %token <doubleVal>tokReal tokBool
 %token  tokSTRING
-%token <intval> tokINT
+%token <st> tokINT
 
 %type <declList> declarations;
 %type <declaration> declaration
@@ -191,7 +201,7 @@ exp     : name {$$ = new UntypedExp_Name($1);}
               
         | exp tokOR exp {}
                
-        | tokNOT exp {}
+        | tokNOT exp {$$=new UntypedExp_Not{$2};}
         
   		| dotExp {$$=$1;}
   	
@@ -237,7 +247,10 @@ exp     : name {$$ = new UntypedExp_Name($1);}
                
         | exp tokSTAR arith_exp {}
                
-        | exp tokSLASH arith_exp {}
+        | exp tokSLASH arith_exp {
+			// TODO I must hanlde divion by 0
+
+		}
         
         | exp tokMODULO arith_exp  {} //new Rule
               
@@ -293,19 +306,28 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 	        
 	| tokINT
 	{
-		$$ = new ArithExp_Integer($1);
+		$$ = new ArithExp_Integer(stoi(*$1));
 	}
 
 	| tokReal{$$=new ArithExp_Real{$1};}
 	
-	| dotExp {$$=new ArithExp_Const{$1->dotName};}
+	| dotExp {
+					if($1->kind==uDotName)
+						$$=new AritExp_ConstDotName{$1->dotName};
+					else{
+						UntypedExp_DotNameNumber* dotwithPath=static_cast<UntypedExp_DotNameNumber*>($1);
+						$$=new ArithExp_ConstPathDotName{dotwithPath->dotName,dotwithPath->path};
+					}
+		}
 	      
 	| tokLPAREN arith_exp tokRPAREN {}
       
 	;
 
 dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};}
+			| name tokDOT tokINT tokDOT name{check_bits(*$3); $$=new UntypedExp_DotNameNumber{new DotName{$1,$5},$3};}
         ;
+
    
 
 par_list: tokVAR0 name tokCOMMA par_list {}
@@ -487,5 +509,5 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *msg) {
-	std::cout<<"syntax error";
+	std::cout<<*msg;
 }

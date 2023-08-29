@@ -21,7 +21,7 @@ enum UntypedExpNodeKind {
   uMax, uMin, uMinus, uMinusModulo, uMult, uName, uNot, uNotEqual, uNotIn,
   uOr, uPlus, uPlusModulo, uRoot, uSet, uSetminus, uSub, uRestrict,uModul,
   uTrue, uUnion, uUp, uImport, uExport, uPrefix, uRootPred, uInStateSpace,
-  uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName
+  uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName,uDotNameNumber
 };
 
 enum DeclarationKind {
@@ -162,7 +162,6 @@ public:
 		 UntypedExp *exp) :
     UntypedExp_par_unpee(ex1,d, exp) {}
 
-  private:
 
 
 };
@@ -208,17 +207,36 @@ public:
   Name *name;
 };
 
-class UntypedExp_DotName: public UntypedExp {
+class UntypedExp_Dot: public UntypedExp {
 public:
-  UntypedExp_DotName(DotName *n) :
-    UntypedExp(uDotName), dotName(n) {}
-  virtual ~UntypedExp_DotName() {delete dotName;}
+
+  UntypedExp_Dot(UntypedExpNodeKind k,DotName*dotName):UntypedExp(k), dotName{dotName}{}
+  virtual ~UntypedExp_Dot(){delete dotName;}
 
   MonaTypeTag chekType() override;
   string setExpressionInString()override;
 
   DotName *dotName;
 
+};
+
+class UntypedExp_DotName: public UntypedExp_Dot 
+{
+  public:
+  UntypedExp_DotName(DotName * dotName):UntypedExp_Dot{uDotName,dotName}{}
+};
+
+
+
+class UntypedExp_DotNameNumber:public UntypedExp_Dot
+{
+  public:
+    UntypedExp_DotNameNumber(DotName*dotName,string *s):UntypedExp_Dot{uDotNameNumber,dotName},path{s}{}
+    virtual ~UntypedExp_DotNameNumber(){delete path;}
+     string setExpressionInString() override;
+    
+    string *path;
+    
 };
 
 
@@ -251,6 +269,7 @@ public:
   void createStrings();
 
   DeclarationList *declarations;
+ 
 };
 
 class UntypedExp_par_ea: public UntypedExp {
@@ -325,14 +344,48 @@ class ArithExp_Real:public ArithExp
 
 class ArithExp_Const: public ArithExp {
 public:
-  ArithExp_Const(DotName *dotName) :
-    ArithExp(aConst), dotName{dotName} {}
+  ArithExp_Const(MonaTypeTag k, DotName*dotName) :
+    ArithExp(k), dotName{dotName} {}
   virtual ~ArithExp_Const() {delete dotName;}
 
   MonaTypeTag evaluate()override;
   string setArithString() override;
 
   DotName *dotName;
+};
+class AritExp_ConstDotName:public ArithExp_Const
+{
+  public:
+    AritExp_ConstDotName(DotName *dotName):ArithExp_Const{aDotName,dotName}{}
+};
+
+class ArithExp_ConstPathDotName:public ArithExp_Const{
+  public:
+  ArithExp_ConstPathDotName(DotName*dotName,string *path):ArithExp_Const{aDotNameNumber,dotName},path{path}{}
+  virtual ~ArithExp_ConstPathDotName(){delete path;}
+
+   string setArithString() override;
+
+  string *path;
+
+};
+
+class UntypedExp_par_e: public UntypedExp {
+public:
+  UntypedExp_par_e(UntypedExpNodeKind k, UntypedExp *e) :
+    UntypedExp(k), exp(e) {}
+  virtual ~UntypedExp_par_e() {delete exp;}
+  
+  MonaTypeTag chekType() override;
+  string setExpressionInString() override;
+
+  UntypedExp *exp;
+};
+
+class UntypedExp_Not: public UntypedExp_par_e {
+public:
+  UntypedExp_Not(UntypedExp *exp) :
+    UntypedExp_par_e(uNot, exp) {}
 };
 
 #endif

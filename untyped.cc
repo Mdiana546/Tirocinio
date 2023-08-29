@@ -147,9 +147,33 @@ void Variable_Declaration::insertDecInSymbolTable()
 
 void UntypedExp_par_unpee::insertDecInSymbolTable()
 {
+  MonaTypeTag type;
+
+      switch(kind)
+      {
+        case ex1:
+          type=Varname1;
+        break;
+        case ex2:
+          type=Varname2;
+        break;
+        case ex0:
+          type=Varname0;
+        break;
+        case all0:
+          type=Varname0;
+        break;
+        case all1:
+          type=Varname1;
+        break;
+        case all2:
+          type=Varname2;
+        break;
+      }
+
     for(VarDecl*dec : *nameList)
         {
-          symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,Varname1});
+          symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,type});
         }
 }
 
@@ -191,7 +215,8 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
                       return Boolean;
                     break;
                     case Boolean:
-                    return Boolean;
+                      return Boolean;
+                    break;
                   }
                 }
                    
@@ -270,7 +295,7 @@ MonaTypeTag UntypedExp_par_ee::chekType()
             {
               return Boolean;
             }
-           cout<<"error:error type AND"<<endl;
+           cout<<"error:error type AND or OR"<<endl;
            return nu;
 
 }
@@ -279,6 +304,27 @@ string UntypedExp_par_ee::setExpressionInString()
 {
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
+    string result,result2;
+    HanldeExpressionFormat Hexpression {e1};
+    HanldeExpressionFormat Hexpression2 {e2};
+    
+    result=Hexpression.returnSMTLIBVersion();
+    result2=Hexpression2.returnSMTLIBVersion();
+
+    if(!result.empty()){
+      count++;
+      smT+="(define-fun C"+to_string(count)+result+")\n";
+      smT+=result+"\n";
+      e1=Hexpression.returnMonaVersion();
+    }
+    if(!result2.empty()){
+      count++;
+      smT+="(define-fun C"+to_string(count)+result2+")\n";
+      smT+=result2+"\n";
+      e1=Hexpression2.returnMonaVersion();
+  
+    }
+
     switch(kind)
     {
       case uAnd:
@@ -287,9 +333,8 @@ string UntypedExp_par_ee::setExpressionInString()
       case uOr:
         return e1+"|"+e2;
       break;
-      //TODO I muste see how implement not
     }
-  cout<<"error "<<endl;
+  cout<<"error:error string AND or OR "<<endl;
   return "";
 }
 
@@ -301,7 +346,7 @@ MonaTypeTag UntypedExp_par_ea::chekType()
     if(e==ar)
     {
         if(e==Integer || e==Real)
-            return e;
+            return e;  // TODO I must handle the division by zero 
       
     }
   cout<<"error:type of UntypedExp_par_ea "<<endl;
@@ -330,6 +375,7 @@ string UntypedExp_par_ea::setExpressionInString()
           return e+"%"+ar;
         break;
         default:
+          cout<<"error:error UntypedExp_par_ea";
           return "";
       }
 
@@ -344,9 +390,9 @@ MonaTypeTag ArithExp_par_aa::evaluate()
     if(ae1==ae2)
     {
         if(ae1==Integer || ae1==Real)
-            return ae1;
+            return ae1; //TODO I must hanalde the division by zero
     }
-    cout<<"error:error on add"<<endl;
+    cout<<"error:error on ArithExp_par_aa"<<endl;
     return nu;
 }
 
@@ -372,6 +418,7 @@ string ArithExp_par_aa::setArithString()
         return ae1+"%"+ae2;
       break;
       default:
+        cout<<"error:error on ArithExp_par_aa";
         return "";
     }
 }
@@ -401,27 +448,37 @@ MonaTypeTag ArithExp_Const::evaluate()
 {
  if(symbleTable.isPresentEntry(dotName))
                  return symbleTable.lookup(dotName)->tag;
-              else{}  
-                cout<<"error"<<endl;
-                return nu;
+   
+    cout<<"error:dotElement isn't present"<<endl;
+    return nu;
 }
 string ArithExp_Const::setArithString()
 {
   return *(dotName->name1->str)+"."+*(dotName->name2->str);
 }
 
-MonaTypeTag UntypedExp_DotName::chekType()
+string ArithExp_ConstPathDotName::setArithString()
+{
+  return *(dotName->name1->str)+"."+*path+"."+*(dotName->name2->str);
+}
+
+MonaTypeTag UntypedExp_Dot::chekType()
 {
      if(symbleTable.isPresentEntry(dotName))
                  return symbleTable.lookup(dotName)->tag;
-              else{}
-                cout<<"error:dotName element isn't present"<<endl;
-                return nu;
+              
+          cout<<"error:dotName element isn't present"<<endl;
+          return nu;
 }
 
-string UntypedExp_DotName::setExpressionInString()
+string UntypedExp_Dot::setExpressionInString()
 {
   return *(dotName->name1->str)+"."+*(dotName->name2->str);
+}
+
+string UntypedExp_DotNameNumber::setExpressionInString()
+{
+    return *(dotName->name1->str)+"."+*path+"."+*(dotName->name2->str);
 }
 
 
@@ -462,6 +519,21 @@ string HandleDeclarationFormat::returnSmtLibDeclaration()
 
 }
 
+MonaTypeTag UntypedExp_par_e::chekType()
+{
+  MonaTypeTag e1=exp->chekType();
+
+    if(e1==Boolean)
+      return Boolean;
+    cout<<"error:error in NOT";
+    return nu;
+}
+
+string UntypedExp_par_e::setExpressionInString()
+{
+  string e=exp->setExpressionInString();
+  return "~"+e;
+}
 
 
 

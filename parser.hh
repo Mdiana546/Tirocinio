@@ -151,7 +151,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "parser.y"
+#line 27 "parser.y"
 
 int intval;
 double doubleVal;
@@ -161,10 +161,11 @@ Declaration *declaration;
 UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
-UntypedExp_DotName*UntypedExpDotName;
-VarDeclList *varDeclList; 
+UntypedExp_Dot*UntypedExpDotName;
+VarDeclList *varDeclList;   
 
-#line 168 "parser.hh"
+
+#line 169 "parser.hh"
 
 };
 typedef union YYSTYPE YYSTYPE;

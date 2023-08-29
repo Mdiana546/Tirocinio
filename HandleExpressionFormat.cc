@@ -180,9 +180,12 @@ string  HanldeExpressionFormat:: returnSMTLIBVersion()
 
 string HanldeExpressionFormat::changePointWithSpace(string str)
 {
-  auto index=str.find(".");
-  if(index!=string::npos)
-    return str.replace(index,1," ");
+  auto lastIndex=str.find_last_of(".");
+  auto firstIndex=str.find(".");
+  if(lastIndex!=string::npos){
+    str.insert(lastIndex+1,"  ");
+     str.erase(firstIndex,lastIndex);
+  }
   return str;
 }
 

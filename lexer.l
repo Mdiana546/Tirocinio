@@ -101,7 +101,7 @@ numeral		[0-9]+
 "real"          return tokReal; //new rule
 "bool"          return tokBool;  //nu rule
 {RealNumeral}   {yylval.doubleVal=std::stod(yytext);return tokReal;}
-{numeral}      	{yylval.intval=std::stoi(yytext);return tokINT;}
+{numeral}      	{yylval.st=new std::string(yytext);return tokINT;}
 {name}		{yylval.st=new std::string(yytext);return tokNAME;}
 {whitespace}    ;/* ignore */
 
