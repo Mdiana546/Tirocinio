@@ -6,9 +6,15 @@
 
 bool HanldeExpressionFormat::isMSODExpression(string &str)
 {
-    if(str.find('.')!=string::npos)
+ auto pos=str.find(".");
+
+  if(pos!=string::npos){
+
+    if((str[pos+1]=='0' || str[pos+1]=='1') & (str[pos+2]=='.'))
+        return true;
+    else if(isalpha(str[pos+1]))
       return true;
-    
+  }
     return false;
 }
 
@@ -160,10 +166,26 @@ string HanldeExpressionFormat:: checkOperator(string& c)
       
 }
 
+bool HanldeExpressionFormat::isANumber(string& str)
+{
+     for(int index=0;index<str.length();index)
+          {
+              if(isalpha(str[index]))
+                return false;
+          }
+        return true;
+}
+
 string HanldeExpressionFormat::generateSMTLIB(Node*node)
 { 
-    	if(node->left ==nullptr && node->right == nullptr)
-	        return changePointWithSpace(node->data);
+    	if(node->left ==nullptr && node->right == nullptr){
+        string result;
+            if(!isANumber(node->data))
+	             result=changePointWithSpace(node->data);
+            else 
+              result=node->data;
+          return result;
+      }
 	  
 	string leftExpr=generateSMTLIB(node->left);
 	string rightExpr=generateSMTLIB(node->right);

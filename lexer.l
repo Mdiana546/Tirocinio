@@ -13,6 +13,8 @@ whitespace	[ \t\r\n\f]+
 RealNumeral [1-9]+","[0-9]+
 numeral		[0-9]+
 %%
+[[:space:]]+   ; // Ignore spaces
+spaces
 
 "%"             return tokMODULO;
 "&"             return tokAND;

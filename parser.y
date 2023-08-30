@@ -18,9 +18,20 @@ void check_bits(string s)
 {
   int i;
   for (i = 0; s[i] != '\0'; i++)
-    if (s[i] != '0' && s[i] != '1')
-		yyerror("erro parser");
+    if (s[i] != '0' && s[i] != '1'){
+		yyerror("erro path");
+		exit(1);
+		} //I must handle the deallocation of all elements created
 }
+
+void checkNameIntName(string s)
+	{
+		if((s.length()!=1) || (s!="0" && s!="1"))
+		{
+					yyerror("error path MSO variable");
+					exit(1); //I must handle deallocation of all elements created   
+		}
+	}
 %}
 
 %union
@@ -167,7 +178,9 @@ declaration : tokASSERT exp tokSEMICOLON{}
 		
         ;
 
-exp     : name {$$ = new UntypedExp_Name($1);}
+exp     : name {$$ = new UntypedExp_Name(uName,$1);}
+
+		| name tokDOT tokINT {check_bits(*$3);$$=new UntypedExp_PathName{uPathName,$1,$3};}
               
         | tokLPAREN exp tokRPAREN {}
          
@@ -325,10 +338,10 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 	;
 
 dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};}
-			| name tokDOT tokINT tokDOT name{check_bits(*$3); $$=new UntypedExp_DotNameNumber{new DotName{$1,$5},$3};}
+
+			| name tokDOT tokINT tokDOT name{checkNameIntName(*$3);$$=new UntypedExp_DotNameNumber{new DotName{$1,$5},$3};}
         ;
 
-   
 
 par_list: tokVAR0 name tokCOMMA par_list {}
 	    

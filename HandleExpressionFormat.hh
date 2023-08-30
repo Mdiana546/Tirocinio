@@ -39,6 +39,7 @@ string returnNameVar(string&,int&);
 string checkOperator(string& );
 void setMonaExpression();
 string changePointWithSpace(string);
+bool isANumber(string&);
 public:
 
 /*

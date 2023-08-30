@@ -21,7 +21,7 @@ enum UntypedExpNodeKind {
   uMax, uMin, uMinus, uMinusModulo, uMult, uName, uNot, uNotEqual, uNotIn,
   uOr, uPlus, uPlusModulo, uRoot, uSet, uSetminus, uSub, uRestrict,uModul,
   uTrue, uUnion, uUp, uImport, uExport, uPrefix, uRootPred, uInStateSpace,
-  uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName,uDotNameNumber
+  uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName,uDotNameNumber,uPathName
 };
 
 enum DeclarationKind {
@@ -195,16 +195,28 @@ public:
 
 class DeclarationList: public list<Declaration*> {};
 
+
 class UntypedExp_Name: public UntypedExp {
 public:
-  UntypedExp_Name(Name *n) :
-    UntypedExp(uName), name(n) {}
+  UntypedExp_Name(UntypedExpNodeKind k,Name *n) :
+    UntypedExp(k), name(n) {}
   virtual ~UntypedExp_Name() {delete name;}
   
   MonaTypeTag chekType() override;
   string setExpressionInString() override;
   
   Name *name;
+};
+
+class UntypedExp_PathName:public UntypedExp_Name
+{
+  public:
+    UntypedExp_PathName(UntypedExpNodeKind k,Name*name,string *s):UntypedExp_Name{k,name},path{s}{}
+
+    MonaTypeTag chekType() override;
+    string setExpressionInString() override;
+
+    string *path;
 };
 
 class UntypedExp_Dot: public UntypedExp {
@@ -234,7 +246,7 @@ class UntypedExp_DotNameNumber:public UntypedExp_Dot
     UntypedExp_DotNameNumber(DotName*dotName,string *s):UntypedExp_Dot{uDotNameNumber,dotName},path{s}{}
     virtual ~UntypedExp_DotNameNumber(){delete path;}
      string setExpressionInString() override;
-    
+ 
     string *path;
     
 };

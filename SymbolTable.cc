@@ -39,16 +39,21 @@ bool SymbolTable::isPresentEntry(Name*name)
 
 bool SymbolTable::isPresentEntry(DotName*dotName)
 {
-    return isPresentEntry(dotName->name1) && isPresentEntry(dotName->name2);
+     if(isPresentEntry(dotName->name1) && isPresentEntry(dotName->name2)){
+
+        if(lookup(dotName->name1)->tag==Varname1)
+            return true;
+        else 
+            return false;
+     }
+     return false;
 }
 
 SymbolTable::SymbolEntry* SymbolTable::lookup(Name* name)
 {
         if(isPresentEntry(name))
-        {
-            int key=hashValue(name);
             return getElement(name);
-        }
+            
     return nullptr;
 }
 

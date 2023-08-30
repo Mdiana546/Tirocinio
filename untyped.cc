@@ -284,6 +284,22 @@ string UntypedExp_Name::setExpressionInString()
   return *(name->str);
 }
 
+string UntypedExp_PathName::setExpressionInString()
+{
+  return *(name->str)+"."+*path;
+}
+
+MonaTypeTag UntypedExp_PathName::chekType()
+{
+  MonaTypeTag entryTag =UntypedExp_Name::chekType();
+    if(entryTag==Varname1)
+        return entryTag;
+    
+    cout<<"erro type on PathName. Name var isn't a var1";
+    return nu;
+
+}
+
 
 
 MonaTypeTag UntypedExp_par_ee::chekType()
