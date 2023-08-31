@@ -3,10 +3,14 @@
 #include<string>
 #include<stack>
 #include <iostream>
+#include <sstream>
+#include <set>
 #define lessEqual '#'
 #define greaterEqual '@'
 using std::stack;
 using std::string;
+using std::stringstream;
+using std::set;
 
 class HanldeExpressionFormat
 {

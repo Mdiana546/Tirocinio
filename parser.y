@@ -12,6 +12,7 @@ void yyerror(const char *msg);
 extern string MFormat;
 extern string smT;
 extern int count; 
+ MonaUntypedAST* untypedAST;
 
 
 void check_bits(string s)
@@ -19,24 +20,22 @@ void check_bits(string s)
   int i;
   for (i = 0; s[i] != '\0'; i++)
     if (s[i] != '0' && s[i] != '1'){
-		yyerror("erro path");
-		exit(1);
-		} //I must handle the deallocation of all elements created
+		yyerror("branch indication error");
+		}
 }
 
 void checkNameIntName(string s)
 	{
 		if((s.length()!=1) || (s!="0" && s!="1"))
 		{
-					yyerror("error path MSO variable");
-					exit(1); //I must handle deallocation of all elements created   
+					yyerror("branch indication error");
 		}
 	}
-%}
+%} 
 
 %union
 {
-int intval;
+int intval; 
 double doubleVal;
 std::string *st;
 DeclarationList* declList;
@@ -45,7 +44,7 @@ UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
 UntypedExp_Dot*UntypedExpDotName;
-VarDeclList *varDeclList;   
+VarDeclList *varDeclList;  
 
 }
 
@@ -72,7 +71,7 @@ VarDeclList *varDeclList;
 %token<st> tokNAME
 %token <doubleVal>tokReal tokBool
 %token  tokSTRING
-%token <st> tokINT
+%token <st> tokINT 
 
 %type <declList> declarations;
 %type <declaration> declaration
@@ -80,7 +79,7 @@ VarDeclList *varDeclList;
 %type <arithExp> arith_exp;
 %type <name> name;
 %type<UntypedExpDotName>dotExp
-%type <varDeclList> name_where_list;
+%type <varDeclList> name_where_list;  
 
 
 %nonassoc LOW
@@ -104,8 +103,13 @@ VarDeclList *varDeclList;
 
 start	: header declarations{
 		
-		 MonaUntypedAST* untypedAST=new MonaUntypedAST($2);
+		 untypedAST=new MonaUntypedAST($2);
+		 try{
 		 untypedAST->typeCheckDeclarations();
+		 }catch(runtime_error e)
+		 {
+			yyerror(e.what());
+		 }
 		 untypedAST->createStrings();
 		 HandleFiles handleFile{};
 		handleFile.writeOnMonaFile(MFormat);
@@ -522,5 +526,7 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *msg) {
-	std::cout<<*msg;
+	std::cout<<string(msg);
+	delete untypedAST->declarations;
+	exit(-1);
 }

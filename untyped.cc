@@ -15,7 +15,7 @@ void MonaUntypedAST::typeCheckDeclarations()
        (static_cast<Variable_Declaration*>(dec))->insertDeclarationInSymbolTable();
        break;
       case dExpression:
-         (static_cast<Expression_Declaration*>(dec))->exp->chekType();
+         MonaTypeTag tag=(static_cast<Expression_Declaration*>(dec))->exp->chekType();
       break;
     }
   }
@@ -32,7 +32,7 @@ void MonaUntypedAST::createStrings()
         (static_cast<Variable_Declaration*>(dec))->insertDeclarationInString();
         break;
         case dExpression:
-          (static_cast<Expression_Declaration*>(dec))->exp->setExpressionInString();
+          MFormat+=(static_cast<Expression_Declaration*>(dec))->exp->setExpressionInString()+"\n";
         break;
       }
   }
@@ -68,24 +68,23 @@ void Variable_Declaration::insertDeclarationInString()
             break;
           case Integer:
               Hdeclaration.addDeclList(decls);
-            type="int";
             break;
           case Real:
-            Hdeclaration.addDeclList(decls);
-            type="real";
+             Hdeclaration.addDeclList(decls);
             break;
-              Hdeclaration.addDeclList(decls);
           case Boolean:
-            type="bool";
+              Hdeclaration.addDeclList(decls);
            break;
       }
 
-    for(VarDecl*dec : *decls)
-    {
-      listELements+=","+*(dec->name->str);
+  if(!type.empty()){
+      for(VarDecl*dec : *decls)
+      {
+        listELements+=","+*(dec->name->str);
+      }
+      listELements.erase(0,1); //I delete the first colon
+      MFormat+=type+" "+listELements+";\n";
     }
-    listELements.erase(0,1); //I delete the first colon
-    MFormat+=type+" "+listELements+";\n";
 }
 
 
@@ -93,38 +92,69 @@ MonaTypeTag UntypedExp_par_unpee::chekType()
 {
   
  insertDecInSymbolTable();
-  exp->chekType();
+ MonaTypeTag tag=exp->chekType();
   deleteElementSymbleTable();
-  return nu;
+
+  if(tag!=Boolean){
+    string symbolOPerator=getSymbolOperator();
+    throw runtime_error{"Error creating formula in "+symbolOPerator};
+  }
+return tag;
+}
+
+string UntypedExp_par_unpee::getSymbolOperator()
+{
+      switch(kind)
+    {
+      case ex1:
+        return "ex1";
+      break;
+      case ex2:
+        return "ex2";
+      break;
+      case ex0:
+        return "ex0";
+        break;
+      case all0:
+        return "all0";
+      case all1:
+        return "all1";
+      break;
+      default :
+        return "all2";
+      break;
+    }
+    return "";
 }
 
 string UntypedExp_par_unpee::setExpressionInString()
 {
-  insertDeclarationInString();
-  MFormat+=":\n"+exp->setExpressionInString()+";";
-  return "";
+string result;
+  insertDeclarationInString(result);
+  result+=":\n"+exp->setExpressionInString()+";";
+  return result;
 }
 
-void UntypedExp_par_unpee::insertDeclarationInString()
+void UntypedExp_par_unpee::insertDeclarationInString(string& result)
 {
     switch(kind)
     {
       case ex1:
-        MFormat+="ex1";
+        result+="ex1";
       break;
       case ex2:
-        MFormat+="ex2";
+        result+="ex2";
       break;
       case ex0:
-        MFormat+="ex0";
+        result+="ex0";
         break;
       case all0:
-        MFormat+="all0";
+        result+="all0";
       case all1:
-        MFormat+="all1";
+        result+="all1";
       break;
       case all2:
-        MFormat+="all2";
+        result+="all2";
       break;
     }
   string listElements;
@@ -132,7 +162,7 @@ void UntypedExp_par_unpee::insertDeclarationInString()
       listElements+=","+*(dec->name->str); 
 
      listElements.erase(0,1); //I delete the first colon
-     MFormat+=" "+listElements;
+     result+=" "+listElements;
 
 
 }
@@ -219,13 +249,38 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
                     break;
                   }
                 }
-                   
-                cout<<"error: error type less"<<endl;
               break;
         }
     }
-   cout<<"error: error type less"<<endl;
-   return nu;
+    string symbolOperator=getSymbolOperator();
+    throw runtime_error{"the two operands for "+symbolOperator+" operator are of different type "};
+}
+
+string UntypedExp_par_ee_two::getSymbolOperator()
+{
+
+    switch(kind)
+    {
+      case uLess:
+        return "<";
+      break;
+      case uLessEq:
+        return "<=";
+        break;
+      case uGreater:
+          return ">";
+      break;
+      case uGreaterEq:
+        return ">=";
+      break;
+      case uEqual:
+        return "=";
+      break;
+      default:
+        return "!=";
+        break;
+    }
+    
 }
 
 string UntypedExp_par_ee_two::setExpressionInString()
@@ -255,14 +310,15 @@ string UntypedExp_par_ee_two::setExpressionInString()
          e3=e1+"!="+e2; //TODO i must implement it in HandleExpressionFormat
         break;
     }
+    
     HanldeExpressionFormat Hexp{e3};
     smtFile=Hexp.returnSMTLIBVersion();
 
     if(!smtFile.empty())
     {
       count++;
-      smT+="(define-fun C"+to_string(count)+smtFile+")\n";
-      return "C"+to_string(count)+Hexp.returnMonaVersion();
+      smT+="(define-fun C"+to_string(count)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+smtFile+")\n";
+      return Hexp.returnMonaVersion()+to_string(count);
     }
     return Hexp.returnMonaVersion();
 
@@ -272,11 +328,9 @@ string UntypedExp_par_ee_two::setExpressionInString()
 MonaTypeTag UntypedExp_Name::chekType()
 {
         if(symbleTable.isPresentEntry(name))
-        {
             return (symbleTable.lookup(name))->tag;
-        }
-        cout<<"error:element don't present in a symble table"<<endl;
-        return nu;
+        
+        throw runtime_error{"the element "+*(name->str)+ " has not been declared"};
 }
 
 string UntypedExp_Name::setExpressionInString()
@@ -295,8 +349,7 @@ MonaTypeTag UntypedExp_PathName::chekType()
     if(entryTag==Varname1)
         return entryTag;
     
-    cout<<"erro type on PathName. Name var isn't a var1";
-    return nu;
+    throw runtime_error{"the element "+*(name->str)+" is not order 1"};
 
 }
 
@@ -308,50 +361,30 @@ MonaTypeTag UntypedExp_par_ee::chekType()
         MonaTypeTag e2=exp2->chekType();
 
           if(e1==e2 && e1==Boolean)
-            {
               return Boolean;
-            }
-           cout<<"error:error type AND or OR"<<endl;
-           return nu;
 
+          string symbolOperator=getSymbolOperator();
+           throw runtime_error{"the two operands for "+symbolOperator+" operator are of different types"};
+
+}
+
+string UntypedExp_par_ee::getSymbolOperator()
+{
+    if(kind==uAnd)
+      return "&";
+    else
+      return "|";
 }
 
 string UntypedExp_par_ee::setExpressionInString()
 {
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
-    string result,result2;
-    HanldeExpressionFormat Hexpression {e1};
-    HanldeExpressionFormat Hexpression2 {e2};
-    
-    result=Hexpression.returnSMTLIBVersion();
-    result2=Hexpression2.returnSMTLIBVersion();
-
-    if(!result.empty()){
-      count++;
-      smT+="(define-fun C"+to_string(count)+result+")\n";
-      smT+=result+"\n";
-      e1=Hexpression.returnMonaVersion();
-    }
-    if(!result2.empty()){
-      count++;
-      smT+="(define-fun C"+to_string(count)+result2+")\n";
-      smT+=result2+"\n";
-      e1=Hexpression2.returnMonaVersion();
-  
-    }
-
-    switch(kind)
-    {
-      case uAnd:
-        return e1+"&"+e2;
-      break;
-      case uOr:
-        return e1+"|"+e2;
-      break;
-    }
-  cout<<"error:error string AND or OR "<<endl;
-  return "";
+   
+    if(kind==uAnd)
+      return e1+"&"+e2;
+    else  
+      return e1+"|"+e2;
 }
 
 MonaTypeTag UntypedExp_par_ea::chekType()
@@ -365,9 +398,33 @@ MonaTypeTag UntypedExp_par_ea::chekType()
             return e;  // TODO I must handle the division by zero 
       
     }
-  cout<<"error:type of UntypedExp_par_ea "<<endl;
-  return nu;
+  string symbolOperator=getSymbolOperator();
+  throw runtime_error{symbolOperator+" operation error"};
 }
+
+string UntypedExp_par_ea::getSymbolOperator()
+{
+    switch(kind)
+    {
+      case uPlus:
+        return "+";
+      break;
+      case uMinus:
+        return "-";
+      break;
+      case uMult:
+        return "*";
+      break;
+      case uDiv:
+        return "/";
+      break;
+      default:
+        return "%";
+      break;
+    }
+}
+
+
 
 string UntypedExp_par_ea::setExpressionInString()
 {
@@ -387,12 +444,9 @@ string UntypedExp_par_ea::setExpressionInString()
         case uDiv:
           return  e+"/"+ar;
         break;
-        case uModul:
+        default:
           return e+"%"+ar;
         break;
-        default:
-          cout<<"error:error UntypedExp_par_ea";
-          return "";
       }
 
   
@@ -430,12 +484,9 @@ string ArithExp_par_aa::setArithString()
       break;
       case aDiv:
         return ae1+"/"+ae2;
-      break; aModul:
+      default:
         return ae1+"%"+ae2;
       break;
-      default:
-        cout<<"error:error on ArithExp_par_aa";
-        return "";
     }
 }
 MonaTypeTag ArithExp_Integer::evaluate()
@@ -483,8 +534,8 @@ MonaTypeTag UntypedExp_Dot::chekType()
      if(symbleTable.isPresentEntry(dotName))
                  return symbleTable.lookup(dotName)->tag;
               
-          cout<<"error:dotName element isn't present"<<endl;
-          return nu;
+          throw runtime_error{"the element "+*(dotName->name1->str)+" or the element "+*(dotName->name2->str)+
+          " has not been declared"};
 }
 
 string UntypedExp_Dot::setExpressionInString()

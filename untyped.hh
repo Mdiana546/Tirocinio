@@ -6,10 +6,12 @@
 #include<string>
 #include<iostream>
 #include"HandleExpressionFormat.hh"
+#include <exception>
 using std::string;
 using std::list;
 using std::cout;
 using std::endl;
+using std::runtime_error;
 
 
 
@@ -118,7 +120,8 @@ public:
 
   void insertDecInSymbolTable();
   void deleteElementSymbleTable();
-  void insertDeclarationInString();
+  void insertDeclarationInString(string&);
+  string getSymbolOperator();
   string setExpressionInString() override;
   MonaTypeTag chekType() override;
   
@@ -138,6 +141,7 @@ public:
 
   string setExpressionInString() override;
   MonaTypeTag chekType() override;
+  virtual string getSymbolOperator();
 
   UntypedExp *exp1;
   UntypedExp *exp2;
@@ -152,6 +156,7 @@ class UntypedExp_par_ee_two: public UntypedExp_par_ee
 
   string setExpressionInString() override;
   MonaTypeTag chekType() override;
+  string getSymbolOperator() override;
 
 
 };
@@ -293,6 +298,7 @@ public:
   virtual ~UntypedExp_par_ea()
   {delete exp; delete aexp;}
 
+  string getSymbolOperator();
   string setExpressionInString() override;
    MonaTypeTag chekType() override;
   UntypedExp *exp;

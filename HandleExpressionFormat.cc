@@ -129,13 +129,20 @@ void HanldeExpressionFormat::setVar(Node*node)
             setVar(node->left);
             setVar(node->right);
           }
+
 }
 
 void HanldeExpressionFormat::setMonaExpression()
 {
-size_t pos=expression.find(",");
-if(pos!=string::npos)
-  expression.erase(pos,1);
+set<string> words;
+stringstream s(expression);
+string word;
+
+  while(getline(s,word,','))
+    words.insert(word);
+expression.clear();
+  for(string str:words)
+    expression+=str+" ";
   
 }
 
@@ -145,7 +152,7 @@ string  HanldeExpressionFormat::returnMonaVersion(){
         expression.clear();
         setVar(root);
         setMonaExpression();
-        expression="{"+expression+"}";
+        expression=expression +"in C";
         }
       
     return expression;
@@ -204,11 +211,13 @@ string HanldeExpressionFormat::changePointWithSpace(string str)
 {
   auto lastIndex=str.find_last_of(".");
   auto firstIndex=str.find(".");
-  if(lastIndex!=string::npos){
-    str.insert(lastIndex+1,"  ");
-     str.erase(firstIndex,lastIndex);
-  }
-  return str;
+
+    if(lastIndex==firstIndex)
+        return "("+str.substr(lastIndex+1,str.length()-(lastIndex+1))+" data)";
+    else{
+         return "("+str.substr(lastIndex+1,str.length()-(lastIndex+1))+" data"+string{str[lastIndex-1]}+")";
+
+    }
 }
 
 HanldeExpressionFormat::~HanldeExpressionFormat()

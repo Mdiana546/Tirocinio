@@ -151,9 +151,9 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 38 "parser.y"
+#line 37 "parser.y"
 
-int intval;
+int intval; 
 double doubleVal;
 std::string *st;
 DeclarationList* declList;
@@ -162,7 +162,7 @@ UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
 UntypedExp_Dot*UntypedExpDotName;
-VarDeclList *varDeclList;   
+VarDeclList *varDeclList;  
 
 
 #line 169 "parser.hh"
