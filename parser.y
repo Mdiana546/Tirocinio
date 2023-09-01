@@ -12,7 +12,7 @@ void yyerror(const char *msg);
 extern string MFormat;
 extern string smT;
 extern int count; 
- MonaUntypedAST* untypedAST;
+ MonaUntypedAST* untypedAST; 
 
 
 void check_bits(string s)

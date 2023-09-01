@@ -137,27 +137,9 @@ string result;
 
 void UntypedExp_par_unpee::insertDeclarationInString(string& result)
 {
-    switch(kind)
-    {
-      case ex1:
-        result+="ex1";
-      break;
-      case ex2:
-        result+="ex2";
-      break;
-      case ex0:
-        result+="ex0";
-        break;
-      case all0:
-        result+="all0";
-      case all1:
-        result+="all1";
-      break;
-      case all2:
-        result+="all2";
-      break;
-    }
+  result+=getSymbolOperator();
   string listElements;
+
     for(VarDecl*dec:*nameList)
       listElements+=","+*(dec->name->str); 
 
@@ -277,7 +259,7 @@ string UntypedExp_par_ee_two::getSymbolOperator()
         return "=";
       break;
       default:
-        return "!=";
+        return "!="; //TODO i must implement it in HandleExpressionFormat
         break;
     }
     
@@ -288,28 +270,7 @@ string UntypedExp_par_ee_two::setExpressionInString()
   string smtFile,e3;
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
-
-    switch(kind)
-    {
-      case uLess:
-        e3=e1+"<"+e2;
-      break;
-      case uLessEq:
-        e3=e1+"<="+e2;
-        break;
-      case uGreater:
-        e3=e1+">"+e2;
-      break;
-      case uGreaterEq:
-        e3=e1+">="+e2;
-      break;
-      case uEqual:
-        e3=e1+"="+e2; 
-      break;
-      case uNotEqual:
-         e3=e1+"!="+e2; //TODO i must implement it in HandleExpressionFormat
-        break;
-    }
+    e3=e1+getSymbolOperator()+e2;
     
     HanldeExpressionFormat Hexp{e3};
     smtFile=Hexp.returnSMTLIBVersion();
@@ -330,7 +291,7 @@ MonaTypeTag UntypedExp_Name::chekType()
         if(symbleTable.isPresentEntry(name))
             return (symbleTable.lookup(name))->tag;
         
-        throw runtime_error{"the element "+*(name->str)+ " has not been declared"};
+        throw runtime_error{"the element -> "+*(name->str)+ " has not been declared"};
 }
 
 string UntypedExp_Name::setExpressionInString()
@@ -349,11 +310,9 @@ MonaTypeTag UntypedExp_PathName::chekType()
     if(entryTag==Varname1)
         return entryTag;
     
-    throw runtime_error{"the element "+*(name->str)+" is not order 1"};
+    throw runtime_error{"the element->"+*(name->str)+" is not order 1"};
 
 }
-
-
 
 MonaTypeTag UntypedExp_par_ee::chekType()
 {
@@ -380,11 +339,7 @@ string UntypedExp_par_ee::setExpressionInString()
 {
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
-   
-    if(kind==uAnd)
-      return e1+"&"+e2;
-    else  
-      return e1+"|"+e2;
+    return e1+" "+getSymbolOperator()+" "+e2;
 }
 
 MonaTypeTag UntypedExp_par_ea::chekType()
@@ -430,26 +385,7 @@ string UntypedExp_par_ea::setExpressionInString()
 {
       string e=exp->setExpressionInString();
       string ar=aexp->setArithString();
-      switch(kind)
-      {
-        case uPlus:
-           return e+"+"+ar;
-        break;
-        case uMinus:
-         return e+"-"+ar;
-        break;
-        case uMult:
-          return e+"*"+ar;
-        break;
-        case uDiv:
-          return  e+"/"+ar;
-        break;
-        default:
-          return e+"%"+ar;
-        break;
-      }
-
-  
+      return e+getSymbolOperator()+ar;
 }
 
 MonaTypeTag ArithExp_par_aa::evaluate()
@@ -460,10 +396,31 @@ MonaTypeTag ArithExp_par_aa::evaluate()
     if(ae1==ae2)
     {
         if(ae1==Integer || ae1==Real)
-            return ae1; //TODO I must hanalde the division by zero
+            return ae1; 
     }
-    cout<<"error:error on ArithExp_par_aa"<<endl;
-    return nu;
+    string symbolOperator=getSymbolOperator();
+    throw runtime_error{symbolOperator+"operation error"};
+}
+
+string ArithExp_par_aa::getSymbolOperator()
+{
+  switch(kind)
+    {
+      case aAdd:
+          return "+";
+      break;
+      case aSubtr:
+        return "-";
+      break;
+      case aMult:
+        return "*";
+      break;
+      case aDiv:
+        return "/";
+      default:
+        return "%";
+      break;
+    }
 }
 
 string ArithExp_par_aa::setArithString()
@@ -471,23 +428,7 @@ string ArithExp_par_aa::setArithString()
 
     string ae1=aexp1->setArithString();
     string ae2=aexp2->setArithString();
-    switch(kind)
-    {
-      case aAdd:
-          return ae1+"+"+ae2;
-      break;
-      case aSubtr:
-        return ae1+"-"+ae2;
-      break;
-      case aMult:
-        return ae1+"*"+ae2;
-      break;
-      case aDiv:
-        return ae1+"/"+ae2;
-      default:
-        return ae1+"%"+ae2;
-      break;
-    }
+    return ae1+getSymbolOperator()+ae2;
 }
 MonaTypeTag ArithExp_Integer::evaluate()
 {
@@ -516,8 +457,9 @@ MonaTypeTag ArithExp_Const::evaluate()
  if(symbleTable.isPresentEntry(dotName))
                  return symbleTable.lookup(dotName)->tag;
    
-    cout<<"error:dotElement isn't present"<<endl;
-    return nu;
+  throw runtime_error{"the element->"+*(dotName->name1->str)+" or the element->"+*(dotName->name2->str)+
+        " has not been declared"};
+
 }
 string ArithExp_Const::setArithString()
 {
@@ -534,7 +476,7 @@ MonaTypeTag UntypedExp_Dot::chekType()
      if(symbleTable.isPresentEntry(dotName))
                  return symbleTable.lookup(dotName)->tag;
               
-          throw runtime_error{"the element "+*(dotName->name1->str)+" or the element "+*(dotName->name2->str)+
+          throw runtime_error{"the element ->"+*(dotName->name1->str)+" or the element->"+*(dotName->name2->str)+
           " has not been declared"};
 }
 
@@ -592,8 +534,8 @@ MonaTypeTag UntypedExp_par_e::chekType()
 
     if(e1==Boolean)
       return Boolean;
-    cout<<"error:error in NOT";
-    return nu;
+
+    throw runtime_error{"incorrect use of not"};
 }
 
 string UntypedExp_par_e::setExpressionInString()

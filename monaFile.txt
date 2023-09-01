@@ -1,5 +1,7 @@
 ws2s; 
 var1 myVar;
 ex1 p1,p2,p3,p4,p5:
-p1.a+p2.a;
+ p1 p2 p3 p4 in C1 & p1.0001<p2;
+ex1 firstName,secondName:
+ firstName secondName in C2;
 

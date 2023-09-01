@@ -250,6 +250,7 @@ class UntypedExp_DotNameNumber:public UntypedExp_Dot
   public:
     UntypedExp_DotNameNumber(DotName*dotName,string *s):UntypedExp_Dot{uDotNameNumber,dotName},path{s}{}
     virtual ~UntypedExp_DotNameNumber(){delete path;}
+    
      string setExpressionInString() override;
  
     string *path;
@@ -326,6 +327,7 @@ public:
   
   string setArithString() override;
   MonaTypeTag evaluate() override;
+  string getSymbolOperator();
 
   ArithExp *aexp1;
   ArithExp *aexp2;
@@ -371,6 +373,7 @@ public:
 
   DotName *dotName;
 };
+
 class AritExp_ConstDotName:public ArithExp_Const
 {
   public:

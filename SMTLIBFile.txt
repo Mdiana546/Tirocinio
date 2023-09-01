@@ -1,2 +1,6 @@
 (declare-datatypes () ((Data (mk-state (a Int)  (b Int)  (c Int)  (d Real)  (e Real)  (f Real) ))))
+(define-fun C1((data Data) (data0 Data) (data1 Data)) Bool 
+(< (+ (a data) (a data)) (+ (a data) (a data))))
+(define-fun C2((data Data) (data0 Data) (data1 Data)) Bool 
+(< (d data) (e data)))
 
