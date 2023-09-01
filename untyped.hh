@@ -167,8 +167,48 @@ public:
 		 UntypedExp *exp) :
     UntypedExp_par_unpee(ex1,d, exp) {}
 
+};
+
+class UntypedExp_Ex0: public UntypedExp_par_unpee  {
+public:
+  UntypedExp_Ex0(VarDeclList *d,
+		 UntypedExp *exp) :
+    UntypedExp_par_unpee(ex0,d, exp) {}
+
+};
 
 
+class UntypedExp_Ex2: public UntypedExp_par_unpee  {
+public:
+  UntypedExp_Ex2(VarDeclList *d,
+		 UntypedExp *exp) :
+    UntypedExp_par_unpee(ex2,d, exp) {}
+
+};
+
+class UntypedExp_All0: public UntypedExp_par_unpee  {
+public:
+  UntypedExp_All0(VarDeclList *d, 
+		  UntypedExp *exp) :
+    UntypedExp_par_unpee(all0, d, exp) {} 
+
+};
+
+class UntypedExp_All1: public UntypedExp_par_unpee  {
+public:
+  UntypedExp_All1(VarDeclList *d, 
+		  UntypedExp *exp) :
+    UntypedExp_par_unpee(all1, d, exp) {} 
+    
+};
+
+
+class UntypedExp_All2: public UntypedExp_par_unpee  {
+public:
+  UntypedExp_All2(VarDeclList *d, 
+		  UntypedExp *exp) :
+    UntypedExp_par_unpee(all2, d, exp) {} 
+    
 };
 
 
@@ -178,10 +218,52 @@ public:
     UntypedExp_par_ee_two(uLess, exp1, exp2) {}
 };
 
+class UntypedExp_LessEq: public UntypedExp_par_ee_two {
+public:
+  UntypedExp_LessEq(UntypedExp *exp1, UntypedExp *exp2) : 
+    UntypedExp_par_ee_two(uLessEq, exp1, exp2) {}
+};
+
+class UntypedExp_GreaterEq: public UntypedExp_par_ee_two {
+public:
+  UntypedExp_GreaterEq(UntypedExp *exp1, UntypedExp *exp2) : 
+    UntypedExp_par_ee_two(uGreaterEq, exp1, exp2) {}
+};
+
+class UntypedExp_Greater: public UntypedExp_par_ee_two {
+public:
+  UntypedExp_Greater(UntypedExp *exp1, UntypedExp *exp2) : 
+    UntypedExp_par_ee_two(uGreater, exp1, exp2) {}
+};
+
+class UntypedExp_Equal: public UntypedExp_par_ee_two {
+public:
+   UntypedExp_Equal(UntypedExp *exp1, UntypedExp *exp2) : 
+    UntypedExp_par_ee_two(uEqual,exp1,exp2) {}
+
+};
+
+//I must handle not euqal
+class UntypedExp_NotEqual: public UntypedExp_par_ee_two {
+public:
+   UntypedExp_NotEqual(UntypedExp *exp1, UntypedExp *exp2) : 
+    UntypedExp_par_ee_two(uNotEqual,exp1,exp2) {}
+
+};
+
+
+
 class UntypedExp_And: public UntypedExp_par_ee {
 public:
   UntypedExp_And(UntypedExp *exp1, UntypedExp *exp2) :
     UntypedExp_par_ee(uAnd, exp1, exp2) {}
+
+};
+
+class UntypedExp_Or: public UntypedExp_par_ee {
+public:
+  UntypedExp_Or(UntypedExp *exp1, UntypedExp *exp2) :
+    UntypedExp_par_ee(uOr, exp1, exp2) {}
 
 };
 
@@ -195,6 +277,8 @@ public:
 
   UntypedExp *exp;
 };
+
+
 
 
 
@@ -302,6 +386,7 @@ public:
   string getSymbolOperator();
   string setExpressionInString() override;
    MonaTypeTag chekType() override;
+
   UntypedExp *exp;
   ArithExp *aexp;
 };
@@ -313,9 +398,48 @@ public:
   UntypedExp_Plus(UntypedExp *exp, ArithExp *aexp) :
     UntypedExp_par_ea(uPlus, exp, aexp) {}
 
+};
+
+class UntypedExp_Minus: public UntypedExp_par_ea {
+public:
+  UntypedExp_Minus(UntypedExp *exp, ArithExp *aexp) :
+    UntypedExp_par_ea(uMinus, exp, aexp) {}
 
 };
 
+
+class UntypedExp_Mult: public UntypedExp_par_ea {
+public:
+  UntypedExp_Mult(UntypedExp *exp, ArithExp *aexp) :
+    UntypedExp_par_ea(uMult, exp, aexp) {}
+
+};
+
+class UntypedExp_Div: public UntypedExp_par_ea {
+public:
+  UntypedExp_Div(UntypedExp *exp, ArithExp *aexp) :
+    UntypedExp_par_ea(uDiv, exp, aexp) {}
+
+};
+
+class UntypedExp_Modul: public UntypedExp_par_ea {
+public:
+  UntypedExp_Modul(UntypedExp *exp, ArithExp *aexp) :
+    UntypedExp_par_ea(uModul, exp, aexp) {}
+
+};
+
+class UntypedExp_Set: public UntypedExp {
+public:
+  UntypedExp_Set(VarDeclList *nameList) : 
+    UntypedExp(uSet), nameList{nameList} {}
+  virtual ~UntypedExp_Set() {delete nameList;}
+
+  MonaTypeTag chekType() override;
+  string setExpressionInString() override;
+
+  VarDeclList*nameList;
+};
 
 
 class ArithExp_par_aa: public ArithExp {
@@ -337,6 +461,33 @@ class ArithExp_Add: public ArithExp_par_aa  {
 public:
   ArithExp_Add(ArithExp *aexp1, ArithExp *aexp2) :
    ArithExp_par_aa(aAdd, aexp1, aexp2) {}
+
+};
+class ArithExp_Subtr: public ArithExp_par_aa  {
+public:
+  ArithExp_Subtr(ArithExp *aexp1, ArithExp *aexp2) :
+   ArithExp_par_aa(aSubtr, aexp1, aexp2) {}
+
+};
+
+class ArithExp_Mult: public ArithExp_par_aa  {
+public:
+  ArithExp_Mult(ArithExp *aexp1, ArithExp *aexp2) :
+   ArithExp_par_aa(aMult, aexp1, aexp2) {}
+
+};
+
+class ArithExp_Div: public ArithExp_par_aa  {
+public:
+  ArithExp_Div(ArithExp *aexp1, ArithExp *aexp2) :
+   ArithExp_par_aa(aDiv, aexp1, aexp2) {}
+
+};
+
+class ArithExp_Modul: public ArithExp_par_aa  {
+public:
+  ArithExp_Modul(ArithExp *aexp1, ArithExp *aexp2) :
+   ArithExp_par_aa(aModul, aexp1, aexp2) {}
 
 };
 

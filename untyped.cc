@@ -388,6 +388,31 @@ string UntypedExp_par_ea::setExpressionInString()
       return e+getSymbolOperator()+ar;
 }
 
+MonaTypeTag UntypedExp_Set::chekType()
+{
+    for(VarDecl*decl:*nameList)
+    {
+        if(symbleTable.isPresentEntry(decl->name))
+        {
+            if(symbleTable.lookup(decl->name)->tag!=Varname1)
+              throw runtime_error{"there are elements of order other than one"};
+        }
+    }
+    return Varname2;
+}
+
+string UntypedExp_Set::setExpressionInString()
+{
+  string result;
+    
+      for(VarDecl*decl:*nameList)
+      {
+        result+=","+*(decl->name->str);
+      }
+      result.erase(0,1);
+    return "{"+result+"}";
+}
+
 MonaTypeTag ArithExp_par_aa::evaluate()
 {
     MonaTypeTag ae1=aexp1->evaluate();

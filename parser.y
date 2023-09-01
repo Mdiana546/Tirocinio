@@ -79,8 +79,7 @@ VarDeclList *varDeclList;
 %type <arithExp> arith_exp;
 %type <name> name;
 %type<UntypedExpDotName>dotExp
-%type <varDeclList> name_where_list;  
-
+%type <varDeclList> name_where_list set_body non_empty_set_body;  
 
 %nonassoc LOW
 %nonassoc tokCOLON
@@ -139,11 +138,11 @@ declaration : tokASSERT exp tokSEMICOLON{}
               
         | tokCONST name tokEQUAL arith_exp tokSEMICOLON {}
              
-        | tokVAR0 name_where_list tokSEMICOLON{}
+        | tokVAR0 name_where_list tokSEMICOLON{$$=new Variable_Declaration{Varname0,$2};}
                 
-        | tokVAR1 universe name_where_list tokSEMICOLON{$$ = new Variable_Declaration(Varname1,$3);}
+        | tokVAR1 universe name_where_list tokSEMICOLON{$$ = new Variable_Declaration(Varname1,$3);} 
              
-        | tokVAR2 universe name_where_list tokSEMICOLON {/*$$=new Declaration{Varname2,$3};*/}
+        | tokVAR2 universe name_where_list tokSEMICOLON {$$=new Variable_Declaration{Varname2,$3};} 
               
 	| tokTREE universe name_where_list tokSEMICOLON {}
 		
@@ -177,7 +176,7 @@ declaration : tokASSERT exp tokSEMICOLON{}
 		
 		| tokReal name_where_list tokSEMICOLON {$$ = new Variable_Declaration(Real,$2);}   //new rule
 			
-		| tokBool {}name_where_list tokSEMICOLON {} //new rule
+		| tokBool name_where_list tokSEMICOLON {$$ = new Variable_Declaration(Boolean,$2);} //new rule
 	
 		
         ;
@@ -200,15 +199,15 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
                
         | exp tokLESS  exp {$$ = new UntypedExp_Less($1, $3);}
                
-        | exp tokLESSEQ exp {}
+        | exp tokLESSEQ exp {$$ = new UntypedExp_LessEq($1, $3);} 
              
-        | exp tokGREATEREQ exp{} 
+        | exp tokGREATEREQ exp{$$ = new UntypedExp_GreaterEq($1, $3);}
                
-        | exp tokGREATER exp {}
+        | exp tokGREATER exp {$$ = new UntypedExp_Greater($1, $3);}
               
-        | exp tokEQUAL exp{}
+        | exp tokEQUAL exp{$$ = new UntypedExp_Equal($1, $3);}
                
-        | exp tokNOTEQUAL exp {}
+        | exp tokNOTEQUAL exp {new UntypedExp_NotEqual($1, $3);}
              
         | exp tokIMPL exp{}
               
@@ -216,7 +215,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | exp tokAND exp {$$ = new UntypedExp_And($1, $3);}
               
-        | exp tokOR exp {}
+        | exp tokOR exp {$$ = new UntypedExp_Or($1, $3);} 
                
         | tokNOT exp {$$=new UntypedExp_Not{$2};}
         
@@ -226,21 +225,19 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokUNIVROOT {}
                
-       // | exp tokDOT tokINT{}
-              
         | exp tokUP {}
              
-        | tokEX0 name_where_list tokCOLON exp {}
+        | tokEX0 name_where_list tokCOLON exp {$$ = new UntypedExp_Ex0($2, $4);} 
         
-        | tokEX1 universe name_where_list tokCOLON exp {$$ = new UntypedExp_Ex1($3, $5);}
+        | tokEX1 universe name_where_list tokCOLON exp {$$ = new UntypedExp_Ex1($3, $5);}  
                
-        | tokEX2 universe name_where_list tokCOLON exp {}
+        | tokEX2 universe name_where_list tokCOLON exp {$$ = new UntypedExp_Ex2($3, $5);}
               
-        | tokALL0 name_where_list tokCOLON exp {}
+        | tokALL0 name_where_list tokCOLON exp {$$ = new UntypedExp_All0($2, $4);} 
                
-        | tokALL1 universe name_where_list tokCOLON exp {}
+        | tokALL1 universe name_where_list tokCOLON exp {$$ = new UntypedExp_All1($3, $5);} 
                
-        | tokALL2 universe name_where_list tokCOLON exp {}
+        | tokALL2 universe name_where_list tokCOLON exp {$$ = new UntypedExp_All2($3, $5);} 
               
         | tokLET0 defs tokIN exp   %prec LOW {}
               
@@ -260,20 +257,17 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
              
         | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);}
               
-        | exp tokMINUS arith_exp {}
+        | exp tokMINUS arith_exp {$$ = new UntypedExp_Minus($1, $3);}
+            
+        | exp tokSTAR arith_exp {$$ = new UntypedExp_Mult($1, $3);} 
                
-        | exp tokSTAR arith_exp {}
-               
-        | exp tokSLASH arith_exp {
-			// TODO I must hanlde divion by 0
+        | exp tokSLASH arith_exp {$$ = new UntypedExp_Div($1, $3);} 
 
-		}
-        
-        | exp tokMODULO arith_exp  {} //new Rule
+        | exp tokMODULO arith_exp  {$$ = new UntypedExp_Modul($1, $3);} 
               
         | tokEMPTY{}    
               
-        | tokLBRACE set_body tokRBRACE{}
+        | tokLBRACE set_body tokRBRACE{$$ = new UntypedExp_Set($2);}
                
         | exp tokUNION exp {} 
              
@@ -313,11 +307,13 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 	
 arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 		
-	| arith_exp tokMINUS arith_exp {}
+	| arith_exp tokMINUS arith_exp {$$ = new ArithExp_Subtr($1, $3);}
 		
-	| arith_exp tokSTAR arith_exp {}
+	| arith_exp tokSTAR arith_exp {$$ = new ArithExp_Mult($1, $3);} 
 		
-	| arith_exp tokSLASH arith_exp {}
+	| arith_exp tokSLASH arith_exp {$$ = new ArithExp_Div($1, $3);} 
+
+	| arith_exp tokMODULO arith_exp{$$=new ArithExp_Modul($1,$3);} 
               
 	| tokMINUS arith_exp {}
 	        
@@ -381,18 +377,12 @@ def	: name tokEQUAL exp{}
 	;
 
 set_body: non_empty_set_body{}
-	
-	| /* empty */{}
 	      
 	;
 
-non_empty_set_body: exp tokCOMMA non_empty_set_body{}
-             
-        | tokINTERVAL tokCOMMA non_empty_set_body{}
-             
-        | exp{}
-           
-        | tokINTERVAL{} 
+non_empty_set_body: name tokCOMMA non_empty_set_body{$3->push_back(new VarDecl{$1,nullptr});$$=$3;}    
+
+        | name{$$=new VarDeclList{}; $$->push_back(new VarDecl{$1,nullptr});}
               
         ;
 

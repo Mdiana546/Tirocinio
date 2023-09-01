@@ -1,9 +1,8 @@
 ws2s; 
 var1 myVar;
+var2 A;
 int a,b,c;
+bool flag;
 real d,e,f;
 ex1 p1,p2,p3,p4,p5:
-p1.a+p2.a<p3.a+p4.a & p1.0001<p2;
-
-ex1 firstName,secondName:
-FirstName.a+5+secondName.d<secondName.a;
+p1.a+p2.a<p3.a+p4.a & p1.0001<p2 & A={p1,p2,p3};
