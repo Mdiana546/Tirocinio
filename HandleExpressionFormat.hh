@@ -7,6 +7,7 @@
 #include <set>
 #define lessEqual '#'
 #define greaterEqual '@'
+#define NotEqual '$'
 using std::stack;
 using std::string;
 using std::stringstream;

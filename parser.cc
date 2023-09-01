@@ -2093,7 +2093,7 @@ yyreduce:
 
   case 45: /* exp: exp tokNOTEQUAL exp  */
 #line 210 "parser.y"
-                              {new UntypedExp_NotEqual((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
+                              {(yyval.untypedExp)=new UntypedExp_NotEqual((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2098 "parser.cc"
     break;
 
@@ -2213,13 +2213,13 @@ yyreduce:
 
   case 65: /* exp: tokTRUE  */
 #line 250 "parser.y"
-                  {}
+                  {(yyval.untypedExp)=new UntypedExp_True();}
 #line 2218 "parser.cc"
     break;
 
   case 66: /* exp: tokFALSE  */
 #line 252 "parser.y"
-                   {}
+                   {(yyval.untypedExp) = new UntypedExp_False();}
 #line 2224 "parser.cc"
     break;
 
@@ -2984,7 +2984,8 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *msg) {
-	std::cout<<string(msg);
-	delete untypedAST->declarations;
+	std::cout<<string(msg)+" near line "+to_string(yylineno);
+	if(untypedAST!=nullptr)
+		delete untypedAST->declarations;
 	exit(-1);
 }

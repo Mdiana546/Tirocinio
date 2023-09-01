@@ -442,6 +442,29 @@ public:
 };
 
 
+class UntypedExp_Boolean:public UntypedExp
+{
+  public:
+   UntypedExp_Boolean(UntypedExpNodeKind k):UntypedExp{k}{}
+
+   MonaTypeTag chekType()override;
+   string setExpressionInString() override;
+};
+
+class UntypedExp_True: public UntypedExp_Boolean {
+public:
+  UntypedExp_True() :
+    UntypedExp_Boolean(uTrue) {}
+
+};
+
+class UntypedExp_False: public UntypedExp_Boolean {
+public:
+  UntypedExp_False() :
+    UntypedExp_Boolean(uFalse) {}
+
+};
+
 class ArithExp_par_aa: public ArithExp {
 public:
 

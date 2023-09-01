@@ -9,12 +9,11 @@
 
 
 name		[a-zA-Z0-9_'\$]+
-whitespace	[ \t\r\n\f]+
+whitespace	[ \t\r\f]+
 RealNumeral [1-9]+","[0-9]+
 numeral		[0-9]+
+endLine     [.*\n]
 %%
-[[:space:]]+   ; // Ignore spaces
-spaces
 
 "%"             return tokMODULO;
 "&"             return tokAND;
@@ -33,6 +32,7 @@ spaces
 "<"             return tokLESS;
 "<="            return tokLESSEQ;
 "<=>"           return tokBIIMPL;
+"~="            return tokNOTEQUAL;
 "="             return tokEQUAL;
 "=>"            return tokIMPL;
 ">"             return tokGREATER;
@@ -45,7 +45,6 @@ spaces
 "|"             return tokOR;
 "}"             return tokRBRACE;
 "~"             return tokNOT;
-"~="            return tokNOTEQUAL;
 "m2l-str"       return tokM2LSTR;
 "m2l-tree"      return tokM2LTREE;
 "empty"         return tokEMPTY;
@@ -106,6 +105,7 @@ spaces
 {numeral}      	{yylval.st=new std::string(yytext);return tokINT;}
 {name}		{yylval.st=new std::string(yytext);return tokNAME;}
 {whitespace}    ;/* ignore */
+{endLine}        {yylineno++;}
 
 
 

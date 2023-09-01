@@ -162,7 +162,7 @@ UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
 UntypedExp_Dot*UntypedExpDotName;
-VarDeclList *varDeclList;  
+VarDeclList *varDeclList;   
 
 
 #line 169 "parser.hh"

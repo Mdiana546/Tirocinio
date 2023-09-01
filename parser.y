@@ -44,7 +44,7 @@ UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
 UntypedExp_Dot*UntypedExpDotName;
-VarDeclList *varDeclList;  
+VarDeclList *varDeclList;   
 
 }
 
@@ -95,7 +95,7 @@ VarDeclList *varDeclList;
 %left tokINTER
 %left tokSETMINUS
 %left tokPLUS tokMINUS
-%left tokSTAR tokSLASH tokMODULO
+%left tokSTAR tokSLASH tokMODULO 
 %left tokDOT tokUP
 
 %%
@@ -197,19 +197,19 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
              
         | tokMAX exp{}
                
-        | exp tokLESS  exp {$$ = new UntypedExp_Less($1, $3);}
+        | exp tokLESS  exp {$$ = new UntypedExp_Less($1, $3);} 
                
         | exp tokLESSEQ exp {$$ = new UntypedExp_LessEq($1, $3);} 
              
         | exp tokGREATEREQ exp{$$ = new UntypedExp_GreaterEq($1, $3);}
                
-        | exp tokGREATER exp {$$ = new UntypedExp_Greater($1, $3);}
+        | exp tokGREATER exp {$$ = new UntypedExp_Greater($1, $3);} 
               
         | exp tokEQUAL exp{$$ = new UntypedExp_Equal($1, $3);}
                
-        | exp tokNOTEQUAL exp {new UntypedExp_NotEqual($1, $3);}
+        | exp tokNOTEQUAL exp {$$=new UntypedExp_NotEqual($1, $3);}
              
-        | exp tokIMPL exp{}
+        | exp tokIMPL exp{}  
               
         | exp tokBIIMPL exp {} 
               
@@ -247,9 +247,9 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
              
         | name tokLPAREN exp_list tokRPAREN {}
               
-        | tokTRUE {}
+        | tokTRUE {$$=new UntypedExp_True();} //new 
             
-        | tokFALSE {}
+        | tokFALSE {$$ = new UntypedExp_False();} //new 
              
         | tokUNIVROOT tokLPAREN exp tokCOMMA universe tokRPAREN {}
               
@@ -516,7 +516,8 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *msg) {
-	std::cout<<string(msg);
-	delete untypedAST->declarations;
+	std::cout<<string(msg)+" near line "+to_string(yylineno);
+	if(untypedAST!=nullptr)
+		delete untypedAST->declarations;
 	exit(-1);
 }

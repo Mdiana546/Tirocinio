@@ -1,6 +1,9 @@
 ws2s; 
 var1 myVar;
 var2 A;
-ex1 p1,p2,p3,p4,p5:
- p1 p2 p3 p4 in C1 & p1.0001<p2 & A={p3,p2,p1};
+var0 f;
+ex1 p1,p2:
+ p1 p2 in C1;
+all1 p:
+p<myVar;
 

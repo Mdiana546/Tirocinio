@@ -20,7 +20,7 @@ bool HanldeExpressionFormat::isMSODExpression(string &str)
 
 void HanldeExpressionFormat::setP()
 {
-  p['<']=p['>']=p['=']=p[lessEqual]=p[greaterEqual]=1,p['+'] = p['-']=2, p['/'] = p['*'] =p['%']= 3;
+  p['<']=p['>']=p['=']=p[lessEqual]=p[greaterEqual]=p[NotEqual]=1,p['+'] = p['-']=2, p['/'] = p['*'] =p['%']= 3;
 }
 
 void HanldeExpressionFormat::replaceOperator(string oldSubStr,char c)
@@ -35,7 +35,7 @@ void HanldeExpressionFormat::replaceOperator(string oldSubStr,char c)
 
 bool HanldeExpressionFormat::isOperator(char c)
 {
-       if(c=='<' || c=='>' || c=='=' || c==lessEqual || c==greaterEqual || c=='+' || c=='-'|| c=='%' || c=='/' || c=='*')
+       if(c=='<' || c=='>' || c=='=' || c==lessEqual || c==greaterEqual|| c==NotEqual || c=='+' || c=='-'|| c=='%' || c=='/' || c=='*')
         return true;
         
       return false;
@@ -105,8 +105,10 @@ HanldeExpressionFormat::HanldeExpressionFormat(string expression):expression{exp
 {
   if(isMSODExpression(expression))
   {
+
     replaceOperator("<=",lessEqual);
     replaceOperator(">=",greaterEqual);
+    replaceOperator("~=",NotEqual);
     setP();
     this->expression+=")";
     buildTree();
@@ -168,6 +170,8 @@ string HanldeExpressionFormat:: checkOperator(string& c)
       return "<=";
     else if(c==string(1,greaterEqual))
       return ">=";
+    else if(c==string(1,NotEqual))
+      return "~=";
     else
       return c;
       

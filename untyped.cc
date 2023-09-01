@@ -226,16 +226,13 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
                     case Varname2:
                       return Boolean;
                     break;
-                    case Boolean:
-                      return Boolean;
-                    break;
                   }
                 }
               break;
         }
     }
     string symbolOperator=getSymbolOperator();
-    throw runtime_error{"the two operands for "+symbolOperator+" operator are of different type "};
+    throw runtime_error{"the two operands for "+symbolOperator+" operator are of different type or are of the wrong type"};
 }
 
 string UntypedExp_par_ee_two::getSymbolOperator()
@@ -259,7 +256,7 @@ string UntypedExp_par_ee_two::getSymbolOperator()
         return "=";
       break;
       default:
-        return "!="; //TODO i must implement it in HandleExpressionFormat
+        return "~=";
         break;
     }
     
@@ -270,7 +267,7 @@ string UntypedExp_par_ee_two::setExpressionInString()
   string smtFile,e3;
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
-    e3=e1+getSymbolOperator()+e2;
+       e3=e1+getSymbolOperator()+e2;
     
     HanldeExpressionFormat Hexp{e3};
     smtFile=Hexp.returnSMTLIBVersion();
@@ -282,7 +279,6 @@ string UntypedExp_par_ee_two::setExpressionInString()
       return Hexp.returnMonaVersion()+to_string(count);
     }
     return Hexp.returnMonaVersion();
-
 }
 
 
@@ -319,7 +315,7 @@ MonaTypeTag UntypedExp_par_ee::chekType()
         MonaTypeTag e1=exp1->chekType();
         MonaTypeTag e2=exp2->chekType();
 
-          if(e1==e2 && e1==Boolean)
+          if((e1==Varname0 || e1==Boolean) &&  (e2==Varname0 || e2==Boolean))
               return Boolean;
 
           string symbolOperator=getSymbolOperator();
@@ -339,6 +335,26 @@ string UntypedExp_par_ee::setExpressionInString()
 {
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
+    HanldeExpressionFormat He1=HanldeExpressionFormat{e1};
+    HanldeExpressionFormat He2=HanldeExpressionFormat{e2};
+    string sE1=He1.returnSMTLIBVersion();
+    string sE2=He2.returnSMTLIBVersion();
+
+    if(!sE1.empty())
+    {
+      count++;
+      smT+="(define-fun C"+to_string(count)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
+      e1=He1.returnMonaVersion()+to_string(count);;
+
+    }
+
+    if(!sE2.empty())
+    {
+      count++;
+      smT+="(define-fun C"+to_string(count)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE2+")\n";
+      e2=He2.returnMonaVersion()+to_string(count);;
+    }
+
     return e1+" "+getSymbolOperator()+" "+e2;
 }
 
@@ -350,7 +366,7 @@ MonaTypeTag UntypedExp_par_ea::chekType()
     if(e==ar)
     {
         if(e==Integer || e==Real)
-            return e;  // TODO I must handle the division by zero 
+            return e;  
       
     }
   string symbolOperator=getSymbolOperator();
@@ -411,6 +427,18 @@ string UntypedExp_Set::setExpressionInString()
       }
       result.erase(0,1);
     return "{"+result+"}";
+}
+
+MonaTypeTag UntypedExp_Boolean::chekType()
+{
+  return Boolean;
+}
+string UntypedExp_Boolean::setExpressionInString()
+{
+  if(kind==uTrue)
+    return "true";
+  else  
+    return "false";
 }
 
 MonaTypeTag ArithExp_par_aa::evaluate()
