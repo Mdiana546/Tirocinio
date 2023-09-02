@@ -122,10 +122,14 @@ void HanldeExpressionFormat::setVar(Node*node)
         if(node->left ==nullptr){
                 if(!isdigit(node->data[0]))
                 {
-                    size_t pos=node->data.find('.');
+                   size_t pos=node->data.find('^');
+                  if(pos==string::npos)
+                      pos=node->data.find('.');
+
                     string sub=node->data.substr(0,pos);
                     expression+=","+sub;
                 }
+                
           }
           else{
             setVar(node->left);

@@ -32,7 +32,7 @@ void MonaUntypedAST::createStrings()
         (static_cast<Variable_Declaration*>(dec))->insertDeclarationInString();
         break;
         case dExpression:
-          MFormat+=(static_cast<Expression_Declaration*>(dec))->exp->setExpressionInString()+"\n";
+          MFormat+=(static_cast<Expression_Declaration*>(dec))->exp->setExpressionInString()+";\n";
         break;
       }
   }
@@ -131,7 +131,7 @@ string UntypedExp_par_unpee::setExpressionInString()
 {
 string result;
   insertDeclarationInString(result);
-  result+=":\n"+exp->setExpressionInString()+";";
+  result+=":\n"+exp->setExpressionInString();
   return result;
 }
 
@@ -232,7 +232,7 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
         }
     }
     string symbolOperator=getSymbolOperator();
-    throw runtime_error{"the two operands for "+symbolOperator+" operator are of different type or are of the wrong type"};
+    throw runtime_error{"the two operands for operator -> "+symbolOperator+" are of different type or are of the wrong type"};
 }
 
 string UntypedExp_par_ee_two::getSymbolOperator()
@@ -292,7 +292,12 @@ MonaTypeTag UntypedExp_Name::chekType()
 
 string UntypedExp_Name::setExpressionInString()
 {
-  return *(name->str);
+  if(kind==uName)
+    return *(name->str);
+
+  return *(name->str)+"^";
+  
+
 }
 
 string UntypedExp_PathName::setExpressionInString()
@@ -310,25 +315,66 @@ MonaTypeTag UntypedExp_PathName::chekType()
 
 }
 
+MonaTypeTag UntypedExp_NameUp::chekType()
+{
+  MonaTypeTag entryTag =UntypedExp_Name::chekType();
+  if(entryTag==Varname1)
+    return entryTag;
+
+   throw runtime_error{"the element->"+*(name->str)+" is not order 1"};
+}
+
+
 MonaTypeTag UntypedExp_par_ee::chekType()
 {
         MonaTypeTag e1=exp1->chekType();
         MonaTypeTag e2=exp2->chekType();
 
-          if((e1==Varname0 || e1==Boolean) &&  (e2==Varname0 || e2==Boolean))
+          if(kind==uAnd || kind==uOr){
+            if((e1==Varname0 || e1==Boolean) &&  (e2==Varname0 || e2==Boolean))
+                return Boolean;
+          }
+          else if(kind==uIn || kind==uNotIn)
+          {
+            if(e1==Varname1 && e2==Varname2)
               return Boolean;
+          }
+          else
+          {
+            if(e1==Boolean && e2==Boolean)
+              return Boolean;
+          }
 
           string symbolOperator=getSymbolOperator();
-           throw runtime_error{"the two operands for "+symbolOperator+" operator are of different types"};
+           throw runtime_error{"the two operands for operator ->"+symbolOperator+" are of different types"};
 
 }
 
 string UntypedExp_par_ee::getSymbolOperator()
 {
-    if(kind==uAnd)
-      return "&";
-    else
-      return "|";
+
+    switch(kind)
+    {
+      case uAnd:
+        return "&";
+      break;
+      case uOr:
+        return "|";
+      break;
+      case uIn:
+        return "in";
+      break;
+      case uImpl:
+        return "=>";
+      break;
+      case uNotIn:
+        return "notin";
+      break;
+      default :
+        return "<=>";
+      break;
+      
+    }
 }
 
 string UntypedExp_par_ee::setExpressionInString()
@@ -356,6 +402,13 @@ string UntypedExp_par_ee::setExpressionInString()
     }
 
     return e1+" "+getSymbolOperator()+" "+e2;
+}
+
+string Membership::setExpressionInString()
+{
+   string e1=exp1->setExpressionInString();
+   string e2=exp2->setExpressionInString();
+   return e1+" "+getSymbolOperator()+" "+e2;
 }
 
 MonaTypeTag UntypedExp_par_ea::chekType()
@@ -535,7 +588,11 @@ MonaTypeTag UntypedExp_Dot::chekType()
 
 string UntypedExp_Dot::setExpressionInString()
 {
-  return *(dotName->name1->str)+"."+*(dotName->name2->str);
+    if(kind==uDot)
+       return *(dotName->name1->str)+"."+*(dotName->name2->str);
+
+    return *(dotName->name1->str)+"^"+"."+*(dotName->name2->str);
+
 }
 
 string UntypedExp_DotNameNumber::setExpressionInString()

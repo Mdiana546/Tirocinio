@@ -23,7 +23,8 @@ enum UntypedExpNodeKind {
   uMax, uMin, uMinus, uMinusModulo, uMult, uName, uNot, uNotEqual, uNotIn,
   uOr, uPlus, uPlusModulo, uRoot, uSet, uSetminus, uSub, uRestrict,uModul,
   uTrue, uUnion, uUp, uImport, uExport, uPrefix, uRootPred, uInStateSpace,
-  uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName,uDotNameNumber,uPathName
+  uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName,uDotNameNumber,uPathName,
+  uDotNameUp
 };
 
 enum DeclarationKind {
@@ -267,6 +268,39 @@ public:
 
 };
 
+class Membership:public UntypedExp_par_ee
+{
+  public:
+    Membership(UntypedExpNodeKind k,UntypedExp*exp1,UntypedExp*exp2):UntypedExp_par_ee{k,exp1,exp2}{}
+
+    string setExpressionInString() override;
+};
+
+class UntypedExp_In: public Membership {
+public:
+  UntypedExp_In(UntypedExp *exp1, UntypedExp *exp2) :
+    Membership(uIn, exp1, exp2) {}
+
+};
+
+class UntypedExp_NotIn: public Membership {
+public:
+  UntypedExp_NotIn(UntypedExp *exp1, UntypedExp *exp2) :
+    Membership(uNotIn, exp1, exp2) {}   
+};
+
+class UntypedExp_Impl: public UntypedExp_par_ee {
+public:
+  UntypedExp_Impl(UntypedExp *exp1, UntypedExp *exp2) :
+    UntypedExp_par_ee(uImpl, exp1, exp2) {}
+
+};
+
+class UntypedExp_Biimpl: public UntypedExp_par_ee {
+public:
+  UntypedExp_Biimpl(UntypedExp *exp1, UntypedExp *exp2) :
+    UntypedExp_par_ee(uBiimpl, exp1, exp2) {}
+};
 
 class Expression_Declaration: public Declaration {
 public:
@@ -308,6 +342,16 @@ class UntypedExp_PathName:public UntypedExp_Name
     string *path;
 };
 
+class UntypedExp_NameUp:public UntypedExp_Name
+{
+  public:
+    UntypedExp_NameUp(Name *n) :
+    UntypedExp_Name(uUp,n) {}
+  
+  MonaTypeTag chekType() override;
+
+};
+
 class UntypedExp_Dot: public UntypedExp {
 public:
 
@@ -327,6 +371,12 @@ class UntypedExp_DotName: public UntypedExp_Dot
   UntypedExp_DotName(DotName * dotName):UntypedExp_Dot{uDotName,dotName}{}
 };
 
+class UntypedExp_DotNameUp:public UntypedExp_Dot
+{
+  public:
+    UntypedExp_DotNameUp(DotName*dotName):UntypedExp_Dot{uDotNameUp,dotName}{}
+
+};
 
 
 class UntypedExp_DotNameNumber:public UntypedExp_Dot

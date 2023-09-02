@@ -112,7 +112,7 @@ start	: header declarations{
 		 untypedAST->createStrings();
 		 HandleFiles handleFile{};
 		handleFile.writeOnMonaFile(MFormat);
-		handleFile.writeOnSMTLIBFile(smT);
+		handleFile.writeOnSMTLIBFile(smT); 
 		
 		}
 	;
@@ -189,9 +189,9 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
          
         | exp tokSUB exp{}
            
-        | exp tokIN exp {}
+        | exp tokIN exp {$$ = new UntypedExp_In($1, $3);} //new 
               
-        | exp tokNOTIN exp{} 
+        | exp tokNOTIN exp{$$ = new UntypedExp_NotIn($1, $3);} //new
            
         | tokMIN exp{}
              
@@ -209,9 +209,9 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
                
         | exp tokNOTEQUAL exp {$$=new UntypedExp_NotEqual($1, $3);}
              
-        | exp tokIMPL exp{}  
+        | exp tokIMPL exp{$$ = new UntypedExp_Impl($1, $3);}  //new 
               
-        | exp tokBIIMPL exp {} 
+        | exp tokBIIMPL exp {$$ = new UntypedExp_Biimpl($1, $3);}  //new
               
         | exp tokAND exp {$$ = new UntypedExp_And($1, $3);}
               
@@ -225,7 +225,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokUNIVROOT {}
                
-        | exp tokUP {}
+        | name tokUP {$$ = new UntypedExp_NameUp($1);} //new 
              
         | tokEX0 name_where_list tokCOLON exp {$$ = new UntypedExp_Ex0($2, $4);} 
         
@@ -247,9 +247,9 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
              
         | name tokLPAREN exp_list tokRPAREN {}
               
-        | tokTRUE {$$=new UntypedExp_True();} //new 
+        | tokTRUE {$$=new UntypedExp_True();}
             
-        | tokFALSE {$$ = new UntypedExp_False();} //new 
+        | tokFALSE {$$ = new UntypedExp_False();}  
              
         | tokUNIVROOT tokLPAREN exp tokCOMMA universe tokRPAREN {}
               
@@ -340,6 +340,8 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};}
 
 			| name tokDOT tokINT tokDOT name{checkNameIntName(*$3);$$=new UntypedExp_DotNameNumber{new DotName{$1,$5},$3};}
+			
+			| name tokUP tokDOT name {$$=new UntypedExp_DotNameUp{new DotName{$1,$4}};} 
         ;
 
 
@@ -516,7 +518,7 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *msg) {
-	std::cout<<string(msg)+" near line "+to_string(yylineno);
+	std::cout<<"Error near line "+to_string(yylineno)+": "+string(msg);
 	if(untypedAST!=nullptr)
 		delete untypedAST->declarations;
 	exit(-1);
