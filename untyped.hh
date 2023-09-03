@@ -24,7 +24,7 @@ enum UntypedExpNodeKind {
   uOr, uPlus, uPlusModulo, uRoot, uSet, uSetminus, uSub, uRestrict,uModul,
   uTrue, uUnion, uUp, uImport, uExport, uPrefix, uRootPred, uInStateSpace,
   uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName,uDotNameNumber,uPathName,
-  uDotNameUp
+  uDotNameUp,udouble
 };
 
 enum DeclarationKind {
@@ -244,7 +244,7 @@ public:
 
 };
 
-//I must handle not euqal
+
 class UntypedExp_NotEqual: public UntypedExp_par_ee_two {
 public:
    UntypedExp_NotEqual(UntypedExp *exp1, UntypedExp *exp2) : 
@@ -514,6 +514,29 @@ public:
     UntypedExp_Boolean(uFalse) {}
 
 };
+
+class UntypedExp_Int: public UntypedExp {
+public:
+  UntypedExp_Int(int c) :
+    UntypedExp(uInt), n(c) {}
+
+    MonaTypeTag chekType() override;
+  string setExpressionInString() override;
+  
+    int n;
+};
+
+class UntypedExp_Real: public UntypedExp {
+public:
+  UntypedExp_Real(double c) :
+    UntypedExp(udouble), n(c) {}
+
+    MonaTypeTag chekType() override;
+    string setExpressionInString() override;
+  
+    double n;
+};
+
 
 class ArithExp_par_aa: public ArithExp {
 public:

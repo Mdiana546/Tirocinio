@@ -185,7 +185,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 
 		| name tokDOT tokINT {check_bits(*$3);$$=new UntypedExp_PathName{uPathName,$1,$3};}
               
-        | tokLPAREN exp tokRPAREN {}
+        | tokLPAREN exp tokRPAREN {$$=$2;}
          
         | exp tokSUB exp{}
            
@@ -266,7 +266,11 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
         | exp tokMODULO arith_exp  {$$ = new UntypedExp_Modul($1, $3);} 
               
         | tokEMPTY{}    
-              
+
+		| tokINT {$$ = new UntypedExp_Int(stoi(*$1));}
+		
+		|tokReal {$$=new UntypedExp_Real{$1};}
+
         | tokLBRACE set_body tokRBRACE{$$ = new UntypedExp_Set($2);}
                
         | exp tokUNION exp {} 

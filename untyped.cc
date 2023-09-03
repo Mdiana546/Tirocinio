@@ -654,6 +654,26 @@ string UntypedExp_par_e::setExpressionInString()
   return "~"+e;
 }
 
+MonaTypeTag UntypedExp_Int::chekType()
+{
+  return Integer;
+}
+
+string UntypedExp_Int::setExpressionInString()
+{
+  return to_string(n);
+}
+
+MonaTypeTag UntypedExp_Real::chekType()
+{
+  return Real;
+}
+
+string UntypedExp_Real::setExpressionInString()
+{
+  return to_string(n);
+}
+
 
 
 

@@ -9,4 +9,6 @@
 (flag data))
 (define-fun C5((data Data) (data0 Data) (data1 Data)) Bool 
 (< (a data) (a data)))
+(define-fun C6((data Data) (data0 Data) (data1 Data)) Bool 
+(< (+ (1 data) (a data)) (+ (3 data) (a data))))
 
