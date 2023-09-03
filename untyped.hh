@@ -24,7 +24,7 @@ enum UntypedExpNodeKind {
   uOr, uPlus, uPlusModulo, uRoot, uSet, uSetminus, uSub, uRestrict,uModul,
   uTrue, uUnion, uUp, uImport, uExport, uPrefix, uRootPred, uInStateSpace,
   uSucc, uWellFormedTree, uType, uSomeType, uVariant, uConstTree, uTreeRoot,uDotName,uDotNameNumber,uPathName,
-  uDotNameUp,udouble
+  uDotNameUp,udouble,uParen
 };
 
 enum DeclarationKind {
@@ -537,6 +537,18 @@ public:
     double n;
 };
 
+
+class UntypedExp_Paren:public UntypedExp
+{
+  public:
+    UntypedExp_Paren(UntypedExp *exp):UntypedExp{uParen},exp{exp}{};
+
+    MonaTypeTag chekType() override;
+    string setExpressionInString() override;
+
+    UntypedExp *exp;
+
+};
 
 class ArithExp_par_aa: public ArithExp {
 public:

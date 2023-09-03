@@ -674,7 +674,14 @@ string UntypedExp_Real::setExpressionInString()
   return to_string(n);
 }
 
+MonaTypeTag UntypedExp_Paren::chekType()
+{
+  return exp->chekType();
+}
 
-
+string UntypedExp_Paren::setExpressionInString()
+{
+  return "("+exp->setExpressionInString()+")";
+}
 
 
