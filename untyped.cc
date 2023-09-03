@@ -3,7 +3,7 @@ SymbolTable symbleTable{};
 string MFormat="ws2s; \n";
 HandleDeclarationFormat Hdeclaration{};
 string smT;
-int count=0;
+int coun=0;
 
 void MonaUntypedAST::typeCheckDeclarations()
 {
@@ -274,9 +274,9 @@ string UntypedExp_par_ee_two::setExpressionInString()
 
     if(!smtFile.empty())
     {
-      count++;
-      smT+="(define-fun C"+to_string(count)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+smtFile+")\n";
-      return Hexp.returnMonaVersion()+to_string(count);
+      coun++;
+      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+smtFile+")\n";
+      return Hexp.returnMonaVersion()+to_string(coun);
     }
     return Hexp.returnMonaVersion();
 }
@@ -388,17 +388,17 @@ string UntypedExp_par_ee::setExpressionInString()
 
     if(!sE1.empty())
     {
-      count++;
-      smT+="(define-fun C"+to_string(count)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
-      e1=He1.returnMonaVersion()+to_string(count);;
+      coun++;
+      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
+      e1=He1.returnMonaVersion()+to_string(coun);;
 
     }
 
     if(!sE2.empty())
     {
-      count++;
-      smT+="(define-fun C"+to_string(count)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE2+")\n";
-      e2=He2.returnMonaVersion()+to_string(count);;
+      coun++;
+      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE2+")\n";
+      e2=He2.returnMonaVersion()+to_string(coun);;
     }
 
     return e1+" "+getSymbolOperator()+" "+e2;

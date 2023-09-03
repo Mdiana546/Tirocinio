@@ -101,11 +101,17 @@ root=sN.top();
 }
 
 
+void HanldeExpressionFormat:: deleteParen()
+{
+  expression.erase(std::remove(expression.begin(), expression.end(), '('), expression.end());
+  expression.erase(std::remove(expression.begin(), expression.end(), ')'), expression.end());
+}
+
 HanldeExpressionFormat::HanldeExpressionFormat(string expression):expression{expression},root{nullptr}
 {
   if(isMSODExpression(expression))
   {
-
+    deleteParen();
     replaceOperator("<=",lessEqual);
     replaceOperator(">=",greaterEqual);
     replaceOperator("~=",NotEqual);

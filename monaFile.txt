@@ -7,9 +7,9 @@ p1 in A & all1 q:
  p1 q in C1 <=>  p1 p2 in C2;
 all1 q,r:
 ex0 p1:
-~q in A & q in B => p1 &  q in C3 | p1 &  r in C4;
+~(q in A & q in B => p1 &  q in C3) | (p1 &  r in C4);
 all2 V,Z:
-myVar in V & myVar2 in Z =>  myVar myVar2 in C5;
+(myVar in V & myVar2 in Z) => ( myVar myVar2 in C5);
 ex1 p1,p2:
  p1 p2 in C6;
 

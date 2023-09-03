@@ -2013,7 +2013,7 @@ yyreduce:
 
   case 34: /* exp: tokLPAREN exp tokRPAREN  */
 #line 188 "parser.y"
-                                  {(yyval.untypedExp)=(yyvsp[-1].untypedExp);}
+                                  {(yyval.untypedExp)=new UntypedExp_Paren{(yyvsp[-1].untypedExp)};}
 #line 2018 "parser.cc"
     break;
 

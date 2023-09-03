@@ -4,6 +4,7 @@
 #include<stack>
 #include <iostream>
 #include <sstream>
+#include<algorithm>
 #include <set>
 #define lessEqual '#'
 #define greaterEqual '@'
@@ -45,6 +46,7 @@ string checkOperator(string& );
 void setMonaExpression();
 string changePointWithSpace(string);
 bool isANumber(string&);
+void deleteParen();
 public:
 
 /*

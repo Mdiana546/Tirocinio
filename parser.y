@@ -185,7 +185,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 
 		| name tokDOT tokINT {check_bits(*$3);$$=new UntypedExp_PathName{uPathName,$1,$3};}
               
-        | tokLPAREN exp tokRPAREN {$$=$2;}
+        | tokLPAREN exp tokRPAREN {$$=new UntypedExp_Paren{$2};}
          
         | exp tokSUB exp{}
            
@@ -193,7 +193,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | exp tokNOTIN exp{$$ = new UntypedExp_NotIn($1, $3);} //new
            
-        | tokMIN exp{}
+        | tokMIN exp{}  
              
         | tokMAX exp{}
                
