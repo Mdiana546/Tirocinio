@@ -14,6 +14,9 @@ void MonaUntypedAST::typeCheckDeclarations()
       case dVariable:
        (static_cast<Variable_Declaration*>(dec))->insertDeclarationInSymbolTable();
        break;
+      case dPredicate:
+       (static_cast<Predicate_Declaration*>(dec))->insertDeclarationInSymbolTable();
+       break;
       case dExpression:
          MonaTypeTag tag=(static_cast<Expression_Declaration*>(dec))->exp->chekType();
       break;
@@ -30,6 +33,9 @@ void MonaUntypedAST::createStrings()
       {
         case dVariable:
         (static_cast<Variable_Declaration*>(dec))->insertDeclarationInString();
+        break;
+        case dPredicate:
+        (static_cast<Predicate_Declaration*>(dec))->insertDeclarationInString();
         break;
         case dExpression:
           MFormat+=(static_cast<Expression_Declaration*>(dec))->exp->setExpressionInString()+";\n";
@@ -48,6 +54,24 @@ void Variable_Declaration::insertDeclarationInSymbolTable()
 {
 
     insertDecInSymbolTable();
+}
+
+void Predicate_Declaration::insertDeclarationInSymbolTable()
+{
+      for(ParPred*parPred:*parList)
+        symbleTable.insert(new SymbolTable::SymbolEntry{parPred->name,parPred->type});
+
+      MonaTypeTag tag=body->chekType();
+
+      if(tag!=Boolean)
+        throw runtime_error("formula error in pred "+*name->str);
+      
+      for(ParPred*parPred:*parList)
+        symbleTable.remove(parPred->name);
+
+
+      symbleTable.insert(new SymbolTable::SymbolEntryPred{name,aPred,parList});
+
 }
 
 void Variable_Declaration::insertDeclarationInString()
@@ -85,6 +109,29 @@ void Variable_Declaration::insertDeclarationInString()
       listELements.erase(0,1); //I delete the first colon
       MFormat+=type+" "+listELements+";\n";
     }
+}
+
+void Predicate_Declaration::insertDeclarationInString()
+{
+  string list;
+    
+      for(ParPred*parPred:*parList)
+      {
+        switch(parPred->type)
+        {
+          case Varname0:
+            list+="var0 "+*(parPred->name->str)+",";
+          break;
+          case Varname1:
+            list+="var1 "+*(parPred->name->str);
+          break;
+          case Varname2:
+            list+="var2 "+*(parPred->name->str);
+          break;
+        }
+      }
+      list.pop_back();
+    MFormat+=*(name->str)+"("+list+")="+body->setExpressionInString()+";\n";
 }
 
 
@@ -285,7 +332,11 @@ string UntypedExp_par_ee_two::setExpressionInString()
 MonaTypeTag UntypedExp_Name::chekType()
 {
         if(symbleTable.isPresentEntry(name))
-            return (symbleTable.lookup(name))->tag;
+        { 
+            SymbolTable::SymbolEntry *entry=symbleTable.lookup(name);
+            if(entry->tag!=aPred)
+              return (symbleTable.lookup(name))->tag;
+        }
         
         throw runtime_error{"the element -> "+*(name->str)+ " has not been declared"};
 }
@@ -684,4 +735,66 @@ string UntypedExp_Paren::setExpressionInString()
   return "("+exp->setExpressionInString()+")";
 }
 
+
+UntypedExp_Call::UntypedExp_Call(Name*name,VarDeclList*decList):UntypedExp{uCall},name{name}
+{
+  parList=new ParList{};
+    for(VarDecl*decl:*decList)
+        parList->push_back(new ParPred{nu,decl->name});
+}
+
+void UntypedExp_Call::setParList()
+{
+      for(ParPred *parPred:*parList)
+      {
+        if(symbleTable.isPresentEntry(parPred->name))
+          parPred->type=symbleTable.lookup(parPred->name)->tag;
+        else 
+          throw runtime_error{"the element-> "+*parPred->name->str+" was not declared"};
+      }
+
+}
+
+
+MonaTypeTag UntypedExp_Call::chekType()
+{
+      setParList();
+
+      if(symbleTable.isPresentEntry(name))
+      {
+        SymbolTable::SymbolEntry*entry=symbleTable.lookup(name);
+          if(entry->tag==aPred)
+          {
+            SymbolTable::SymbolEntryPred *entryPred=static_cast<SymbolTable::SymbolEntryPred*>(entry);
+            if(parList->size()==entryPred->parList->size())
+            {
+                auto t1=parList->begin();
+                auto t2=entryPred->parList->begin();
+                while(t1!=parList->end() && t2!=entryPred->parList->end())
+                {
+
+                  if((*t1)->type!=(*t2)->type)
+                      throw runtime_error{"pred->"+*name->str+" was not declared"};
+                  ++t1;
+                  ++t2;
+                }
+                return Boolean;
+            }
+          }
+      }
+     throw runtime_error{"pred ->"+*name->str+" was not declared"};
+
+}
+
+string UntypedExp_Call::setExpressionInString()
+{
+  string list;
+
+      for(ParPred *parPred:*parList)
+        list+=*parPred->name->str+",";
+
+      list.pop_back();
+
+      return *name->str+"("+list+")";
+}
 

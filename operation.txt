@@ -4,10 +4,10 @@ var2 A,B;
 var0 f;
 int a,b,c;
 bool flag;
-real d,e,f;
+real d,e;
+
+pred prova(var1 mm)=ex2 Q:mm in Q & (mm.a >10);
 
 
-ex1 p1,p2: p1 in A & all1 q: p1.a<q.a <=> p2.d ~=p1.d;
-all1 q,r:ex0 p1: ~ (q in A & q in B => p1 & q.flag )|( p1 & r.flag);
-all2 V,Z: (myVar in V & myVar2 in Z) => (myVar.a<myVar2.a);
-ex1 p1,p2:1+p1.a < 3+p2.a;
+ex1 p1,p2:1+p1.a < 3+p2.a & prova(myVar);
+ex1 p1: (p1.flag & true) & (all1 q:q.a>p1.a);

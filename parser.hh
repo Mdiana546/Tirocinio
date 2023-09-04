@@ -162,10 +162,11 @@ UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
 UntypedExp_Dot*UntypedExpDotName;
-VarDeclList *varDeclList;   
+VarDeclList *varDeclList; 
+ParList*parList;
 
 
-#line 169 "parser.hh"
+#line 170 "parser.hh"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -11,9 +11,9 @@ void SymbolTable::insert(SymbolEntry* entry)
             table[key].push_back(entry);
 
     }
-    else{}
-        //handle this error
-
+    else{
+        throw runtime_error{"element "+*entry->name->str+" is already present"};
+    }
 }
 
 void SymbolTable::remove(Name*name)
@@ -72,7 +72,7 @@ SymbolTable::SymbolEntry* SymbolTable::getElement(Name*name)
  list<SymbolEntry*> l=table[key];
  for(SymbolEntry* ent:l)
  {
-    if(*(ent->name)==*name)
+    if(*(ent->name->str)==*name->str)
         return ent;
  }
  return nullptr;

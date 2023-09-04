@@ -391,6 +391,35 @@ class UntypedExp_DotNameNumber:public UntypedExp_Dot
     
 };
 
+class UntypedExp_Call:public UntypedExp
+{
+  public:
+    UntypedExp_Call(Name*,VarDeclList*);
+    virtual ~UntypedExp_Call(){delete name,delete parList;}
+
+    MonaTypeTag chekType() override;
+    string setExpressionInString() override;
+    void setParList();
+
+  Name*name;
+  ParList *parList;
+};
+
+class Predicate_Declaration:public Declaration
+{
+  public:
+    Predicate_Declaration(Name*name,ParList*parList,UntypedExp*body):Declaration{dPredicate},name{name},parList{parList},body{body}{}
+  virtual~Predicate_Declaration(){delete name, delete parList,delete body;}
+  
+  void insertDeclarationInSymbolTable();
+  void insertDeclarationInString();
+
+  Name*name;
+  ParList*parList;
+  UntypedExp*body;
+
+};
+
 
 class Variable_Declaration: public Declaration {
 public:
@@ -408,6 +437,8 @@ void insertDeclarationInString();
   private:
   void insertDecInSymbolTable();
 };
+
+
 
 
 
@@ -542,6 +573,7 @@ class UntypedExp_Paren:public UntypedExp
 {
   public:
     UntypedExp_Paren(UntypedExp *exp):UntypedExp{uParen},exp{exp}{};
+    virtual ~UntypedExp_Paren(){delete exp;}
 
     MonaTypeTag chekType() override;
     string setExpressionInString() override;

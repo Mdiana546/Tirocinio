@@ -10,7 +10,7 @@ enum MonaTypeTag {
   Varname0, Varname1, Varname2, VarnameTree,
   Parname0, Parname1, Parname2, ParnameU,
   Univname, Predname, Constname, Statespacename,Integer,Boolean,Real,
-  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber
+  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred
 };
 
 
@@ -20,7 +20,7 @@ public:
   Name(string *s) :
     str(s){}
   virtual ~Name(){delete str;}
-  bool operator==(const Name& cname){return *str==*cname.str;}
+
 
   string *str;
 };
@@ -35,16 +35,42 @@ class DotName {
 };
 
 
+class ParPred{
+  public:
+
+    ParPred(MonaTypeTag type,Name*name):type{type},name{name}{}
+    virtual ~ParPred(){delete name;}
+
+    MonaTypeTag type;
+    Name*name;
+
+
+};
+
+class ParList:public list<ParPred*>
+{};
+
+
 class SymbolTable {
 public:
 
 
-    class SymbolEntry {
+    class SymbolEntry { 
         public:
           Name*name;
           MonaTypeTag tag;
           SymbolEntry(Name*name,MonaTypeTag tag):name{name},tag{tag}{}
           virtual ~SymbolEntry(){delete name;}
+    };
+
+
+    class SymbolEntryPred:public SymbolEntry
+    {
+      public:
+        SymbolEntryPred(Name*name,MonaTypeTag tag,ParList*parList):SymbolEntry{name,tag},parList{parList}{}
+        virtual ~SymbolEntryPred(){delete parList;}
+
+        ParList *parList;
     };
 
 unordered_map<int, list<SymbolEntry*>> table;

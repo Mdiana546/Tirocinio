@@ -6,7 +6,7 @@
 #include <fstream>
 #include "lexer.hh"
 #include "untyped.hh"
-#include "HandleFiles.hh"
+#include "HandleFiles.hh" 
 
 void yyerror(const char *msg);
 extern string MFormat;
@@ -20,7 +20,7 @@ void check_bits(string s)
   int i;
   for (i = 0; s[i] != '\0'; i++)
     if (s[i] != '0' && s[i] != '1'){
-		yyerror("branch indication error");
+		yyerror("branch indication error");  
 		}
 }
 
@@ -44,7 +44,8 @@ UntypedExp *untypedExp;
 ArithExp *arithExp;
 Name *name;
 UntypedExp_Dot*UntypedExpDotName;
-VarDeclList *varDeclList;   
+VarDeclList *varDeclList; 
+ParList*parList;
 
 }
 
@@ -80,6 +81,7 @@ VarDeclList *varDeclList;
 %type <name> name;
 %type<UntypedExpDotName>dotExp
 %type <varDeclList> name_where_list set_body non_empty_set_body;  
+%type <parList> par_list;
 
 %nonassoc LOW
 %nonassoc tokCOLON
@@ -96,8 +98,8 @@ VarDeclList *varDeclList;
 %left tokSETMINUS
 %left tokPLUS tokMINUS
 %left tokSTAR tokSLASH tokMODULO 
-%left tokDOT tokUP
-
+%left tokDOT tokUP     
+  
 %%
 
 start	: header declarations{
@@ -146,7 +148,7 @@ declaration : tokASSERT exp tokSEMICOLON{}
               
 	| tokTREE universe name_where_list tokSEMICOLON {}
 		
-        | tokPRED name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON {}
+        | tokPRED name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON {$$=new Predicate_Declaration{$2,$4,$7};}
              
         | tokPRED name tokEQUAL exp tokSEMICOLON  {}
              
@@ -162,7 +164,7 @@ declaration : tokASSERT exp tokSEMICOLON{}
             
         | tokVERIFY optstring exp tokSEMICOLON {}
                
-        | tokEXECUTE exp tokSEMICOLON {}
+        | tokEXECUTE exp tokSEMICOLON {} 
                
         | tokINCLUDE tokSTRING tokSEMICOLON {}
               
@@ -245,7 +247,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
                
         | tokLET2 defs tokIN exp   %prec LOW {}
              
-        | name tokLPAREN exp_list tokRPAREN {}
+        | name tokLPAREN name_where_list tokRPAREN {$$=new UntypedExp_Call{$1,$3}; }
               
         | tokTRUE {$$=new UntypedExp_True();}
             
@@ -267,13 +269,13 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokEMPTY{}    
 
-		| tokINT {$$ = new UntypedExp_Int(stoi(*$1));}
+		| tokINT {$$ = new UntypedExp_Int(stoi(*$1));}  
 		
 		|tokReal {$$=new UntypedExp_Real{$1};}
 
         | tokLBRACE set_body tokRBRACE{$$ = new UntypedExp_Set($2);}
                
-        | exp tokUNION exp {} 
+        | exp tokUNION exp {}  
              
         | exp tokINTER exp {}
               
@@ -290,7 +292,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 	| tokVARIANT tokLPAREN exp tokCOMMA exp tokCOMMA name 
 	  tokCOMMA name tokRPAREN{}
 		
-	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA 
+	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA  
 	  name tokRPAREN{}
 		
 	| tokTREE tokLPAREN exp tokRPAREN{}
@@ -349,25 +351,25 @@ dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};}
         ;
 
 
-par_list: tokVAR0 name tokCOMMA par_list {}
+par_list: tokVAR0 name tokCOMMA par_list {$4->push_back(new ParPred{Varname0,$2});$$=$4;}
 	    
-	| tokVAR1 name where tokCOMMA par_list{} 
+	| tokVAR1 name where tokCOMMA par_list{{$5->push_back(new ParPred{Varname1,$2});$$=$5;}} 
 	      
-	| tokVAR2 name where tokCOMMA par_list{} 
+	| tokVAR2 name where tokCOMMA par_list{$5->push_back(new ParPred{Varname2,$2});$$=$5;}
 	
 	| tokUNIVERSE name tokCOMMA par_list {}
 		
 	| name where tokCOMMA par_list {}
 	
-	| tokVAR0 name {}
+	| tokVAR0 name {$$=new ParList();$$->push_back(new ParPred{Varname0,$name});}
 		
-	| tokVAR1 name where {}
+	| tokVAR1 name where {$$=new ParList();$$->push_back(new ParPred{Varname1,$name});}
 		
-	| tokVAR2 name where{}
+	| tokVAR2 name where{$$=new ParList();$$->push_back(new ParPred{Varname2,$name});}
 	      
 	| tokUNIVERSE name {}
 	      
-	| name where{}
+	| name where{} 
 		
 	;
 
@@ -392,17 +394,17 @@ non_empty_set_body: name tokCOMMA non_empty_set_body{$3->push_back(new VarDecl{$
               
         ;
 
-exp_list: non_empty_exp_list{} 
+//exp_list: non_empty_exp_list{} 
 	
-	| /* empty */{}
+	//| /* empty */{}
 	
-	;
+	//;
 
-non_empty_exp_list: exp tokCOMMA non_empty_exp_list{} 
+//non_empty_exp_list: exp tokCOMMA non_empty_exp_list{}  
 	
-	| exp {}
+//	| exp {}
 		
-	;
+//	;
 
 universe: tokLBRACKET name_list tokRBRACKET{} 
 	
