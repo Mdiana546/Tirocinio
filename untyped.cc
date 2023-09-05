@@ -4,6 +4,7 @@ string MFormat="ws2s; \n";
 HandleDeclarationFormat Hdeclaration{};
 string smT;
 int coun=0;
+int cc=1;
 
 void MonaUntypedAST::typeCheckDeclarations()
 {
@@ -332,7 +333,6 @@ string UntypedExp_par_ee_two::setExpressionInString(bool privIsAndOr)
           return Hexp.returnMonaVersion()+to_string(coun);
       }
     }
-    cout<<e3;
     return e3;
 }
 
@@ -453,13 +453,11 @@ string UntypedExp_par_ee::setExpressionInString(bool privIsAndOr)
     {
         if(!privIsAndOr){
           e3=e1+getSymbolOperator()+e2;
-          std::cout<<e3;
           coun++;
           HanldeExpressionFormat *He3=new HanldeExpressionFormat{e3};
           smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+He3->returnSMTLIBVersion()+")\n";
-          return He3->returnMonaVersion()+to_string(coun);
           delete He3;
-          return e3;
+          return He3->returnMonaVersion()+to_string(coun);
         }
    } else if(!sE1.empty())
     {
@@ -475,8 +473,38 @@ string UntypedExp_par_ee::setExpressionInString(bool privIsAndOr)
     }
     delete He1;
     delete He2;
-    return e1+getSymbolOperator()+e2;
+    return e1+" "+getSymbolOperator()+" "+e2;
 }
+
+string Implications::setExpressionInString(bool privIsAndOr)
+{
+  string e1=exp1->setExpressionInString(true);
+  string e2=exp2->setExpressionInString(true);
+
+  HanldeExpressionFormat *He1=new HanldeExpressionFormat{e1};
+  HanldeExpressionFormat *He2= new HanldeExpressionFormat{e2};
+
+  string sE1=He1->returnSMTLIBVersion();
+  string sE2=He2->returnSMTLIBVersion();
+
+  if(!sE1.empty())
+    {
+      coun++;
+      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
+      e1=He1->returnMonaVersion()+to_string(coun);;
+    }
+     if(!sE2.empty())
+    {
+      coun++;
+      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE2+")\n";
+      e2=He2->returnMonaVersion()+to_string(coun);;
+    }
+    delete He1;
+    delete He2;
+    return e1+" "+getSymbolOperator()+" "+e2;
+
+}
+
 
 string Membership::setExpressionInString(bool privIsAndOr)
 {
@@ -724,7 +752,7 @@ MonaTypeTag UntypedExp_par_e::chekType()
 
 string UntypedExp_par_e::setExpressionInString(bool privIsAndOr)
 {
-  string e=exp->setExpressionInString();
+  string e=exp->setExpressionInString(privIsAndOr);
   return "~"+e;
 }
 
@@ -755,7 +783,7 @@ MonaTypeTag UntypedExp_Paren::chekType()
 
 string UntypedExp_Paren::setExpressionInString(bool privIsAndOr)
 {
-  return "("+exp->setExpressionInString()+")";
+  return "("+exp->setExpressionInString(privIsAndOr)+")";
 }
 
 

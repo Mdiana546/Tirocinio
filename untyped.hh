@@ -289,17 +289,25 @@ public:
     Membership(uNotIn, exp1, exp2) {}   
 };
 
-class UntypedExp_Impl: public UntypedExp_par_ee {
-public:
-  UntypedExp_Impl(UntypedExp *exp1, UntypedExp *exp2) :
-    UntypedExp_par_ee(uImpl, exp1, exp2) {}
+class Implications:public UntypedExp_par_ee
+{
+  public:
+    Implications(UntypedExpNodeKind k,UntypedExp*exp1,UntypedExp*exp2):UntypedExp_par_ee{k,exp1,exp2}{}
+    string setExpressionInString(bool =false) override;
 
 };
 
-class UntypedExp_Biimpl: public UntypedExp_par_ee {
+class UntypedExp_Impl: public Implications {
+public:
+  UntypedExp_Impl(UntypedExp *exp1, UntypedExp *exp2) :
+    Implications(uImpl, exp1, exp2) {}
+    
+};
+
+class UntypedExp_Biimpl: public Implications {
 public:
   UntypedExp_Biimpl(UntypedExp *exp1, UntypedExp *exp2) :
-    UntypedExp_par_ee(uBiimpl, exp1, exp2) {}
+    Implications(uBiimpl, exp1, exp2) {}
 };
 
 class Expression_Declaration: public Declaration {

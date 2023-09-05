@@ -128,7 +128,7 @@ declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	         	if ($1) $$->push_front($1);}
 	      
 	 ;
-declaration : tokASSERT exp tokSEMICOLON{}
+declaration : tokASSERT exp tokSEMICOLON{} 
             
 	| tokGUIDE func_list tokSEMICOLON{}
         	
@@ -187,7 +187,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 
 		| name tokDOT tokINT {check_bits(*$3);$$=new UntypedExp_PathName{uPathName,$1,$3};}
               
-        | tokLPAREN exp tokRPAREN {$$=new UntypedExp_Paren{$2};}
+        | tokLPAREN exp tokRPAREN {$$=new UntypedExp_Paren{$2};} 
          
         | exp tokSUB exp{}
            
@@ -205,7 +205,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
              
         | exp tokGREATEREQ exp{$$ = new UntypedExp_GreaterEq($1, $3);}
                
-        | exp tokGREATER exp {$$ = new UntypedExp_Greater($1, $3);} 
+        | exp tokGREATER exp {$$ = new UntypedExp_Greater($1, $3);}  
               
         | exp tokEQUAL exp{$$ = new UntypedExp_Equal($1, $3);}
                
@@ -243,7 +243,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokLET0 defs tokIN exp   %prec LOW {}
               
-        | tokLET1 defs tokIN exp   %prec LOW{}
+        | tokLET1 defs tokIN exp   %prec LOW{} 
                
         | tokLET2 defs tokIN exp   %prec LOW {}
              
