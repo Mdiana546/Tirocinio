@@ -179,7 +179,7 @@ string UntypedExp_par_unpee::getSymbolOperator()
     return "";
 }
 
-string UntypedExp_par_unpee::setExpressionInString()
+string UntypedExp_par_unpee::setExpressionInString(bool privIsAndOr)
 {
 string result;
   insertDeclarationInString(result);
@@ -314,7 +314,7 @@ string UntypedExp_par_ee_two::getSymbolOperator()
     
 }
 
-string UntypedExp_par_ee_two::setExpressionInString()
+string UntypedExp_par_ee_two::setExpressionInString(bool privIsAndOr)
 {
   string smtFile,e3;
     string e1=exp1->setExpressionInString();
@@ -326,11 +326,14 @@ string UntypedExp_par_ee_two::setExpressionInString()
 
     if(!smtFile.empty())
     {
-      coun++;
-      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+smtFile+")\n";
-      return Hexp.returnMonaVersion()+to_string(coun);
+      if(!privIsAndOr){
+          coun++;
+          smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+smtFile+")\n";
+          return Hexp.returnMonaVersion()+to_string(coun);
+      }
     }
-    return Hexp.returnMonaVersion();
+    cout<<e3;
+    return e3;
 }
 
 
@@ -345,7 +348,7 @@ MonaTypeTag UntypedExp_Name::chekType()
         throw runtime_error{"the element -> "+*(name->str)+ " has not been declared"};
 }
 
-string UntypedExp_Name::setExpressionInString()
+string UntypedExp_Name::setExpressionInString(bool privIsAndOr)
 {
   if(kind==uName)
     return *(name->str);
@@ -355,7 +358,7 @@ string UntypedExp_Name::setExpressionInString()
 
 }
 
-string UntypedExp_PathName::setExpressionInString()
+string UntypedExp_PathName::setExpressionInString(bool privIsAndOr)
 {
   return *(name->str)+"."+*path;
 }
@@ -434,34 +437,48 @@ string UntypedExp_par_ee::getSymbolOperator()
     }
 }
 
-string UntypedExp_par_ee::setExpressionInString()
+string UntypedExp_par_ee::setExpressionInString(bool privIsAndOr)
 {
-    string e1=exp1->setExpressionInString();
-    string e2=exp2->setExpressionInString();
-    HanldeExpressionFormat He1=HanldeExpressionFormat{e1};
-    HanldeExpressionFormat He2=HanldeExpressionFormat{e2};
-    string sE1=He1.returnSMTLIBVersion();
-    string sE2=He2.returnSMTLIBVersion();
+    string e1=exp1->setExpressionInString(true);
+    string e2=exp2->setExpressionInString(true);
+    
+    HanldeExpressionFormat *He1=new HanldeExpressionFormat{e1};
+    HanldeExpressionFormat *He2= new HanldeExpressionFormat{e2};
+    string sE1=He1->returnSMTLIBVersion();
+    string sE2=He2->returnSMTLIBVersion();
+    string e3;
 
-    if(!sE1.empty())
+  
+    if(!sE1.empty() && !sE2.empty())
+    {
+        if(!privIsAndOr){
+          e3=e1+getSymbolOperator()+e2;
+          std::cout<<e3;
+          coun++;
+          HanldeExpressionFormat *He3=new HanldeExpressionFormat{e3};
+          smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+He3->returnSMTLIBVersion()+")\n";
+          return He3->returnMonaVersion()+to_string(coun);
+          delete He3;
+          return e3;
+        }
+   } else if(!sE1.empty())
     {
       coun++;
       smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
-      e1=He1.returnMonaVersion()+to_string(coun);;
+      e1=He1->returnMonaVersion()+to_string(coun);;
 
-    }
-
-    if(!sE2.empty())
+    }else if(!sE2.empty())
     {
       coun++;
       smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE2+")\n";
-      e2=He2.returnMonaVersion()+to_string(coun);;
+      e2=He2->returnMonaVersion()+to_string(coun);;
     }
-
-    return e1+" "+getSymbolOperator()+" "+e2;
+    delete He1;
+    delete He2;
+    return e1+getSymbolOperator()+e2;
 }
 
-string Membership::setExpressionInString()
+string Membership::setExpressionInString(bool privIsAndOr)
 {
    string e1=exp1->setExpressionInString();
    string e2=exp2->setExpressionInString();
@@ -507,7 +524,7 @@ string UntypedExp_par_ea::getSymbolOperator()
 
 
 
-string UntypedExp_par_ea::setExpressionInString()
+string UntypedExp_par_ea::setExpressionInString(bool privIsAndOr)
 {
       string e=exp->setExpressionInString();
       string ar=aexp->setArithString();
@@ -527,7 +544,7 @@ MonaTypeTag UntypedExp_Set::chekType()
     return Varname2;
 }
 
-string UntypedExp_Set::setExpressionInString()
+string UntypedExp_Set::setExpressionInString(bool privIsAndOr)
 {
   string result;
     
@@ -543,7 +560,7 @@ MonaTypeTag UntypedExp_Boolean::chekType()
 {
   return Boolean;
 }
-string UntypedExp_Boolean::setExpressionInString()
+string UntypedExp_Boolean::setExpressionInString(bool privIsAndOr)
 {
   if(kind==uTrue)
     return "true";
@@ -643,16 +660,16 @@ MonaTypeTag UntypedExp_Dot::chekType()
           " has not been declared"};
 }
 
-string UntypedExp_Dot::setExpressionInString()
+string UntypedExp_Dot::setExpressionInString(bool privIsAndOr)
 {
-    if(kind==uDot)
+    if(kind!=uDotNameUp)
        return *(dotName->name1->str)+"."+*(dotName->name2->str);
 
     return *(dotName->name1->str)+"^"+"."+*(dotName->name2->str);
 
 }
 
-string UntypedExp_DotNameNumber::setExpressionInString()
+string UntypedExp_DotNameNumber::setExpressionInString(bool privIsAndOr)
 {
     return *(dotName->name1->str)+"."+*path+"."+*(dotName->name2->str);
 }
@@ -705,7 +722,7 @@ MonaTypeTag UntypedExp_par_e::chekType()
     throw runtime_error{"incorrect use of not"};
 }
 
-string UntypedExp_par_e::setExpressionInString()
+string UntypedExp_par_e::setExpressionInString(bool privIsAndOr)
 {
   string e=exp->setExpressionInString();
   return "~"+e;
@@ -716,7 +733,7 @@ MonaTypeTag UntypedExp_Int::chekType()
   return Integer;
 }
 
-string UntypedExp_Int::setExpressionInString()
+string UntypedExp_Int::setExpressionInString(bool privIsAndOr)
 {
   return to_string(n);
 }
@@ -726,7 +743,7 @@ MonaTypeTag UntypedExp_Real::chekType()
   return Real;
 }
 
-string UntypedExp_Real::setExpressionInString()
+string UntypedExp_Real::setExpressionInString(bool privIsAndOr)
 {
   return to_string(n);
 }
@@ -736,7 +753,7 @@ MonaTypeTag UntypedExp_Paren::chekType()
   return exp->chekType();
 }
 
-string UntypedExp_Paren::setExpressionInString()
+string UntypedExp_Paren::setExpressionInString(bool privIsAndOr)
 {
   return "("+exp->setExpressionInString()+")";
 }
@@ -800,7 +817,7 @@ MonaTypeTag UntypedExp_Call::chekType()
 
 }
 
-string UntypedExp_Call::setExpressionInString()
+string UntypedExp_Call::setExpressionInString(bool privIsAndOr)
 {
   string list;
     if(!parList->empty()){

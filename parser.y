@@ -183,7 +183,7 @@ declaration : tokASSERT exp tokSEMICOLON{}
 		
         ;
 
-exp     : name {$$ = new UntypedExp_Name(uName,$1);}
+exp     : name {$$ = new UntypedExp_Name(uName,$1);} 
 
 		| name tokDOT tokINT {check_bits(*$3);$$=new UntypedExp_PathName{uPathName,$1,$3};}
               
@@ -193,11 +193,11 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
            
         | exp tokIN exp {$$ = new UntypedExp_In($1, $3);} //new 
               
-        | exp tokNOTIN exp{$$ = new UntypedExp_NotIn($1, $3);} //new
+        | exp tokNOTIN exp{$$ = new UntypedExp_NotIn($1, $3);} //new 
            
         | tokMIN exp{}  
              
-        | tokMAX exp{}
+        | tokMAX exp{} 
                
         | exp tokLESS  exp {$$ = new UntypedExp_Less($1, $3);} 
                
@@ -297,7 +297,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA  
 	  name tokRPAREN{}
 		
-	| tokTREE tokLPAREN exp tokRPAREN{}
+	| tokTREE tokLPAREN exp tokRPAREN{} 
 		
 	| tokTYPE tokLPAREN exp tokCOMMA name tokRPAREN{}
 		
@@ -341,11 +341,11 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 					}
 		}
 	    
-	| tokLPAREN arith_exp tokRPAREN {} 
+	| tokLPAREN arith_exp tokRPAREN {}   
       
 	;
 
-dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};}
+dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};} 
 
 			| name tokDOT tokINT tokDOT name{checkNameIntName(*$3);$$=new UntypedExp_DotNameNumber{new DotName{$1,$5},$3};}
 			

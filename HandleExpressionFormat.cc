@@ -20,7 +20,7 @@ bool HanldeExpressionFormat::isMSODExpression(string &str)
 
 void HanldeExpressionFormat::setP()
 {
-  p['<']=p['>']=p['=']=p[lessEqual]=p[greaterEqual]=p[NotEqual]=1,p['+'] = p['-']=2, p['/'] = p['*'] =p['%']= 3;
+  p['&']=p['|']=1,p['<']=p['>']=p['=']=p[lessEqual]=p[greaterEqual]=p[NotEqual]=2,p['+'] = p['-']=3, p['/'] = p['*'] =p['%']= 4;
 }
 
 void HanldeExpressionFormat::replaceOperator(string oldSubStr,char c)
@@ -35,7 +35,8 @@ void HanldeExpressionFormat::replaceOperator(string oldSubStr,char c)
 
 bool HanldeExpressionFormat::isOperator(char c)
 {
-       if(c=='<' || c=='>' || c=='=' || c==lessEqual || c==greaterEqual|| c==NotEqual || c=='+' || c=='-'|| c=='%' || c=='/' || c=='*')
+    
+       if(c=='<' || c=='>' || c=='=' || c==lessEqual || c==greaterEqual|| c==NotEqual || c=='+' || c=='-'|| c=='%' || c=='/' || c=='*'|| c=='&'|| c=='|')
         return true;
         
       return false;
@@ -101,17 +102,18 @@ root=sN.top();
 }
 
 
-void HanldeExpressionFormat:: deleteParen()
+void HanldeExpressionFormat:: deleteParenAndSpace()
 {
   expression.erase(std::remove(expression.begin(), expression.end(), '('), expression.end());
   expression.erase(std::remove(expression.begin(), expression.end(), ')'), expression.end());
+  expression.erase(std::remove(expression.begin(),expression.end(),' '),expression.end());
 }
 
 HanldeExpressionFormat::HanldeExpressionFormat(string expression):expression{expression},root{nullptr}
 {
   if(isMSODExpression(expression))
   {
-    deleteParen();
+    deleteParenAndSpace();
     replaceOperator("<=",lessEqual);
     replaceOperator(">=",greaterEqual);
     replaceOperator("~=",NotEqual);

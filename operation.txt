@@ -6,11 +6,4 @@ int a,b;
 bool flag;
 real d,e;
 
-pred prova=myVar<myVar2;
-pred prova2()=myVar in B;
-pred prova3(var1 mm,var2 c)=mm in c;
-
-ex1 p1,p2:1+p1.a < 3+p2.a;
-ex1 p1: (p1.flag & true) & (all1 q:q.a>p1.a);
-ex1 p1:p1.flag & f;
-ex0 p:p & A={myVar,myVar2} & prova & prova2() & prova3(myVar,B);
+all1 p1,p2,p3: p1.a+p3.a<p2.a & p2.flag | true;

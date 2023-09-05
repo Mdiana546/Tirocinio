@@ -46,7 +46,7 @@ string checkOperator(string& );
 void setMonaExpression();
 string changePointWithSpace(string);
 bool isANumber(string&);
-void deleteParen();
+void deleteParenAndSpace();
 public:
 
 /*
