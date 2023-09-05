@@ -134,7 +134,7 @@ declaration : tokASSERT exp tokSEMICOLON{}
         	
 	| tokUNIVERSE univs tokSEMICOLON{}
               
-        | tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {}
+        | tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {} 
              
         | tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {}
               
@@ -150,15 +150,15 @@ declaration : tokASSERT exp tokSEMICOLON{}
 		
         | tokPRED name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON {$$=new Predicate_Declaration{$2,$4,$7};}
              
-        | tokPRED name tokEQUAL exp tokSEMICOLON  {}
+        | tokPRED name tokEQUAL exp tokSEMICOLON  {$$=new Predicate_Declaration{$2,new ParList{} ,$4};}
              
-        | tokPRED name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON {}
+        | tokPRED name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON {$$=new Predicate_Declaration{$2,new ParList{} ,$6};} 
             
-        | tokMACRO name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON  {}
+        | tokMACRO name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON  {} 
                
         | tokMACRO name tokEQUAL exp tokSEMICOLON  {}
              
-        | tokMACRO name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON  {}
+        | tokMACRO name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON  {}  
               
         | exp tokSEMICOLON {$$ = new Expression_Declaration($1);}
             
@@ -248,6 +248,8 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
         | tokLET2 defs tokIN exp   %prec LOW {}
              
         | name tokLPAREN name_where_list tokRPAREN {$$=new UntypedExp_Call{$1,$3}; }
+
+		| name tokLPAREN tokRPAREN {$$=new UntypedExp_Call{$1,new VarDeclList()};}
               
         | tokTRUE {$$=new UntypedExp_True();}
             
@@ -338,8 +340,8 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 						$$=new ArithExp_ConstPathDotName{dotwithPath->dotName,dotwithPath->path};
 					}
 		}
-	      
-	| tokLPAREN arith_exp tokRPAREN {}
+	    
+	| tokLPAREN arith_exp tokRPAREN {} 
       
 	;
 
@@ -351,21 +353,21 @@ dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};}
         ;
 
 
-par_list: tokVAR0 name tokCOMMA par_list {$4->push_back(new ParPred{Varname0,$2});$$=$4;}
+par_list: tokVAR0 name tokCOMMA par_list {$4->push_front(new ParPred{Varname0,$2});$$=$4;}
 	    
-	| tokVAR1 name where tokCOMMA par_list{{$5->push_back(new ParPred{Varname1,$2});$$=$5;}} 
+	| tokVAR1 name where tokCOMMA par_list{{$5->push_front(new ParPred{Varname1,$2});$$=$5;}} 
 	      
-	| tokVAR2 name where tokCOMMA par_list{$5->push_back(new ParPred{Varname2,$2});$$=$5;}
+	| tokVAR2 name where tokCOMMA par_list{$5->push_front(new ParPred{Varname2,$2});$$=$5;}
 	
 	| tokUNIVERSE name tokCOMMA par_list {}
 		
 	| name where tokCOMMA par_list {}
 	
-	| tokVAR0 name {$$=new ParList();$$->push_back(new ParPred{Varname0,$name});}
+	| tokVAR0 name {$$=new ParList();$$->push_front(new ParPred{Varname0,$name});}
 		
-	| tokVAR1 name where {$$=new ParList();$$->push_back(new ParPred{Varname1,$name});}
+	| tokVAR1 name where {$$=new ParList();$$->push_front(new ParPred{Varname1,$name});}
 		
-	| tokVAR2 name where{$$=new ParList();$$->push_back(new ParPred{Varname2,$name});}
+	| tokVAR2 name where{$$=new ParList();$$->push_front(new ParPred{Varname2,$name});}
 	      
 	| tokUNIVERSE name {}
 	      

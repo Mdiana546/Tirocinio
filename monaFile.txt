@@ -1,12 +1,17 @@
 ws2s; 
 var1 myVar,myVar2;
 var2 A,B;
-var0 f;
-prova(var1 m)=ex2 Q:
-mm in Q & ( mm in C1);
+var0 f,f2;
+pred prova()=myVar<myVar2;
+pred prova2()=myVar in B;
+pred prova3( var1 mm, var2 c)=mm in c;
 ex1 p1,p2:
- p1 p2 in C2 & prova(myVar);
+ p1 p2 in C1;
 ex1 p1:
-( p1 in C3 & true) & (all1 q:
- p1 q in C4);
+( p1 in C2 & true) & (all1 q:
+ p1 q in C3);
+ex1 p1:
+ p1 in C4 & f;
+ex0 p:
+p & A={myVar2,myVar} & prova & prova2() & prova3(myVar,B);
 

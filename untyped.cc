@@ -58,16 +58,20 @@ void Variable_Declaration::insertDeclarationInSymbolTable()
 
 void Predicate_Declaration::insertDeclarationInSymbolTable()
 {
+     if(!parList->empty()){
       for(ParPred*parPred:*parList)
         symbleTable.insert(new SymbolTable::SymbolEntry{parPred->name,parPred->type});
+     }
 
       MonaTypeTag tag=body->chekType();
 
       if(tag!=Boolean)
         throw runtime_error("formula error in pred "+*name->str);
       
-      for(ParPred*parPred:*parList)
-        symbleTable.remove(parPred->name);
+      if(!parList->empty()){
+        for(ParPred*parPred:*parList)
+          symbleTable.remove(parPred->name);
+      }
 
 
       symbleTable.insert(new SymbolTable::SymbolEntryPred{name,aPred,parList});
@@ -114,26 +118,27 @@ void Variable_Declaration::insertDeclarationInString()
 void Predicate_Declaration::insertDeclarationInString()
 {
   string list;
-    
+    if(!parList->empty()){
       for(ParPred*parPred:*parList)
       {
         switch(parPred->type)
         {
           case Varname0:
-            list+="var0 "+*(parPred->name->str)+",";
+            list+=" var0 "+*(parPred->name->str)+",";
           break;
           case Varname1:
-            list+="var1 "+*(parPred->name->str);
+            list+=" var1 "+*(parPred->name->str)+",";
           break;
           case Varname2:
-            list+="var2 "+*(parPred->name->str);
+            list+=" var2 "+*(parPred->name->str)+",";
           break;
         }
       }
       list.pop_back();
-    MFormat+=*(name->str)+"("+list+")="+body->setExpressionInString()+";\n";
+    }
+    MFormat+="pred "+*(name->str)+"("+list+")="+body->setExpressionInString()+";\n";
 }
-
+ 
 
 MonaTypeTag UntypedExp_par_unpee::chekType()
 {
@@ -334,8 +339,7 @@ MonaTypeTag UntypedExp_Name::chekType()
         if(symbleTable.isPresentEntry(name))
         { 
             SymbolTable::SymbolEntry *entry=symbleTable.lookup(name);
-            if(entry->tag!=aPred)
-              return (symbleTable.lookup(name))->tag;
+            return (symbleTable.lookup(name))->tag;
         }
         
         throw runtime_error{"the element -> "+*(name->str)+ " has not been declared"};
@@ -382,8 +386,10 @@ MonaTypeTag UntypedExp_par_ee::chekType()
         MonaTypeTag e2=exp2->chekType();
 
           if(kind==uAnd || kind==uOr){
-            if((e1==Varname0 || e1==Boolean) &&  (e2==Varname0 || e2==Boolean))
+            
+            if((e1==Varname0 || e1==Boolean ||  e1==aPred) &&  (e2==Varname0 || e2==Boolean||  e2==aPred)){
                 return Boolean;
+            }
           }
           else if(kind==uIn || kind==uNotIn)
           {
@@ -738,13 +744,18 @@ string UntypedExp_Paren::setExpressionInString()
 
 UntypedExp_Call::UntypedExp_Call(Name*name,VarDeclList*decList):UntypedExp{uCall},name{name}
 {
+ if(!decList->empty()){
   parList=new ParList{};
     for(VarDecl*decl:*decList)
         parList->push_back(new ParPred{nu,decl->name});
+ }else
+    parList=new ParList{};
+
 }
 
 void UntypedExp_Call::setParList()
 {
+  if(!parList->empty()){
       for(ParPred *parPred:*parList)
       {
         if(symbleTable.isPresentEntry(parPred->name))
@@ -752,6 +763,7 @@ void UntypedExp_Call::setParList()
         else 
           throw runtime_error{"the element-> "+*parPred->name->str+" was not declared"};
       }
+  }
 
 }
 
@@ -759,13 +771,14 @@ void UntypedExp_Call::setParList()
 MonaTypeTag UntypedExp_Call::chekType()
 {
       setParList();
-
       if(symbleTable.isPresentEntry(name))
       {
         SymbolTable::SymbolEntry*entry=symbleTable.lookup(name);
           if(entry->tag==aPred)
           {
             SymbolTable::SymbolEntryPred *entryPred=static_cast<SymbolTable::SymbolEntryPred*>(entry);
+
+          
             if(parList->size()==entryPred->parList->size())
             {
                 auto t1=parList->begin();
@@ -773,8 +786,9 @@ MonaTypeTag UntypedExp_Call::chekType()
                 while(t1!=parList->end() && t2!=entryPred->parList->end())
                 {
 
-                  if((*t1)->type!=(*t2)->type)
+                  if((*t1)->type!=(*t2)->type){
                       throw runtime_error{"pred->"+*name->str+" was not declared"};
+                  }
                   ++t1;
                   ++t2;
                 }
@@ -789,11 +803,12 @@ MonaTypeTag UntypedExp_Call::chekType()
 string UntypedExp_Call::setExpressionInString()
 {
   string list;
-
+    if(!parList->empty()){
       for(ParPred *parPred:*parList)
         list+=*parPred->name->str+",";
 
       list.pop_back();
+    }
 
       return *name->str+"("+list+")";
 }
