@@ -83,7 +83,7 @@ ParList*parList;
 %type <varDeclList> name_where_list set_body non_empty_set_body;  
 %type <parList> par_list;
 
-%nonassoc LOW  
+%nonassoc LOW    
 %nonassoc tokCOLON
 %right tokBIIMPL
 %right tokIMPL
