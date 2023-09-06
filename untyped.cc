@@ -321,7 +321,6 @@ string UntypedExp_par_ee_two::setExpressionInString(bool privIsAndOr)
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
     e3=e1+getSymbolOperator()+e2;
-    cout<<e3<<endl;
     
     HanldeExpressionFormat Hexp{e3};
     smtFile=Hexp.returnSMTLIBVersion();
@@ -756,7 +755,6 @@ MonaTypeTag UntypedExp_par_e::chekType()
 string UntypedExp_par_e::setExpressionInString(bool privIsAndOr)
 {
   string e=exp->setExpressionInString(false);
-  cout<<e<<endl;
  return "~"+e;
   
 }

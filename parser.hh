@@ -158,7 +158,7 @@ double doubleVal;
 std::string *st;
 DeclarationList* declList;
 Declaration *declaration;
-UntypedExp *untypedExp;
+UntypedExp *untypedExp; 
 ArithExp *arithExp;
 Name *name;
 UntypedExp_Dot*UntypedExpDotName;

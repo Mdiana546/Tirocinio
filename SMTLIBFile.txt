@@ -1,4 +1,4 @@
 (declare-datatypes () ((Data (mk-state (a Int)  (b Int)  (flag Bool)  (d Real)  (e Real) ))))
 (define-fun C1((data Data) (data0 Data) (data1 Data)) Bool 
-(And (flag data) (flag data)))
+(Or (>= (+ (d data) 1.500000) (+ (d data) 2.200000)) (flag data)))
 

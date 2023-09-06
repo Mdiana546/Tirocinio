@@ -10,7 +10,7 @@
 
 name		[a-zA-Z0-9_'\$]+
 whitespace	[ \t\r\f]+
-RealNumeral [1-9]+","[0-9]+
+RealNumeral [1-9]+"."[0-9]+
 numeral		[0-9]+
 endLine     [.*\n]
 %%

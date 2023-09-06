@@ -195,20 +195,25 @@ string HanldeExpressionFormat:: checkOperator(string& c)
 
 bool HanldeExpressionFormat::isANumber(string& str)
 {
-     for(int index=0;index<str.length();index)
+          try
           {
-              if(isalpha(str[index]))
-                return false;
+            double d=std::stod(str);
           }
-        return true;
+          catch(const std::invalid_argument&)
+          {
+            return false;
+          }
+          
+      return true;
 }
 
 string HanldeExpressionFormat::generateSMTLIB(Node*node)
 { 
     	if(node->left ==nullptr && node->right == nullptr){
         string result;
-            if(!isANumber(node->data))
+            if(!isANumber(node->data)){
 	             result=changePointWithSpace(node->data);
+            }
             else 
               result=node->data;
           return result;

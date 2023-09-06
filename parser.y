@@ -40,7 +40,7 @@ double doubleVal;
 std::string *st;
 DeclarationList* declList;
 Declaration *declaration;
-UntypedExp *untypedExp;
+UntypedExp *untypedExp; 
 ArithExp *arithExp;
 Name *name;
 UntypedExp_Dot*UntypedExpDotName;
@@ -223,7 +223,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
         
   		| dotExp {$$=$1;}
   	
-        | tokUNIVROOT tokLPAREN name tokRPAREN {}
+        | tokUNIVROOT tokLPAREN name tokRPAREN {}  
               
         | tokUNIVROOT {}
                
