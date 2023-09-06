@@ -185,9 +185,9 @@ string HanldeExpressionFormat:: checkOperator(string& c)
     else if(c==string(1,NotEqual))
       return "~=";
     else if(c=="&")
-      return "and";
+      return "And";
     else if(c=="|")
-      return "or";
+      return "Or";
     else
       return c;
       
