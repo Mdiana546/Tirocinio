@@ -54,10 +54,12 @@ public:
   virtual ~UntypedExp() {};
   
    virtual MonaTypeTag chekType() = 0;
-   virtual string setExpressionInString(bool =false)=0;
+   virtual string setExpressionInString()=0;
+   virtual string getNameParameter(){return "";}
 
   UntypedExpNodeKind kind;
 };
+
 
 class ArithExp {
 public:
@@ -67,6 +69,7 @@ public:
 
   virtual  MonaTypeTag evaluate() = 0;
   virtual string setArithString()=0;
+  virtual string getNameParameter(){return "";}
 
   MonaTypeTag kind;
 };
@@ -123,7 +126,7 @@ public:
   void deleteElementSymbleTable();
   void insertDeclarationInString(string&);
   string getSymbolOperator();
-  string setExpressionInString(bool =false) override;
+  string setExpressionInString() override;
   MonaTypeTag chekType() override;
   
 
@@ -140,7 +143,7 @@ public:
     UntypedExp(k), exp1(e1), exp2(e2) {}
   virtual ~UntypedExp_par_ee() {delete exp1; delete exp2;}
 
-  string setExpressionInString(bool =false) override;
+  string setExpressionInString() override;
   MonaTypeTag chekType() override;
   virtual string getSymbolOperator();
 
@@ -155,9 +158,10 @@ class UntypedExp_par_ee_two: public UntypedExp_par_ee
 		    UntypedExp *e1, 
 		    UntypedExp *e2):UntypedExp_par_ee{k,e1,e2}{}
 
-  string setExpressionInString(bool =false) override;
+  string setExpressionInString() override;
   MonaTypeTag chekType() override;
   string getSymbolOperator() override;
+  void controlNameParameter();
 
 
 };
@@ -273,7 +277,7 @@ class Membership:public UntypedExp_par_ee
   public:
     Membership(UntypedExpNodeKind k,UntypedExp*exp1,UntypedExp*exp2):UntypedExp_par_ee{k,exp1,exp2}{}
 
-    string setExpressionInString(bool =false) override;
+    string setExpressionInString() override;
 };
 
 class UntypedExp_In: public Membership {
@@ -289,25 +293,19 @@ public:
     Membership(uNotIn, exp1, exp2) {}   
 };
 
-class Implications:public UntypedExp_par_ee
-{
-  public:
-    Implications(UntypedExpNodeKind k,UntypedExp*exp1,UntypedExp*exp2):UntypedExp_par_ee{k,exp1,exp2}{}
-    string setExpressionInString(bool =false) override;
 
-};
 
-class UntypedExp_Impl: public Implications {
+class UntypedExp_Impl: public UntypedExp_par_ee {
 public:
   UntypedExp_Impl(UntypedExp *exp1, UntypedExp *exp2) :
-    Implications(uImpl, exp1, exp2) {}
+    UntypedExp_par_ee(uImpl, exp1, exp2) {}
     
 };
 
-class UntypedExp_Biimpl: public Implications {
+class UntypedExp_Biimpl: public UntypedExp_par_ee {
 public:
   UntypedExp_Biimpl(UntypedExp *exp1, UntypedExp *exp2) :
-    Implications(uBiimpl, exp1, exp2) {}
+    UntypedExp_par_ee(uBiimpl, exp1, exp2) {}
 };
 
 class Expression_Declaration: public Declaration {
@@ -334,7 +332,8 @@ public:
   virtual ~UntypedExp_Name() {delete name;}
   
   MonaTypeTag chekType() override;
-  string setExpressionInString(bool =false) override;
+  string setExpressionInString() override;
+  string getNameParameter() override;
   
   Name *name;
 };
@@ -345,7 +344,7 @@ class UntypedExp_PathName:public UntypedExp_Name
     UntypedExp_PathName(UntypedExpNodeKind k,Name*name,string *s):UntypedExp_Name{k,name},path{s}{}
 
     MonaTypeTag chekType() override;
-    string setExpressionInString(bool =false) override;
+    string setExpressionInString() override;
 
     string *path;
 };
@@ -367,7 +366,8 @@ public:
   virtual ~UntypedExp_Dot(){delete dotName;}
 
   MonaTypeTag chekType() override;
-  string setExpressionInString(bool =false)override;
+  string setExpressionInString ()override;
+  string getNameParameter() override;
 
   DotName *dotName;
 
@@ -379,13 +379,6 @@ class UntypedExp_DotName: public UntypedExp_Dot
   UntypedExp_DotName(DotName * dotName):UntypedExp_Dot{uDotName,dotName}{}
 };
 
-class UntypedExp_DotNameUp:public UntypedExp_Dot
-{
-  public:
-    UntypedExp_DotNameUp(DotName*dotName):UntypedExp_Dot{uDotNameUp,dotName}{}
-
-};
-
 
 class UntypedExp_DotNameNumber:public UntypedExp_Dot
 {
@@ -393,7 +386,7 @@ class UntypedExp_DotNameNumber:public UntypedExp_Dot
     UntypedExp_DotNameNumber(DotName*dotName,string *s):UntypedExp_Dot{uDotNameNumber,dotName},path{s}{}
     virtual ~UntypedExp_DotNameNumber(){delete path;}
     
-     string setExpressionInString(bool =false) override;
+     string setExpressionInString() override;
  
     string *path;
     
@@ -406,7 +399,7 @@ class UntypedExp_Call:public UntypedExp
     virtual ~UntypedExp_Call(){delete name,delete parList;}
 
     MonaTypeTag chekType() override;
-    string setExpressionInString(bool =false) override;
+    string setExpressionInString() override;
     void setParList();
 
   Name*name;
@@ -463,21 +456,27 @@ public:
  
 };
 
-class UntypedExp_par_ea: public UntypedExp {
-public:
+class UntypedExp_par_ea: public UntypedExp{
+
+  public:
+
   UntypedExp_par_ea(UntypedExpNodeKind k,
 		    UntypedExp *e,
 		    ArithExp *ae) :
     UntypedExp(k), exp(e), aexp(ae) {}
   virtual ~UntypedExp_par_ea()
-  {delete exp; delete aexp;}
+  {delete exp; delete aexp,delete name;}
 
   string getSymbolOperator();
-  string setExpressionInString(bool =false) override;
-   MonaTypeTag chekType() override;
+  string setExpressionInString() override;
+  MonaTypeTag chekType() override;
+  string getNameParameter() override;
+  void controlNameParameter();
+
 
   UntypedExp *exp;
   ArithExp *aexp;
+  Name*name;
 };
 
 
@@ -525,7 +524,7 @@ public:
   virtual ~UntypedExp_Set() {delete nameList;}
 
   MonaTypeTag chekType() override;
-  string setExpressionInString(bool =false) override;
+  string setExpressionInString() override;
 
   VarDeclList*nameList;
 };
@@ -537,7 +536,7 @@ class UntypedExp_Boolean:public UntypedExp
    UntypedExp_Boolean(UntypedExpNodeKind k):UntypedExp{k}{}
 
    MonaTypeTag chekType()override;
-   string setExpressionInString(bool =false) override;
+   string setExpressionInString() override;
 };
 
 class UntypedExp_True: public UntypedExp_Boolean {
@@ -560,7 +559,7 @@ public:
     UntypedExp(uInt), n(c) {}
 
     MonaTypeTag chekType() override;
-  string setExpressionInString(bool =false) override;
+  string setExpressionInString() override;
   
     int n;
 };
@@ -571,7 +570,7 @@ public:
     UntypedExp(udouble), n(c) {}
 
     MonaTypeTag chekType() override;
-    string setExpressionInString(bool =false) override;
+    string setExpressionInString() override;
   
     double n;
 };
@@ -584,7 +583,7 @@ class UntypedExp_Paren:public UntypedExp
     virtual ~UntypedExp_Paren(){delete exp;}
 
     MonaTypeTag chekType() override;
-    string setExpressionInString(bool =false) override;
+    string setExpressionInString() override;
 
     UntypedExp *exp;
 
@@ -595,14 +594,17 @@ public:
 
   ArithExp_par_aa(MonaTypeTag k, ArithExp *a1, ArithExp *a2) :
     ArithExp(k), aexp1(a1), aexp2(a2) {}
-  virtual ~ArithExp_par_aa() {delete aexp1; delete aexp2;}
+  virtual ~ArithExp_par_aa() {delete aexp1; delete aexp2,delete name;}
   
   string setArithString() override;
   MonaTypeTag evaluate() override;
   string getSymbolOperator();
+  string getNameParameter() override;
+  void controlNameParameter();
 
   ArithExp *aexp1;
   ArithExp *aexp2;
+  Name *name;
 };
 
 class ArithExp_Add: public ArithExp_par_aa  {
@@ -657,6 +659,7 @@ class ArithExp_Real:public ArithExp
 
   MonaTypeTag evaluate()override;
   string setArithString() override;
+
   double n;
 
 };
@@ -669,6 +672,7 @@ public:
 
   MonaTypeTag evaluate()override;
   string setArithString() override;
+  string getNameParameter() override;
 
   DotName *dotName;
 };
@@ -697,7 +701,7 @@ public:
   virtual ~UntypedExp_par_e() {delete exp;}
   
   MonaTypeTag chekType() override;
-  string setExpressionInString(bool =false) override;
+  string setExpressionInString() override;
 
   UntypedExp *exp;
 };

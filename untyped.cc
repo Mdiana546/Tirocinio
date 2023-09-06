@@ -180,7 +180,7 @@ string UntypedExp_par_unpee::getSymbolOperator()
     return "";
 }
 
-string UntypedExp_par_unpee::setExpressionInString(bool privIsAndOr)
+string UntypedExp_par_unpee::setExpressionInString()
 {
 string result;
   insertDeclarationInString(result);
@@ -238,7 +238,7 @@ void UntypedExp_par_unpee::insertDecInSymbolTable()
 
     for(VarDecl*dec : *nameList)
         {
-          symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,type});
+          symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,type,aExp});
         }
 }
 
@@ -263,12 +263,15 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
         switch(e1)
         {
             case Varname1:
+               controlNameParameter();
                 return Boolean;
              break;
              case Integer:
+                controlNameParameter();
                 return Boolean;
                break;
             case Real:
+                controlNameParameter();
                 return Boolean;
               break;
             default:
@@ -277,7 +280,14 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
                   switch(e1)
                   {
                     case Varname2:
-                      return Boolean;
+                      if(exp1->kind==uSet || exp2->kind==uSet)
+                        return Boolean;
+                      else
+                      {
+                        controlNameParameter();
+                        return Boolean;
+
+                      }
                     break;
                   }
                 }
@@ -286,6 +296,21 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
     }
     string symbolOperator=getSymbolOperator();
     throw runtime_error{"the two operands for operator -> "+symbolOperator+" are of different type or are of the wrong type"};
+}
+
+void UntypedExp_par_ee_two::controlNameParameter()
+{
+
+    if(!exp1->getNameParameter().empty())
+    {
+      if(!exp2->getNameParameter().empty())
+      {
+        if(exp1->getNameParameter()!=exp2->getNameParameter())
+          throw runtime_error{"error name3"};
+      }
+        
+    }
+   
 }
 
 string UntypedExp_par_ee_two::getSymbolOperator()
@@ -315,7 +340,7 @@ string UntypedExp_par_ee_two::getSymbolOperator()
     
 }
 
-string UntypedExp_par_ee_two::setExpressionInString(bool privIsAndOr)
+string UntypedExp_par_ee_two::setExpressionInString()
 {
   string smtFile,e3;
     string e1=exp1->setExpressionInString();
@@ -327,11 +352,9 @@ string UntypedExp_par_ee_two::setExpressionInString(bool privIsAndOr)
 
     if(!smtFile.empty())
     {
-      if(!privIsAndOr){
-          coun++;
-          smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+smtFile+")\n";
-          return Hexp.returnMonaVersion()+to_string(coun);
-      }
+        coun++;
+        smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+smtFile+")\n";
+        return Hexp.returnMonaVersion()+to_string(coun);
     }
     return e3;
 }
@@ -348,17 +371,24 @@ MonaTypeTag UntypedExp_Name::chekType()
         throw runtime_error{"the element -> "+*(name->str)+ " has not been declared"};
 }
 
-string UntypedExp_Name::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Name::setExpressionInString()
 {
   if(kind==uName)
     return *(name->str);
 
   return *(name->str)+"^";
-  
 
 }
 
-string UntypedExp_PathName::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Name::getNameParameter()
+{
+    if(symbleTable.lookup(name)->typeEntry==aExp)
+        return *name->str;
+    
+  return "";
+}
+
+string UntypedExp_PathName::setExpressionInString()
 {
   return *(name->str)+"."+*path;
 }
@@ -437,78 +467,35 @@ string UntypedExp_par_ee::getSymbolOperator()
     }
 }
 
-string UntypedExp_par_ee::setExpressionInString(bool privIsAndOr)
+string UntypedExp_par_ee::setExpressionInString()
 {
-    string e1=exp1->setExpressionInString(true);
-    string e2=exp2->setExpressionInString(true);
-    
-    HanldeExpressionFormat *He1=new HanldeExpressionFormat{e1};
-    HanldeExpressionFormat *He2= new HanldeExpressionFormat{e2};
-    string sE1=He1->returnSMTLIBVersion();
-    string sE2=He2->returnSMTLIBVersion();
+    string e1=exp1->setExpressionInString();
+    string e2=exp2->setExpressionInString();
+    HanldeExpressionFormat He1=HanldeExpressionFormat{e1};
+    HanldeExpressionFormat He2=HanldeExpressionFormat{e2};
+    string sE1=He1.returnSMTLIBVersion();
+    string sE2=He2.returnSMTLIBVersion();
 
-  
-    if(!sE1.empty() && !sE2.empty())
-    {
-        if(!privIsAndOr){
-          string e3;
-          e3=e1+getSymbolOperator()+e2;
-          coun++;
-          HanldeExpressionFormat *He3=new HanldeExpressionFormat{e3};
-         smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+He3->returnSMTLIBVersion()+")\n";
-          e3=He3->returnMonaVersion()+to_string(coun);
-          delete He3;
-          return e3;
+       if(!sE1.empty())
+       {
+        coun++;
+        smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
+        e1=He1.returnMonaVersion()+to_string(coun);
+       }
 
-        }
-   } else if(!sE1.empty())
-    {
-      coun++;
-      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
-      e1=He1->returnMonaVersion()+to_string(coun);;
-
-    }else if(!sE2.empty())
-    {
+      if(!sE2.empty())
+      {
       coun++;
       smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE2+")\n";
-      e2=He2->returnMonaVersion()+to_string(coun);;
-    }
-    delete He1;
-    delete He2;
-    return e1+" "+getSymbolOperator()+" "+e2;
-}
+      e2=He2.returnMonaVersion()+to_string(coun);;
+      }
 
-string Implications::setExpressionInString(bool privIsAndOr)
-{
-  string e1=exp1->setExpressionInString(true);
-  string e2=exp2->setExpressionInString(true);
-
-  HanldeExpressionFormat *He1=new HanldeExpressionFormat{e1};
-  HanldeExpressionFormat *He2= new HanldeExpressionFormat{e2};
-
-  string sE1=He1->returnSMTLIBVersion();
-  string sE2=He2->returnSMTLIBVersion();
-
-  if(!sE1.empty())
-    {
-      coun++;
-      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
-      e1=He1->returnMonaVersion()+to_string(coun);;
-    }
-     if(!sE2.empty())
-    {
-      coun++;
-      smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE2+")\n";
-      e2=He2->returnMonaVersion()+to_string(coun);;
-    }
-    delete He1;
-    delete He2;
     return e1+" "+getSymbolOperator()+" "+e2;
 
 }
 
 
-string Membership::setExpressionInString(bool privIsAndOr)
+string Membership::setExpressionInString()
 {
    string e1=exp1->setExpressionInString();
    string e2=exp2->setExpressionInString();
@@ -523,11 +510,37 @@ MonaTypeTag UntypedExp_par_ea::chekType()
     if(e==ar)
     {
         if(e==Integer || e==Real)
-            return e;  
+        {
+              controlNameParameter();
+               return e;  
+         }
+     }
       
-    }
   string symbolOperator=getSymbolOperator();
   throw runtime_error{symbolOperator+" operation error"};
+}
+
+void UntypedExp_par_ea::controlNameParameter()
+{
+    if(!exp->getNameParameter().empty())
+    {
+      if(!aexp->getNameParameter().empty())
+      {
+        cout<<exp->getNameParameter()<<endl;
+        cout<<aexp->getNameParameter()<<endl;
+        if(exp->getNameParameter()!=aexp->getNameParameter())
+          throw runtime_error{"error name1"};
+      }
+         cout<<exp->getNameParameter()<<endl;
+         this->name=new Name{new string{exp->getNameParameter()}};
+         return;
+    }
+  else if(!aexp->getNameParameter().empty()){
+     this->name=new Name{new string{aexp->getNameParameter()}};
+     return;
+  }
+
+ this->name=nullptr;
 }
 
 string UntypedExp_par_ea::getSymbolOperator()
@@ -554,11 +567,18 @@ string UntypedExp_par_ea::getSymbolOperator()
 
 
 
-string UntypedExp_par_ea::setExpressionInString(bool privIsAndOr)
+string UntypedExp_par_ea::setExpressionInString()
 {
       string e=exp->setExpressionInString();
       string ar=aexp->setArithString();
       return e+getSymbolOperator()+ar;
+}
+
+string UntypedExp_par_ea::getNameParameter()
+{
+    if(name!=nullptr)
+        return *name->str;
+    return "";
 }
 
 MonaTypeTag UntypedExp_Set::chekType()
@@ -574,7 +594,7 @@ MonaTypeTag UntypedExp_Set::chekType()
     return Varname2;
 }
 
-string UntypedExp_Set::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Set::setExpressionInString()
 {
   string result;
     
@@ -590,7 +610,7 @@ MonaTypeTag UntypedExp_Boolean::chekType()
 {
   return Boolean;
 }
-string UntypedExp_Boolean::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Boolean::setExpressionInString()
 {
   if(kind==uTrue)
     return "true";
@@ -605,11 +625,33 @@ MonaTypeTag ArithExp_par_aa::evaluate()
 
     if(ae1==ae2)
     {
-        if(ae1==Integer || ae1==Real)
-            return ae1; 
+        if(ae1==Integer || ae1==Real){
+              controlNameParameter();
+              return ae1;
+            }
     }
     string symbolOperator=getSymbolOperator();
     throw runtime_error{symbolOperator+"operation error"};
+}
+
+void ArithExp_par_aa::controlNameParameter()
+{
+  if(!aexp1->getNameParameter().empty())
+  {
+      if(!aexp2->getNameParameter().empty())
+      {
+        if(aexp1->getNameParameter()!=aexp2->getNameParameter())
+          throw runtime_error{"error name2"};
+      }
+         this->name=new Name{new string{aexp1->getNameParameter()}};
+         return;
+  }
+  else if(!aexp2->getNameParameter().empty()){
+    this->name=new Name{new string{aexp2->getNameParameter()}};
+    return;
+  }
+
+ this->name=nullptr;
 }
 
 string ArithExp_par_aa::getSymbolOperator()
@@ -645,6 +687,14 @@ MonaTypeTag ArithExp_Integer::evaluate()
   return Integer;
 }
 
+string ArithExp_par_aa::getNameParameter()
+{
+    if(name!=nullptr)
+      return *name->str;
+
+  return "";
+}
+
 string ArithExp_Integer::setArithString()
 {
   return to_string(n);
@@ -676,6 +726,13 @@ string ArithExp_Const::setArithString()
   return *(dotName->name1->str)+"."+*(dotName->name2->str);
 }
 
+string ArithExp_Const::getNameParameter()
+{
+    if(symbleTable.lookup(dotName->name1)->typeEntry==aExp)
+        return *dotName->name1->str;
+    return "";
+}
+
 string ArithExp_ConstPathDotName::setArithString()
 {
   return *(dotName->name1->str)+"."+*path+"."+*(dotName->name2->str);
@@ -690,7 +747,7 @@ MonaTypeTag UntypedExp_Dot::chekType()
           " has not been declared"};
 }
 
-string UntypedExp_Dot::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Dot::setExpressionInString()
 {
     if(kind!=uDotNameUp)
        return *(dotName->name1->str)+"."+*(dotName->name2->str);
@@ -699,7 +756,16 @@ string UntypedExp_Dot::setExpressionInString(bool privIsAndOr)
 
 }
 
-string UntypedExp_DotNameNumber::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Dot::getNameParameter()
+{
+    if(symbleTable.lookup(dotName->name1)->typeEntry==aExp){
+        return *dotName->name1->str;
+    }
+
+    return "";
+}
+
+string UntypedExp_DotNameNumber::setExpressionInString()
 {
     return *(dotName->name1->str)+"."+*path+"."+*(dotName->name2->str);
 }
@@ -752,9 +818,9 @@ MonaTypeTag UntypedExp_par_e::chekType()
     throw runtime_error{"incorrect use of not"};
 }
 
-string UntypedExp_par_e::setExpressionInString(bool privIsAndOr)
+string UntypedExp_par_e::setExpressionInString()
 {
-  string e=exp->setExpressionInString(false);
+  string e=exp->setExpressionInString();
  return "~"+e;
   
 }
@@ -764,7 +830,7 @@ MonaTypeTag UntypedExp_Int::chekType()
   return Integer;
 }
 
-string UntypedExp_Int::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Int::setExpressionInString()
 {
   return to_string(n);
 }
@@ -774,19 +840,20 @@ MonaTypeTag UntypedExp_Real::chekType()
   return Real;
 }
 
-string UntypedExp_Real::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Real::setExpressionInString()
 {
   return to_string(n);
 }
+
 
 MonaTypeTag UntypedExp_Paren::chekType()
 {
   return exp->chekType();
 }
 
-string UntypedExp_Paren::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Paren::setExpressionInString()
 {
-  return "("+exp->setExpressionInString(privIsAndOr)+")";
+  return "("+exp->setExpressionInString()+")";
 }
 
 
@@ -848,7 +915,7 @@ MonaTypeTag UntypedExp_Call::chekType()
 
 }
 
-string UntypedExp_Call::setExpressionInString(bool privIsAndOr)
+string UntypedExp_Call::setExpressionInString()
 {
   string list;
     if(!parList->empty()){

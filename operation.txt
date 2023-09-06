@@ -8,4 +8,4 @@ real d,e;
 
 pred prova(var1 m,var2 g)=m in g;
 
-all1 p1,p2: p1.d+1.5>=p2.d+2.2 | p2.flag;
+all1 p1,p2,p3: ~(myVar.a+5+10>=p1.a+myVar.a+myVar2.a+p1.0.a) & (myVar.a<myVar2.a) & prova(myVar);

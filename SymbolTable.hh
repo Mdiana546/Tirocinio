@@ -10,7 +10,7 @@ enum MonaTypeTag {
   Varname0, Varname1, Varname2, VarnameTree,
   Parname0, Parname1, Parname2, ParnameU,
   Univname, Predname, Constname, Statespacename,Integer,Boolean,Real,
-  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred
+  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred,aDec,aExp
 };
 
 
@@ -59,7 +59,8 @@ public:
         public:
           Name*name;
           MonaTypeTag tag;
-          SymbolEntry(Name*name,MonaTypeTag tag):name{name},tag{tag}{}
+          MonaTypeTag typeEntry;
+          SymbolEntry(Name*name,MonaTypeTag tag,MonaTypeTag typeEntry =aDec):name{name},tag{tag},typeEntry{typeEntry}{}
           virtual ~SymbolEntry(){delete name;}
     };
 

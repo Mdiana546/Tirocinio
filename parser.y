@@ -37,7 +37,7 @@ void checkNameIntName(string s)
 {
 int intval; 
 double doubleVal;
-std::string *st;
+std::string *st;   
 DeclarationList* declList;
 Declaration *declaration;
 UntypedExp *untypedExp; 
@@ -56,7 +56,7 @@ ParList*parList;
 %token tokBIIMPL tokCOLON tokCOMMA 
 %token tokCONST tokDEFAULT1 tokDEFAULT2 tokDOT tokEMPTY
 %token tokEQUAL tokEX0 tokEX1 tokEX2 tokFALSE tokGREATER 
-%token tokGREATEREQ tokGUIDE tokIMPL tokIN tokINTER 
+%token tokGREATEREQ tokGUIDE tokIMPL tokIN tokINTER  
 %token tokINTERVAL tokLBRACE tokLBRACKET tokLESS 
 %token tokLESSEQ tokLET0 tokLET1 tokLET2
 %token tokLPAREN tokMACRO tokMAX tokMIN tokMINUS
@@ -70,9 +70,9 @@ ParList*parList;
 %token tokINSTATESPACE tokEXECUTE tokTYPE tokSOMETYPE tokVARIANT tokSUCC
 %token tokWS1S tokWS2S tokTREEROOT tokCONSTTREE tokALLPOS
 %token<st> tokNAME
-%token <doubleVal>tokReal tokBool
-%token  tokSTRING
-%token <st> tokINT 
+%token <doubleVal>tokReal tokBool   
+%token  tokSTRING  
+%token <st> tokINT     
 
 %type <declList> declarations;
 %type <declaration> declaration
@@ -128,9 +128,9 @@ declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	         	if ($1) $$->push_front($1);}
 	      
 	 ;
-declaration : tokASSERT exp tokSEMICOLON{} 
+declaration : tokASSERT exp tokSEMICOLON{}  
             
-	| tokGUIDE func_list tokSEMICOLON{}
+	| tokGUIDE func_list tokSEMICOLON{} 
         	
 	| tokUNIVERSE univs tokSEMICOLON{}
               
@@ -271,7 +271,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokEMPTY{}    
 
-		| tokINT {$$ = new UntypedExp_Int(stoi(*$1));}  
+		| tokINT {$$ = new UntypedExp_Int(stoi(*$1));}   
 		
 		|tokReal {$$=new UntypedExp_Real{$1};}
 
@@ -349,7 +349,6 @@ dotExp:		name tokDOT name {$$=new UntypedExp_DotName{new DotName{$1,$3}};}
 
 			| name tokDOT tokINT tokDOT name{checkNameIntName(*$3);$$=new UntypedExp_DotNameNumber{new DotName{$1,$5},$3};}
 			
-			| name tokUP tokDOT name {$$=new UntypedExp_DotNameUp{new DotName{$1,$4}};} 
         ;
 
 
