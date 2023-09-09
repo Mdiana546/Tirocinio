@@ -81,7 +81,7 @@ ParList*parList;
 %type <name> name;
 %type<UntypedExpDotName>dotExp
 %type <varDeclList> name_where_list set_body non_empty_set_body;  
-%type <parList> par_list;
+%type <parList> par_list; 
 
 %nonassoc LOW    
 %nonassoc tokCOLON
@@ -375,7 +375,7 @@ par_list: tokVAR0 name tokCOMMA par_list {$4->push_front(new ParPred{Varname0,$2
 	;
 
 
-defs	: def tokCOMMA defs{} 
+defs	: def tokCOMMA defs{}  
 	
 	| def {}
 		
@@ -425,11 +425,11 @@ name_list: name tokCOMMA name_list{}
 	;
 
 name_where_list: name where tokCOMMA name_where_list
-		{$4->push_front(new VarDecl($1,nullptr)); 
+		{$4->push_front(new VarDecl($1,$2)); 
 		 $$ = $4;} 
 	| name where
 		{$$ = new VarDeclList(); 
-		 $$->push_front(new VarDecl($1,nullptr));}
+		 $$->push_front(new VarDecl($1,$2));}
 	
 	;
 
@@ -457,9 +457,9 @@ univ	: name tokCOLON tokINT{}
 		
 	;
 
-where	: tokWHERE exp{}
+where	: tokWHERE exp{$$=$2;} 
 	
-	| /* empty */{}
+	| /* empty */{$$=nullptr;}
 		
 	;
 
@@ -515,7 +515,7 @@ int main(int argc, char **argv) {
    if (argc > 1) {
       yyin=fopen(argv[1],"r");;
       if (yyin == NULL){
-         std::cout<<"syntax error";
+         std::cout<<"syntax error"; 
       }//end if
    }//end if
 	yyparse(); // Calls yylex() for tokens exp tokPLUS arith_exp {}.

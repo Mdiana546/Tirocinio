@@ -1,8 +1,9 @@
 ws2s; 
-var1 myVar,myVar2;
+var1 myVar,myVar2 where myVar2<myVar;
 var2 A,B;
 var0 f,f2;
-pred prova( var1 m, var2 g)=m in g;
-all1 p1,p2,p3:
-~( myVar myVar2 p1 in C1) & ( myVar myVar2 in C2) & prova(myVar,B);
+pred prova( var1 m, var2 g)=all1 p1,p2:
+ p1 in C1 &  m p1 in C2;
+all1 p1 where  p1 in C3,p2,p3:
+ myVar p1 in C4 &  p2 in C5 & prova(myVar,B);
 

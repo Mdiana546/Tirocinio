@@ -1,11 +1,11 @@
 ws2s; 
-var1 myVar,myVar2;
+var1 myVar,myVar2 where myVar2<myVar;
 var2 A,B;
 var0 f,f2;
 int a,b;
 bool flag;
 real d,e;
 
-pred prova(var1 m,var2 g)=m in g;
+pred prova(var1 m,var2 g)=all1 p1,p2:p1.a<p1.b & m.a<p1.a;
 
-all1 p1,p2,p3: ~(myVar.a+5+10>=p1.a+myVar.a+myVar2.a+p1.0.a) & (myVar.a<myVar2.a) & prova(myVar);
+all1 p1 where p1.a<p1.b,p2,p3: myVar.a+5>=p1.a+myVar.a & p2.a<p2.b & prova(myVar,B);

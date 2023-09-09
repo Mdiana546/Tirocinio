@@ -110,6 +110,8 @@ void Variable_Declaration::insertDeclarationInString()
       for(VarDecl*dec : *decls)
       {
         listELements+=","+*(dec->name->str);
+        if(dec->where!=nullptr)
+          listELements+=" where "+dec->where->setExpressionInString();
       }
       listELements.erase(0,1); //I delete the first colon
       MFormat+=type+" "+listELements+";\n";
@@ -193,8 +195,11 @@ void UntypedExp_par_unpee::insertDeclarationInString(string& result)
   result+=getSymbolOperator();
   string listElements;
 
-    for(VarDecl*dec:*nameList)
-      listElements+=","+*(dec->name->str); 
+    for(VarDecl*dec:*nameList){
+        listElements+=","+*(dec->name->str);
+        if(dec->where!=nullptr)
+            listElements+=" where "+dec->where->setExpressionInString();
+   }
 
      listElements.erase(0,1); //I delete the first colon
      result+=" "+listElements;
@@ -206,7 +211,9 @@ void Variable_Declaration::insertDecInSymbolTable()
 {
    for(VarDecl*dec : *decls)
     {
-      symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,declKind});
+        symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,declKind});
+        if(dec->where!=nullptr)
+          dec->where->chekType();
     }
 }
 
@@ -239,6 +246,9 @@ void UntypedExp_par_unpee::insertDecInSymbolTable()
     for(VarDecl*dec : *nameList)
         {
           symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,type,aExp});
+            if(dec->where!=nullptr)
+                dec->where->chekType();
+              
         }
 }
 
@@ -526,12 +536,10 @@ void UntypedExp_par_ea::controlNameParameter()
     {
       if(!aexp->getNameParameter().empty())
       {
-        cout<<exp->getNameParameter()<<endl;
-        cout<<aexp->getNameParameter()<<endl;
+        
         if(exp->getNameParameter()!=aexp->getNameParameter())
           throw runtime_error{"error name1"};
       }
-         cout<<exp->getNameParameter()<<endl;
          this->name=new Name{new string{exp->getNameParameter()}};
          return;
     }

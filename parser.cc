@@ -2584,7 +2584,7 @@ yyreduce:
 
   case 127: /* name_where_list: name where tokCOMMA name_where_list  */
 #line 428 "parser.y"
-                {(yyvsp[0].varDeclList)->push_front(new VarDecl((yyvsp[-3].name),nullptr)); 
+                {(yyvsp[0].varDeclList)->push_front(new VarDecl((yyvsp[-3].name),(yyvsp[-2].untypedExp))); 
 		 (yyval.varDeclList) = (yyvsp[0].varDeclList);}
 #line 2590 "parser.cc"
     break;
@@ -2592,7 +2592,7 @@ yyreduce:
   case 128: /* name_where_list: name where  */
 #line 431 "parser.y"
                 {(yyval.varDeclList) = new VarDeclList(); 
-		 (yyval.varDeclList)->push_front(new VarDecl((yyvsp[-1].name),nullptr));}
+		 (yyval.varDeclList)->push_front(new VarDecl((yyvsp[-1].name),(yyvsp[0].untypedExp)));}
 #line 2597 "parser.cc"
     break;
 
@@ -2646,13 +2646,13 @@ yyreduce:
 
   case 137: /* where: tokWHERE exp  */
 #line 460 "parser.y"
-                      {}
+                      {(yyval.untypedExp)=(yyvsp[0].untypedExp);}
 #line 2651 "parser.cc"
     break;
 
   case 138: /* where: %empty  */
 #line 462 "parser.y"
-                     {}
+                     {(yyval.untypedExp)=nullptr;}
 #line 2657 "parser.cc"
     break;
 
@@ -2958,7 +2958,7 @@ int main(int argc, char **argv) {
    if (argc > 1) {
       yyin=fopen(argv[1],"r");;
       if (yyin == NULL){
-         std::cout<<"syntax error";
+         std::cout<<"syntax error"; 
       }//end if
    }//end if
 	yyparse(); // Calls yylex() for tokens exp tokPLUS arith_exp {}.
