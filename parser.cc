@@ -2167,7 +2167,7 @@ yyreduce:
 
   case 59: /* exp: tokALL1 universe name_where_list tokCOLON exp  */
 #line 240 "parser.y"
-                                                        {(yyval.untypedExp) = new UntypedExp_All1((yyvsp[-2].varDeclList), (yyvsp[0].untypedExp));}
+                                                        {(yyval.untypedExp) = new UntypedExp_All1((yyvsp[-2].varDeclList), (yyvsp[0].untypedExp));(yyval.untypedExp)->turnTrueIsAll1();}
 #line 2172 "parser.cc"
     break;
 

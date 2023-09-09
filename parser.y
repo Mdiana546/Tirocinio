@@ -31,12 +31,12 @@ void checkNameIntName(string s)
 					yyerror("branch indication error");
 		}
 	}
-%} 
+%}  
 
 %union
 {
 int intval; 
-double doubleVal;
+double doubleVal; 
 std::string *st;   
 DeclarationList* declList;
 Declaration *declaration;
@@ -119,7 +119,7 @@ start	: header declarations{
 		}
 	;
 
-header	: tokWS2S tokSEMICOLON {}
+header	: tokWS2S tokSEMICOLON {}  
 		;
 
 declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
@@ -237,7 +237,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokALL0 name_where_list tokCOLON exp {$$ = new UntypedExp_All0($2, $4);} 
                
-        | tokALL1 universe name_where_list tokCOLON exp {$$ = new UntypedExp_All1($3, $5);} 
+        | tokALL1 universe name_where_list tokCOLON exp {$$ = new UntypedExp_All1($3, $5);$$->turnTrueIsAll1();} 
                
         | tokALL2 universe name_where_list tokCOLON exp {$$ = new UntypedExp_All2($3, $5);} 
               
@@ -275,7 +275,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 		
 		|tokReal {$$=new UntypedExp_Real{$1};}
 
-        | tokLBRACE set_body tokRBRACE{$$ = new UntypedExp_Set($2);}
+        | tokLBRACE set_body tokRBRACE{$$ = new UntypedExp_Set($2);} 
                
         | exp tokUNION exp {}  
              

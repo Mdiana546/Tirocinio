@@ -56,8 +56,10 @@ public:
    virtual MonaTypeTag chekType() = 0;
    virtual string setExpressionInString()=0;
    virtual string getNameParameter(){return "";}
+   virtual void turnTrueIsAll1(){isAll1=true;}
 
   UntypedExpNodeKind kind;
+  bool isAll1=false;
 };
 
 
@@ -70,8 +72,10 @@ public:
   virtual  MonaTypeTag evaluate() = 0;
   virtual string setArithString()=0;
   virtual string getNameParameter(){return "";}
+  virtual void turnTrueIsAll1() {isAll1=true;}
 
   MonaTypeTag kind;
+  bool isAll1=false;
 };
 
 class VarDecl {
@@ -146,6 +150,8 @@ public:
   string setExpressionInString() override;
   MonaTypeTag chekType() override;
   virtual string getSymbolOperator();
+  void turnTrueIsAll1() override;
+  
 
   UntypedExp *exp1;
   UntypedExp *exp2;
@@ -161,6 +167,7 @@ class UntypedExp_par_ee_two: public UntypedExp_par_ee
   string setExpressionInString() override;
   MonaTypeTag chekType() override;
   string getSymbolOperator() override;
+  void turnTrueIsAll1()override;
   void controlNameParameter();
 
 
@@ -204,6 +211,7 @@ public:
   UntypedExp_All1(VarDeclList *d, 
 		  UntypedExp *exp) :
     UntypedExp_par_unpee(all1, d, exp) {} 
+    void turnTrueIsAll1() override;
     
 };
 
@@ -471,6 +479,7 @@ class UntypedExp_par_ea: public UntypedExp{
   string setExpressionInString() override;
   MonaTypeTag chekType() override;
   string getNameParameter() override;
+  void turnTrueIsAll1() override;
   void controlNameParameter();
 
 
@@ -581,9 +590,10 @@ class UntypedExp_Paren:public UntypedExp
   public:
     UntypedExp_Paren(UntypedExp *exp):UntypedExp{uParen},exp{exp}{};
     virtual ~UntypedExp_Paren(){delete exp;}
-
+ 
     MonaTypeTag chekType() override;
     string setExpressionInString() override;
+    void turnTrueIsAll1() override;
 
     UntypedExp *exp;
 
@@ -600,6 +610,7 @@ public:
   MonaTypeTag evaluate() override;
   string getSymbolOperator();
   string getNameParameter() override;
+  void turnTrueIsAll1()  override;
   void controlNameParameter();
 
   ArithExp *aexp1;
@@ -702,6 +713,7 @@ public:
   
   MonaTypeTag chekType() override;
   string setExpressionInString() override;
+  void turnTrueIsAll1() override;
 
   UntypedExp *exp;
 };

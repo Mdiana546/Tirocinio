@@ -1,6 +1,6 @@
 #include "untyped.hh"
 SymbolTable symbleTable{};
-string MFormat="ws2s; \n";
+string MFormat;
 HandleDeclarationFormat Hdeclaration{};
 string smT;
 int coun=0;
@@ -49,6 +49,17 @@ void MonaUntypedAST::createStrings()
     smtLibDeclaration+="\n"+smT;
     smT=smtLibDeclaration;
   }
+string constraintVar;
+  for(int i=1;i<=coun;i++)
+    constraintVar+=", C"+to_string(i);
+
+constraintVar.erase(0,1);
+constraintVar="var2"+constraintVar+";\n";
+MFormat="ws2s;\n"+constraintVar+MFormat;
+
+
+  
+
 }
 
 void Variable_Declaration::insertDeclarationInSymbolTable()
@@ -207,6 +218,13 @@ void UntypedExp_par_unpee::insertDeclarationInString(string& result)
 
 }
 
+void UntypedExp_All1::turnTrueIsAll1()
+{
+  UntypedExp::turnTrueIsAll1();
+  exp->turnTrueIsAll1();
+}
+
+
 void Variable_Declaration::insertDecInSymbolTable()
 {
    for(VarDecl*dec : *decls)
@@ -273,6 +291,7 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
         switch(e1)
         {
             case Varname1:
+              if(isAll1)
                controlNameParameter();
                 return Boolean;
              break;
@@ -294,9 +313,9 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
                         return Boolean;
                       else
                       {
-                        controlNameParameter();
+                        if(isAll1)
+                          controlNameParameter();
                         return Boolean;
-
                       }
                     break;
                   }
@@ -368,7 +387,12 @@ string UntypedExp_par_ee_two::setExpressionInString()
     }
     return e3;
 }
-
+void UntypedExp_par_ee_two::turnTrueIsAll1()
+{
+  UntypedExp::turnTrueIsAll1();
+  exp1->turnTrueIsAll1();
+  exp2->turnTrueIsAll1();
+}
 
 MonaTypeTag UntypedExp_Name::chekType()
 {
@@ -504,7 +528,12 @@ string UntypedExp_par_ee::setExpressionInString()
 
 }
 
-
+void UntypedExp_par_ee::turnTrueIsAll1()
+{
+  UntypedExp::turnTrueIsAll1();
+  exp1->turnTrueIsAll1();
+  exp2->turnTrueIsAll1();
+}
 string Membership::setExpressionInString()
 {
    string e1=exp1->setExpressionInString();
@@ -573,7 +602,12 @@ string UntypedExp_par_ea::getSymbolOperator()
     }
 }
 
-
+void UntypedExp_par_ea::turnTrueIsAll1()
+{
+  UntypedExp::turnTrueIsAll1();
+  exp->turnTrueIsAll1();
+  aexp->turnTrueIsAll1();
+}
 
 string UntypedExp_par_ea::setExpressionInString()
 {
@@ -690,9 +724,18 @@ string ArithExp_par_aa::setArithString()
     string ae2=aexp2->setArithString();
     return ae1+getSymbolOperator()+ae2;
 }
+
+void ArithExp_par_aa::turnTrueIsAll1()
+{
+  ArithExp::turnTrueIsAll1();
+  aexp1->turnTrueIsAll1();
+  aexp2->turnTrueIsAll1();
+}
 MonaTypeTag ArithExp_Integer::evaluate()
 {
-  return Integer;
+  if(isAll1)
+    return Integer;
+  throw runtime_error{"you cannot write in MSO-D"};
 }
 
 string ArithExp_par_aa::getNameParameter()
@@ -716,14 +759,22 @@ string ArithExp_Real::setArithString()
 
 MonaTypeTag ArithExp_Real::evaluate()
 {
+  if(isAll1)
+    return Real;
 
-  return Real;
+  throw runtime_error{"you cannot write in MDO-D"};
 }
 
 MonaTypeTag ArithExp_Const::evaluate()
 {
- if(symbleTable.isPresentEntry(dotName))
+ if(symbleTable.isPresentEntry(dotName)){
+              if(isAll1)
                  return symbleTable.lookup(dotName)->tag;
+              else  
+                throw runtime_error{"you cannot write in MDO-D"};
+
+ }
+
    
   throw runtime_error{"the element->"+*(dotName->name1->str)+" or the element->"+*(dotName->name2->str)+
         " has not been declared"};
@@ -748,8 +799,12 @@ string ArithExp_ConstPathDotName::setArithString()
 
 MonaTypeTag UntypedExp_Dot::chekType()
 {
-     if(symbleTable.isPresentEntry(dotName))
+     if(symbleTable.isPresentEntry(dotName)){
+          if(isAll1)
                  return symbleTable.lookup(dotName)->tag;
+          else 
+            throw runtime_error{"the expression cannot write in MDO-D"};
+     }
               
           throw runtime_error{"the element ->"+*(dotName->name1->str)+" or the element->"+*(dotName->name2->str)+
           " has not been declared"};
@@ -772,6 +827,7 @@ string UntypedExp_Dot::getNameParameter()
 
     return "";
 }
+
 
 string UntypedExp_DotNameNumber::setExpressionInString()
 {
@@ -826,6 +882,12 @@ MonaTypeTag UntypedExp_par_e::chekType()
     throw runtime_error{"incorrect use of not"};
 }
 
+void UntypedExp_par_e::turnTrueIsAll1()
+{
+  UntypedExp::turnTrueIsAll1();
+  exp->turnTrueIsAll1();
+}
+
 string UntypedExp_par_e::setExpressionInString()
 {
   string e=exp->setExpressionInString();
@@ -835,7 +897,10 @@ string UntypedExp_par_e::setExpressionInString()
 
 MonaTypeTag UntypedExp_Int::chekType()
 {
-  return Integer;
+    if(isAll1)
+      return Integer;
+
+      throw runtime_error{"the expression cannot write in MSO-D"};
 }
 
 string UntypedExp_Int::setExpressionInString()
@@ -845,7 +910,10 @@ string UntypedExp_Int::setExpressionInString()
 
 MonaTypeTag UntypedExp_Real::chekType()
 {
-  return Real;
+    if(isAll1)
+       return Real;
+    throw runtime_error{"the expression cannot write in MSO_D"};
+
 }
 
 string UntypedExp_Real::setExpressionInString()
@@ -864,6 +932,11 @@ string UntypedExp_Paren::setExpressionInString()
   return "("+exp->setExpressionInString()+")";
 }
 
+void UntypedExp_Paren::turnTrueIsAll1()
+{
+  UntypedExp::turnTrueIsAll1();
+  exp->turnTrueIsAll1();
+}
 
 UntypedExp_Call::UntypedExp_Call(Name*name,VarDeclList*decList):UntypedExp{uCall},name{name}
 {

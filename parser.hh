@@ -154,7 +154,7 @@ union YYSTYPE
 #line 37 "parser.y"
 
 int intval; 
-double doubleVal;
+double doubleVal; 
 std::string *st;   
 DeclarationList* declList;
 Declaration *declaration;
