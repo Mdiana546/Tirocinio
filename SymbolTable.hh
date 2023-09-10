@@ -59,8 +59,7 @@ public:
         public:
           Name*name;
           MonaTypeTag tag;
-          MonaTypeTag typeEntry;
-          SymbolEntry(Name*name,MonaTypeTag tag,MonaTypeTag typeEntry =aDec):name{name},tag{tag},typeEntry{typeEntry}{}
+          SymbolEntry(Name*name,MonaTypeTag tag):name{name},tag{tag}{}
           virtual ~SymbolEntry(){delete name;}
     };
 

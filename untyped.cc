@@ -263,7 +263,7 @@ void UntypedExp_par_unpee::insertDecInSymbolTable()
 
     for(VarDecl*dec : *nameList)
         {
-          symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,type,aExp});
+          symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,type});
             if(dec->where!=nullptr)
                 dec->where->chekType();
               
@@ -291,8 +291,6 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
         switch(e1)
         {
             case Varname1:
-              if(isAll1)
-               controlNameParameter();
                 return Boolean;
              break;
              case Integer:
@@ -416,10 +414,8 @@ string UntypedExp_Name::setExpressionInString()
 
 string UntypedExp_Name::getNameParameter()
 {
-    if(symbleTable.lookup(name)->typeEntry==aExp)
         return *name->str;
     
-  return "";
 }
 
 string UntypedExp_PathName::setExpressionInString()
@@ -787,9 +783,7 @@ string ArithExp_Const::setArithString()
 
 string ArithExp_Const::getNameParameter()
 {
-    if(symbleTable.lookup(dotName->name1)->typeEntry==aExp)
         return *dotName->name1->str;
-    return "";
 }
 
 string ArithExp_ConstPathDotName::setArithString()
@@ -821,11 +815,8 @@ string UntypedExp_Dot::setExpressionInString()
 
 string UntypedExp_Dot::getNameParameter()
 {
-    if(symbleTable.lookup(dotName->name1)->typeEntry==aExp){
-        return *dotName->name1->str;
-    }
-
-    return "";
+    
+   return *dotName->name1->str;
 }
 
 

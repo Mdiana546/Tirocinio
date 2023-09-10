@@ -119,7 +119,7 @@ start	: header declarations{
 		}
 	;
 
-header	: tokWS2S tokSEMICOLON {}  
+header	: tokWS2S tokSEMICOLON {}   
 		;
 
 declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}

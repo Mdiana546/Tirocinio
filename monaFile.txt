@@ -1,14 +1,15 @@
 ws2s;
-var2 C1, C2, C3, C4, C5, C6;
+var2 C1, C2, C3, C4;
 var1 myVar,myVar2 where myVar<myVar2;
 var2 A,B;
 var0 f,f2;
 pred prova( var1 m, var2 g)=m in g;
-all1 p1 where p1 in B,p2,p3:
-~( p1 in C1 &  p2 in C2 & prova(myVar,B)) & ( p2 in C3) &  p3 in C4;
+all1 p1 where ex1 p2:
+p2>p1,p2,p3:
+ p1 in C1 & p1<myVar &  p1 in C2 & A={myVar2,myVar};
 all2 C:
 C={myVar2,myVar} & f => myVar<myVar2;
 ex1 p:
 p in A & all1 p1:
- p in C5 &  p1 in C6;
+ p in C3 &  p1 in C4;
 
