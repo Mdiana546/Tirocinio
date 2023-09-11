@@ -1,15 +1,19 @@
 ws2s;
-var2 C1, C2, C3, C4;
+var2 C1, C2, C3, C4, C5, C6, C7, C8;
 var1 myVar,myVar2 where myVar<myVar2;
 var2 A,B;
 var0 f,f2;
-pred prova( var1 m, var2 g)=m in g;
+defaultwhere1(p)=all1 p2:
+ p in C1 &  p in C2;
+macro prova()=myVar in A;
 all1 p1 where ex1 p2:
 p2>p1,p2,p3:
- p1 in C1 & p1<myVar &  p1 in C2 & A={myVar2,myVar};
+ p1 in C3 & p1<myVar &  p1 in C4 & A={myVar2,myVar} & ~( p1 in C5);
 all2 C:
-C={myVar2,myVar} & f => myVar<myVar2;
-ex1 p:
+C={myVar2,myVar} & f => myVar<myVar2 & prova;
+ex1 m,p:
 p in A & all1 p1:
- p in C3 &  p1 in C4;
+ p in C6 &  p1 in C7;
+all1 p5:
+ p5 in C8 & true;
 

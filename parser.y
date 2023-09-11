@@ -91,7 +91,7 @@ ParList*parList;
 %left tokAND
 %nonassoc tokNOT
 %nonassoc tokIN tokNOTIN tokSUB
-%nonassoc tokEQUAL tokNOTEQUAL tokGREATER tokGREATEREQ tokLESS tokLESSEQ
+%nonassoc tokEQUAL tokNOTEQUAL tokGREATER tokGREATEREQ tokLESS tokLESSEQ 
 %nonassoc tokMAX tokMIN
 %left tokUNION
 %left tokINTER
@@ -134,9 +134,9 @@ declaration : tokASSERT exp tokSEMICOLON{}
         	
 	| tokUNIVERSE univs tokSEMICOLON{}
               
-        | tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {} 
+        | tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname1, $3, $6);}  
              
-        | tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {}
+        | tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname2, $3, $6);}
               
         | tokCONST name tokEQUAL arith_exp tokSEMICOLON {}
              
@@ -146,23 +146,23 @@ declaration : tokASSERT exp tokSEMICOLON{}
              
         | tokVAR2 universe name_where_list tokSEMICOLON {$$=new Variable_Declaration{Varname2,$3};} 
               
-	| tokTREE universe name_where_list tokSEMICOLON {}
+		| tokTREE universe name_where_list tokSEMICOLON {}
 		
         | tokPRED name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON {$$=new Predicate_Declaration{$2,$4,$7};}
              
-        | tokPRED name tokEQUAL exp tokSEMICOLON  {$$=new Predicate_Declaration{$2,new ParList{} ,$4};}
+        | tokPRED name tokEQUAL exp tokSEMICOLON  {$$=new Predicate_Declaration{$2,new ParList{} ,$4};} 
              
         | tokPRED name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON {$$=new Predicate_Declaration{$2,new ParList{} ,$6};} 
             
-        | tokMACRO name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON  {} 
+        | tokMACRO name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON  {$$=new Macro_Declaration{$2,$4,$7};} 
                
-        | tokMACRO name tokEQUAL exp tokSEMICOLON  {}
+        | tokMACRO name tokEQUAL exp tokSEMICOLON  {$$=new Macro_Declaration{$2,new ParList{},$4};} 
              
-        | tokMACRO name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON  {}  
+        | tokMACRO name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON  {$$=new Macro_Declaration{$2,new ParList{},$6};}   
               
-        | exp tokSEMICOLON {$$ = new Expression_Declaration($1);}
+        | exp tokSEMICOLON {$$ = new Expression_Declaration($1);}       
             
-        | tokVERIFY optstring exp tokSEMICOLON {}
+        | tokVERIFY optstring exp tokSEMICOLON {}      
                
         | tokEXECUTE exp tokSEMICOLON {} 
                

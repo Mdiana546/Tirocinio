@@ -1,10 +1,18 @@
-(declare-datatypes () ((Data (mk-state (a Int)  (b Int)  (flag Bool)  (d Real)  (e Real) ))))
+(declare-datatypes () ((Data (mk-state (a Int)  (b Int)  (c Int)  (flag Bool)  (d Real)  (e Real) ))))
 (define-fun C1((data Data) (data0 Data) (data1 Data)) Bool 
 (< (a data) (b data)))
 (define-fun C2((data Data) (data0 Data) (data1 Data)) Bool 
-(< (a data) (+ 5 10)))
+(< (d data) (e data)))
 (define-fun C3((data Data) (data0 Data) (data1 Data)) Bool 
 (< (a data) (b data)))
 (define-fun C4((data Data) (data0 Data) (data1 Data)) Bool 
+(< (a data) (+ 5 10)))
+(define-fun C5((data Data) (data0 Data) (data1 Data)) Bool 
+(> (+ (a data) (* (b data) (c data))) (/ (b data) (a data))))
+(define-fun C6((data Data) (data0 Data) (data1 Data)) Bool 
 (< (a data) (b data)))
+(define-fun C7((data Data) (data0 Data) (data1 Data)) Bool 
+(< (a data) (b data)))
+(define-fun C8((data Data) (data0 Data) (data1 Data)) Bool 
+(flag data))
 

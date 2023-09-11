@@ -95,7 +95,10 @@ public:
   Declaration(DeclarationKind k) :
     kind(k) {}
   virtual ~Declaration() {};
-		    	    
+
+	virtual void insertDeclarationInSymbolTable()=0;
+  virtual void insertDeclarationInString()=0;
+
   DeclarationKind  kind;
 };
 
@@ -321,6 +324,9 @@ public:
   Expression_Declaration(UntypedExp *e) :
     Declaration(dExpression), exp(e) {}
   virtual ~Expression_Declaration() {delete exp;}
+
+  void insertDeclarationInSymbolTable() override {};
+  void insertDeclarationInString()override{};
   
 
   UntypedExp *exp;
@@ -414,19 +420,36 @@ class UntypedExp_Call:public UntypedExp
   ParList *parList;
 };
 
-class Predicate_Declaration:public Declaration
+
+class Predicate_Macro_Declaration: public Declaration {
+public:
+  Predicate_Macro_Declaration(DeclarationKind k, Name *n, ParList *pars, 
+			      UntypedExp *b) :
+    Declaration(k), name(n), parList(pars), body(b){}
+  virtual ~Predicate_Macro_Declaration() 
+  {delete name; delete parList; delete body;}
+
+
+  void insertDeclarationInSymbolTable()override;
+  void insertDeclarationInString()override;
+  
+  Name *name;
+  ParList *parList;
+  UntypedExp *body;
+};
+
+
+class Predicate_Declaration:public Predicate_Macro_Declaration
 {
   public:
-    Predicate_Declaration(Name*name,ParList*parList,UntypedExp*body):Declaration{dPredicate},name{name},parList{parList},body{body}{}
-  virtual~Predicate_Declaration(){delete name, delete parList,delete body;}
-  
-  void insertDeclarationInSymbolTable();
-  void insertDeclarationInString();
+    Predicate_Declaration(Name*name,ParList*parList,UntypedExp*body):Predicate_Macro_Declaration{dPredicate,name,parList,body}{}
 
-  Name*name;
-  ParList*parList;
-  UntypedExp*body;
+};
 
+class Macro_Declaration: public Predicate_Macro_Declaration {
+public:
+  Macro_Declaration(Name *name,ParList *parList, UntypedExp *body) :
+    Predicate_Macro_Declaration(dMacro, name, parList, body) {}
 };
 
 
@@ -437,8 +460,8 @@ public:
   virtual ~Variable_Declaration() 
   {delete decls;}
 
-void insertDeclarationInSymbolTable();
-void insertDeclarationInString();
+void insertDeclarationInSymbolTable()override;
+void insertDeclarationInString()override;
 
   MonaTypeTag declKind;
   VarDeclList *decls;
@@ -447,7 +470,20 @@ void insertDeclarationInString();
   void insertDecInSymbolTable();
 };
 
+class Default_Declaration: public Declaration {
+public:
+  Default_Declaration(MonaTypeTag k, Name *n, UntypedExp *e) :
+    Declaration(dDefault), type(k), name(n), exp(e) {}
+  virtual ~Default_Declaration() {delete name; delete exp;}
 
+  void insertDeclarationInSymbolTable();
+  void insertDeclarationInString();
+  string getSymbolOperator();
+
+  MonaTypeTag type;
+  Name *name;
+  UntypedExp *exp;
+};
 
 
 

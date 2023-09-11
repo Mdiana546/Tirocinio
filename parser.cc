@@ -1867,13 +1867,13 @@ yyreduce:
 
   case 9: /* declaration: tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON  */
 #line 137 "parser.y"
-                                                                         {}
+                                                                         {(yyval.declaration) = new Default_Declaration(Varname1, (yyvsp[-4].name), (yyvsp[-1].untypedExp));}
 #line 1872 "parser.cc"
     break;
 
   case 10: /* declaration: tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON  */
 #line 139 "parser.y"
-                                                                         {}
+                                                                         {(yyval.declaration) = new Default_Declaration(Varname2, (yyvsp[-4].name), (yyvsp[-1].untypedExp));}
 #line 1878 "parser.cc"
     break;
 
@@ -1903,7 +1903,7 @@ yyreduce:
 
   case 15: /* declaration: tokTREE universe name_where_list tokSEMICOLON  */
 #line 149 "parser.y"
-                                                        {}
+                                                                {}
 #line 1908 "parser.cc"
     break;
 
@@ -1927,19 +1927,19 @@ yyreduce:
 
   case 19: /* declaration: tokMACRO name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON  */
 #line 157 "parser.y"
-                                                                                {}
+                                                                                {(yyval.declaration)=new Macro_Declaration{(yyvsp[-6].name),(yyvsp[-4].parList),(yyvsp[-1].untypedExp)};}
 #line 1932 "parser.cc"
     break;
 
   case 20: /* declaration: tokMACRO name tokEQUAL exp tokSEMICOLON  */
 #line 159 "parser.y"
-                                                   {}
+                                                   {(yyval.declaration)=new Macro_Declaration{(yyvsp[-3].name),new ParList{},(yyvsp[-1].untypedExp)};}
 #line 1938 "parser.cc"
     break;
 
   case 21: /* declaration: tokMACRO name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON  */
 #line 161 "parser.y"
-                                                                       {}
+                                                                       {(yyval.declaration)=new Macro_Declaration{(yyvsp[-5].name),new ParList{},(yyvsp[-1].untypedExp)};}
 #line 1944 "parser.cc"
     break;
 

@@ -88,3 +88,18 @@ string s=*(name->str);
     }
  return hash;
 }
+
+bool SymbolTable::isTagPresent(MonaTypeTag tag)
+{
+    for(const auto& pair:table)
+    {
+        for(SymbolEntry*entry:pair.second)
+        {
+            if(entry->tag==aPred)
+                return true;
+        }
+    }
+    return false;
+}
+
+

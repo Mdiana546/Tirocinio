@@ -10,7 +10,7 @@ enum MonaTypeTag {
   Varname0, Varname1, Varname2, VarnameTree,
   Parname0, Parname1, Parname2, ParnameU,
   Univname, Predname, Constname, Statespacename,Integer,Boolean,Real,
-  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred,aDec,aExp
+  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred,aDec,aExp,aPred_Macro
 };
 
 
@@ -81,6 +81,8 @@ unordered_map<int, list<SymbolEntry*>> table;
     bool isPresentEntry(DotName *dotName);
     SymbolEntry*lookup(DotName *dotName);
     SymbolEntry* lookup(Name*name);
+    bool isTagPresent(MonaTypeTag tag);
+
 private:
   int hashValue(Name* name);
   SymbolEntry*getElement(Name*name);

@@ -20,6 +20,7 @@ bool HanldeExpressionFormat::isMSODExpression(string &str)
 
 void HanldeExpressionFormat::setP()
 {
+
   p['&']=p['|']=1,p['<']=p['>']=p['=']=p[lessEqual]=p[greaterEqual]=p[NotEqual]=2,p['+'] = p['-']=3, p['/'] = p['*'] =p['%']= 4;
 }
 

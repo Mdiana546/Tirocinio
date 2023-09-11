@@ -10,18 +10,10 @@ void MonaUntypedAST::typeCheckDeclarations()
 {
   for(Declaration * dec:*declarations)
   {
-    switch(dec->kind)
-    {
-      case dVariable:
-       (static_cast<Variable_Declaration*>(dec))->insertDeclarationInSymbolTable();
-       break;
-      case dPredicate:
-       (static_cast<Predicate_Declaration*>(dec))->insertDeclarationInSymbolTable();
-       break;
-      case dExpression:
+    if(dec->kind!=dExpression)
+          dec->insertDeclarationInSymbolTable();
+    else
          MonaTypeTag tag=(static_cast<Expression_Declaration*>(dec))->exp->chekType();
-      break;
-    }
   }
 
 }
@@ -30,25 +22,19 @@ void MonaUntypedAST::createStrings()
 {
     for(Declaration * dec:*declarations)
      {
-      switch(dec->kind)
-      {
-        case dVariable:
-        (static_cast<Variable_Declaration*>(dec))->insertDeclarationInString();
-        break;
-        case dPredicate:
-        (static_cast<Predicate_Declaration*>(dec))->insertDeclarationInString();
-        break;
-        case dExpression:
+        if(dec->kind!=dExpression)
+            dec->insertDeclarationInString();
+        else
           MFormat+=(static_cast<Expression_Declaration*>(dec))->exp->setExpressionInString()+";\n";
-        break;
       }
-  }
+
    if(Hdeclaration.isADeclarationPresent())
-  {
+    {
     string smtLibDeclaration=Hdeclaration.returnSmtLibDeclaration();
     smtLibDeclaration+="\n"+smT;
     smT=smtLibDeclaration;
-  }
+    }
+
 string constraintVar;
   for(int i=1;i<=coun;i++)
     constraintVar+=", C"+to_string(i);
@@ -56,9 +42,6 @@ string constraintVar;
 constraintVar.erase(0,1);
 constraintVar="var2"+constraintVar+";\n";
 MFormat="ws2s;\n"+constraintVar+MFormat;
-
-
-  
 
 }
 
@@ -68,7 +51,7 @@ void Variable_Declaration::insertDeclarationInSymbolTable()
     insertDecInSymbolTable();
 }
 
-void Predicate_Declaration::insertDeclarationInSymbolTable()
+void Predicate_Macro_Declaration::insertDeclarationInSymbolTable()
 {
      if(!parList->empty()){
       for(ParPred*parPred:*parList)
@@ -86,9 +69,23 @@ void Predicate_Declaration::insertDeclarationInSymbolTable()
       }
 
 
-      symbleTable.insert(new SymbolTable::SymbolEntryPred{name,aPred,parList});
+      symbleTable.insert(new SymbolTable::SymbolEntryPred{name,aPred_Macro,parList});
 
 }
+
+void Default_Declaration::insertDeclarationInSymbolTable()
+{
+  if(symbleTable.isTagPresent(aPred_Macro))
+    throw runtime_error{"defaultwheredeclarations must come before all predicate and macro declarations"};
+
+  symbleTable.insert(new SymbolTable::SymbolEntry{name,type});
+  
+  if(exp->chekType()!=Boolean)
+    throw runtime_error{"formula error in"+getSymbolOperator()};
+
+    symbleTable.remove(name);
+}
+
 
 void Variable_Declaration::insertDeclarationInString()
 {
@@ -129,7 +126,7 @@ void Variable_Declaration::insertDeclarationInString()
     }
 }
 
-void Predicate_Declaration::insertDeclarationInString()
+void Predicate_Macro_Declaration::insertDeclarationInString()
 {
   string list;
     if(!parList->empty()){
@@ -150,9 +147,25 @@ void Predicate_Declaration::insertDeclarationInString()
       }
       list.pop_back();
     }
-    MFormat+="pred "+*(name->str)+"("+list+")="+body->setExpressionInString()+";\n";
+    if(kind==dPredicate)
+        MFormat+="pred "+*(name->str)+"("+list+")="+body->setExpressionInString()+";\n";
+    else 
+        MFormat+="macro "+*(name->str)+"("+list+")="+body->setExpressionInString()+";\n";
 }
  
+ void Default_Declaration::insertDeclarationInString()
+ {
+      MFormat+=getSymbolOperator()+"("+*name->str+")="+exp->setExpressionInString()+";\n";
+
+ }
+
+ string Default_Declaration::getSymbolOperator()
+ {
+    if(type=Varname1)
+      return "defaultwhere1";
+    else  
+      return "defaultwhere2";
+ }
 
 MonaTypeTag UntypedExp_par_unpee::chekType()
 {
@@ -333,7 +346,7 @@ void UntypedExp_par_ee_two::controlNameParameter()
       if(!exp2->getNameParameter().empty())
       {
         if(exp1->getNameParameter()!=exp2->getNameParameter())
-          throw runtime_error{"error name3"};
+          throw runtime_error{"you are using two differently named parameters for an MSO-D formula"};
       }
         
     }
@@ -397,7 +410,10 @@ MonaTypeTag UntypedExp_Name::chekType()
         if(symbleTable.isPresentEntry(name))
         { 
             SymbolTable::SymbolEntry *entry=symbleTable.lookup(name);
-            return (symbleTable.lookup(name))->tag;
+            if(entry->tag==aPred_Macro)
+              return Boolean;
+            else
+              return (symbleTable.lookup(name))->tag;
         }
         
         throw runtime_error{"the element -> "+*(name->str)+ " has not been declared"};
@@ -429,7 +445,7 @@ MonaTypeTag UntypedExp_PathName::chekType()
     if(entryTag==Varname1)
         return entryTag;
     
-    throw runtime_error{"the element->"+*(name->str)+" is not order 1"};
+    throw runtime_error{"the element->"+*(name->str)+" is not first-order 1"};
 
 }
 
@@ -439,7 +455,7 @@ MonaTypeTag UntypedExp_NameUp::chekType()
   if(entryTag==Varname1)
     return entryTag;
 
-   throw runtime_error{"the element->"+*(name->str)+" is not order 1"};
+   throw runtime_error{"the element->"+*(name->str)+" is not first-order 1"};
 }
 
 
@@ -466,7 +482,7 @@ MonaTypeTag UntypedExp_par_ee::chekType()
           }
 
           string symbolOperator=getSymbolOperator();
-           throw runtime_error{"the two operands for operator ->"+symbolOperator+" are of different types"};
+           throw runtime_error{"the two operands for operator ->"+symbolOperator+" are of the wrong type"};
 
 }
 
@@ -501,25 +517,28 @@ string UntypedExp_par_ee::setExpressionInString()
 {
     string e1=exp1->setExpressionInString();
     string e2=exp2->setExpressionInString();
-    HanldeExpressionFormat He1=HanldeExpressionFormat{e1};
-    HanldeExpressionFormat He2=HanldeExpressionFormat{e2};
-    string sE1=He1.returnSMTLIBVersion();
-    string sE2=He2.returnSMTLIBVersion();
+    HanldeExpressionFormat* He1=new HanldeExpressionFormat{e1};
+    HanldeExpressionFormat * He2=new HanldeExpressionFormat{e2};
+
+    string sE1=He1->returnSMTLIBVersion();
+    string sE2=He2->returnSMTLIBVersion();
 
        if(!sE1.empty())
        {
         coun++;
         smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE1+")\n";
-        e1=He1.returnMonaVersion()+to_string(coun);
+        e1=He1->returnMonaVersion()+to_string(coun);
        }
 
       if(!sE2.empty())
       {
       coun++;
       smT+="(define-fun C"+to_string(coun)+"((data Data) (data0 Data) (data1 Data)) Bool \n"+sE2+")\n";
-      e2=He2.returnMonaVersion()+to_string(coun);;
+      e2=He2->returnMonaVersion()+to_string(coun);;
       }
 
+    delete He1;
+    delete He2;
     return e1+" "+getSymbolOperator()+" "+e2;
 
 }
@@ -552,7 +571,7 @@ MonaTypeTag UntypedExp_par_ea::chekType()
      }
       
   string symbolOperator=getSymbolOperator();
-  throw runtime_error{symbolOperator+" operation error"};
+  throw runtime_error{symbolOperator+":operation error"};
 }
 
 void UntypedExp_par_ea::controlNameParameter()
@@ -563,7 +582,7 @@ void UntypedExp_par_ea::controlNameParameter()
       {
         
         if(exp->getNameParameter()!=aexp->getNameParameter())
-          throw runtime_error{"error name1"};
+          throw runtime_error{"you are using two differently named parameters for an MSO-D formula for the operator->"+getSymbolOperator()};
       }
          this->name=new Name{new string{exp->getNameParameter()}};
          return;
@@ -669,7 +688,7 @@ MonaTypeTag ArithExp_par_aa::evaluate()
             }
     }
     string symbolOperator=getSymbolOperator();
-    throw runtime_error{symbolOperator+"operation error"};
+    throw runtime_error{symbolOperator+":operation error"};
 }
 
 void ArithExp_par_aa::controlNameParameter()
@@ -679,7 +698,7 @@ void ArithExp_par_aa::controlNameParameter()
       if(!aexp2->getNameParameter().empty())
       {
         if(aexp1->getNameParameter()!=aexp2->getNameParameter())
-          throw runtime_error{"error name2"};
+          throw runtime_error{"you are using two parameters with different names for an MSO-D formula for the operator"+getSymbolOperator()};
       }
          this->name=new Name{new string{aexp1->getNameParameter()}};
          return;
@@ -731,7 +750,7 @@ MonaTypeTag ArithExp_Integer::evaluate()
 {
   if(isAll1)
     return Integer;
-  throw runtime_error{"you cannot write in MSO-D"};
+  throw runtime_error{"the expression cannot write in MSO-D"};
 }
 
 string ArithExp_par_aa::getNameParameter()
@@ -758,7 +777,7 @@ MonaTypeTag ArithExp_Real::evaluate()
   if(isAll1)
     return Real;
 
-  throw runtime_error{"you cannot write in MDO-D"};
+  throw runtime_error{"the expression cannot write in MDO-D"};
 }
 
 MonaTypeTag ArithExp_Const::evaluate()
@@ -767,7 +786,7 @@ MonaTypeTag ArithExp_Const::evaluate()
               if(isAll1)
                  return symbleTable.lookup(dotName)->tag;
               else  
-                throw runtime_error{"you cannot write in MDO-D"};
+                throw runtime_error{"the expression cannot write in MDO-D"};
 
  }
 
@@ -870,7 +889,7 @@ MonaTypeTag UntypedExp_par_e::chekType()
     if(e1==Boolean)
       return Boolean;
 
-    throw runtime_error{"incorrect use of not"};
+    throw runtime_error{"incorrect use of -> not"};
 }
 
 void UntypedExp_par_e::turnTrueIsAll1()
@@ -891,7 +910,7 @@ MonaTypeTag UntypedExp_Int::chekType()
     if(isAll1)
       return Integer;
 
-      throw runtime_error{"the expression cannot write in MSO-D"};
+      throw runtime_error{"the expression cannot be write in MSO-D"};
 }
 
 string UntypedExp_Int::setExpressionInString()
@@ -903,7 +922,7 @@ MonaTypeTag UntypedExp_Real::chekType()
 {
     if(isAll1)
        return Real;
-    throw runtime_error{"the expression cannot write in MSO_D"};
+    throw runtime_error{"the expression cannot be write in MSO_D"};
 
 }
 
@@ -931,12 +950,12 @@ void UntypedExp_Paren::turnTrueIsAll1()
 
 UntypedExp_Call::UntypedExp_Call(Name*name,VarDeclList*decList):UntypedExp{uCall},name{name}
 {
+parList=new ParList{};
+
  if(!decList->empty()){
-  parList=new ParList{};
     for(VarDecl*decl:*decList)
         parList->push_back(new ParPred{nu,decl->name});
- }else
-    parList=new ParList{};
+ }
 
 }
 
@@ -947,7 +966,7 @@ void UntypedExp_Call::setParList()
       {
         if(symbleTable.isPresentEntry(parPred->name))
           parPred->type=symbleTable.lookup(parPred->name)->tag;
-        else 
+        else
           throw runtime_error{"the element-> "+*parPred->name->str+" was not declared"};
       }
   }
@@ -961,7 +980,7 @@ MonaTypeTag UntypedExp_Call::chekType()
       if(symbleTable.isPresentEntry(name))
       {
         SymbolTable::SymbolEntry*entry=symbleTable.lookup(name);
-          if(entry->tag==aPred)
+          if(entry->tag==aPred_Macro)
           {
             SymbolTable::SymbolEntryPred *entryPred=static_cast<SymbolTable::SymbolEntryPred*>(entry);
 
@@ -974,7 +993,7 @@ MonaTypeTag UntypedExp_Call::chekType()
                 {
 
                   if((*t1)->type!=(*t2)->type){
-                      throw runtime_error{"pred->"+*name->str+" was not declared"};
+                      throw runtime_error{*name->str+" was not declared"};
                   }
                   ++t1;
                   ++t2;
@@ -983,7 +1002,7 @@ MonaTypeTag UntypedExp_Call::chekType()
             }
           }
       }
-     throw runtime_error{"pred ->"+*name->str+" was not declared"};
+     throw runtime_error{*name->str+" was not declared"};
 
 }
 

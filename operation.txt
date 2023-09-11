@@ -2,14 +2,18 @@ ws2s;
 var1 myVar,myVar2 where myVar<myVar2;
 var2 A,B;
 var0 f,f2;
-int a,b;
+int a,b,c;
 bool flag;
 real d,e;
 
-pred prova(var1 m,var2 g)=m in g;
+defaultwhere1(p)=all1 p2:p.a<p.b & p.d<p.e;
 
-all1 p1 where ex1 p2:p2>p1,p2,p3: p1.a<p1.b & p1<myVar & p1.a<5+10 & A={myVar,myVar2};
+macro prova=myVar in A;
 
-all2 C: C={myVar,myVar2} & f => myVar<myVar2;
+all1 p1 where ex1 p2:p2>p1,p2,p3: p1.a<p1.b & p1<myVar & p1.a<5+10 & A={myVar,myVar2} & ~(p1.a+p1.b*p1.c>p1.b/p1.a);
 
-ex1 p: p in A & all1 p1:p.a<p.b & p1.a<p1.b;
+all2 C: C={myVar,myVar2} & f => myVar<myVar2 & prova(C);
+
+ex1 m,p: p in A & all1 p1:p.a<p.b & p1.a<p1.b;
+
+all1 p5: p5.flag & true;
