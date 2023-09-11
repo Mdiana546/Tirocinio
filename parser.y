@@ -128,7 +128,7 @@ declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	         	if ($1) $$->push_front($1);}
 	      
 	 ;
-declaration : tokASSERT exp tokSEMICOLON{}  
+declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}   
             
 	| tokGUIDE func_list tokSEMICOLON{} 
         	
@@ -308,7 +308,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 		
 	| tokTREEROOT tokLPAREN exp tokRPAREN{}
 		   
-        | tokRESTRICT tokLPAREN exp tokRPAREN{}
+        | tokRESTRICT tokLPAREN exp tokRPAREN{$$ = new UntypedExp_Restrict($3);}
         
               
 	;

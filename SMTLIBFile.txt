@@ -12,7 +12,5 @@
 (define-fun C6((data Data) (data0 Data) (data1 Data)) Bool 
 (< (a data) (b data)))
 (define-fun C7((data Data) (data0 Data) (data1 Data)) Bool 
-(< (a data) (b data)))
-(define-fun C8((data Data) (data0 Data) (data1 Data)) Bool 
 (flag data))
 

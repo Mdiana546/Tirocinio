@@ -1849,7 +1849,7 @@ yyreduce:
 
   case 6: /* declaration: tokASSERT exp tokSEMICOLON  */
 #line 131 "parser.y"
-                                        {}
+                                        {(yyval.declaration) = new Assertion_Declaration((yyvsp[-1].untypedExp));}
 #line 1854 "parser.cc"
     break;
 
@@ -2371,7 +2371,7 @@ yyreduce:
 
   case 93: /* exp: tokRESTRICT tokLPAREN exp tokRPAREN  */
 #line 311 "parser.y"
-                                             {}
+                                             {(yyval.untypedExp) = new UntypedExp_Restrict((yyvsp[-1].untypedExp));}
 #line 2376 "parser.cc"
     break;
 

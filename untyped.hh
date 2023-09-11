@@ -319,6 +319,20 @@ public:
     UntypedExp_par_ee(uBiimpl, exp1, exp2) {}
 };
 
+
+class UntypedExp_Restrict: public UntypedExp {
+public:
+  UntypedExp_Restrict(UntypedExp *e) :
+    UntypedExp(uRestrict), exp(e) {}
+  virtual ~UntypedExp_Restrict() {delete exp;}
+
+  string setExpressionInString() override;
+  MonaTypeTag chekType() override;
+
+  
+  UntypedExp *exp;
+};
+
 class Expression_Declaration: public Declaration {
 public:
   Expression_Declaration(UntypedExp *e) :
@@ -476,12 +490,24 @@ public:
     Declaration(dDefault), type(k), name(n), exp(e) {}
   virtual ~Default_Declaration() {delete name; delete exp;}
 
-  void insertDeclarationInSymbolTable();
-  void insertDeclarationInString();
+  void insertDeclarationInSymbolTable() override;
+  void insertDeclarationInString() override ;
   string getSymbolOperator();
 
   MonaTypeTag type;
   Name *name;
+  UntypedExp *exp;
+};
+
+class Assertion_Declaration: public Declaration {
+public:
+  Assertion_Declaration(UntypedExp *e) :
+    Declaration(dAssertion), exp(e) {}
+  virtual ~Assertion_Declaration() {delete exp;}
+ 
+    void insertDeclarationInSymbolTable() override;
+    void insertDeclarationInString() override;
+  
   UntypedExp *exp;
 };
 

@@ -86,6 +86,12 @@ void Default_Declaration::insertDeclarationInSymbolTable()
     symbleTable.remove(name);
 }
 
+void Assertion_Declaration::insertDeclarationInSymbolTable()
+{
+  if(exp->chekType()!=Boolean)
+      throw runtime_error{"assertion error"};
+}
+
 
 void Variable_Declaration::insertDeclarationInString()
 {
@@ -165,6 +171,11 @@ void Predicate_Macro_Declaration::insertDeclarationInString()
       return "defaultwhere1";
     else  
       return "defaultwhere2";
+ }
+
+ void Assertion_Declaration::insertDeclarationInString()
+ {
+  MFormat+="assert "+exp->setExpressionInString()+";\n";
  }
 
 MonaTypeTag UntypedExp_par_unpee::chekType()
@@ -1019,3 +1030,18 @@ string UntypedExp_Call::setExpressionInString()
       return *name->str+"("+list+")";
 }
 
+MonaTypeTag UntypedExp_Restrict::chekType()
+{
+  if(exp->chekType()!=Boolean)
+    throw runtime_error{"error restriction"};
+  
+  return Boolean;
+}
+
+string UntypedExp_Restrict::setExpressionInString()
+{
+  string expression=exp->setExpressionInString();
+  expression.erase(std::remove(expression.begin(),expression.end(),'\n'),expression.end());
+
+  return "restrict("+expression+")";
+}
