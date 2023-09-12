@@ -893,6 +893,7 @@ string HandleDeclarationFormat::returnSmtLibDeclaration()
 
 }
 
+
 MonaTypeTag UntypedExp_par_e::chekType()
 {
   MonaTypeTag e1=exp->chekType();
@@ -967,6 +968,7 @@ parList=new ParList{};
     for(VarDecl*decl:*decList)
         parList->push_back(new ParPred{nu,decl->name});
  }
+ delete decList;
 
 }
 

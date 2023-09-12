@@ -73,7 +73,6 @@ endLine     [.*\n]
 "pred"          return tokPRED;
 "macro"         return tokMACRO;
 "assert"        return tokASSERT;
-"root"          return tokUNIVROOT;
 "tree"          return tokTREE;
 "ws1s"          return tokWS1S;
 "ws2s"          {return tokWS2S;}

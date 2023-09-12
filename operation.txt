@@ -19,3 +19,5 @@ all2 C: C={myVar,myVar2} & f => myVar<myVar2 & prova();
 ex1 m,p: p in A & all1 p1:p.a<p.b & p1<p1 & restrict(ex1 p5:p5<m);
 
 all1 p5: p5.flag & true;
+
+all1 p1:5+10<p1.a;

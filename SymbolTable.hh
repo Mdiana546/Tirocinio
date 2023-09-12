@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include<list>
+#include "ListC.hh"
 #include<string>
 using namespace std;
 
@@ -47,7 +48,7 @@ class ParPred{
 
 };
 
-class ParList:public list<ParPred*>
+class ParList:public ListC<ParPred*>
 {};
 
 

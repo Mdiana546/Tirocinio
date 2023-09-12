@@ -101,5 +101,3 @@ bool SymbolTable::isTagPresent(MonaTypeTag tag)
     }
     return false;
 }
-
-

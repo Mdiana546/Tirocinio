@@ -103,7 +103,7 @@ public:
 };
 
 
-class VarDeclList: public list<VarDecl*> {};
+class VarDeclList: public ListC<VarDecl*> {};
 
 class HandleDeclarationFormat
 {
@@ -112,7 +112,7 @@ list<VarDeclList*>decl;
 
 
     void addDeclList(VarDeclList*);
-    bool isADeclarationPresent();;
+    bool isADeclarationPresent();
     string returnSmtLibDeclaration();
 
 };
@@ -350,7 +350,7 @@ public:
 
 
 
-class DeclarationList: public list<Declaration*> {};
+class DeclarationList: public ListC<Declaration*> {};
 
 
 class UntypedExp_Name: public UntypedExp {
@@ -370,6 +370,7 @@ class UntypedExp_PathName:public UntypedExp_Name
 {
   public:
     UntypedExp_PathName(UntypedExpNodeKind k,Name*name,string *s):UntypedExp_Name{k,name},path{s}{}
+    virtual ~UntypedExp_PathName(){delete path;}
 
     MonaTypeTag chekType() override;
     string setExpressionInString() override;
@@ -476,12 +477,12 @@ public:
 
 void insertDeclarationInSymbolTable()override;
 void insertDeclarationInString()override;
+void insertDecInSymbolTable();
 
   MonaTypeTag declKind;
   VarDeclList *decls;
 
-  private:
-  void insertDecInSymbolTable();
+
 };
 
 class Default_Declaration: public Declaration {

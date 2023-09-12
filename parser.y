@@ -38,7 +38,7 @@ void checkNameIntName(string s)
 int intval; 
 double doubleVal; 
 std::string *st;   
-DeclarationList* declList;
+DeclarationList* declList;   
 Declaration *declaration;
 UntypedExp *untypedExp; 
 ArithExp *arithExp;
@@ -97,14 +97,14 @@ ParList*parList;
 %left tokINTER
 %left tokSETMINUS
 %left tokPLUS tokMINUS
-%left tokSTAR tokSLASH tokMODULO 
+%left tokSTAR tokSLASH tokMODULO   
 %left tokDOT tokUP     
   
 %%
 
-start	: header declarations{
+start	: header declarations{ 
 		
-		 untypedAST=new MonaUntypedAST($2);
+		 untypedAST=new MonaUntypedAST($2); 
 		 try{
 		 untypedAST->typeCheckDeclarations();
 		 }catch(runtime_error e)
@@ -115,7 +115,7 @@ start	: header declarations{
 		 HandleFiles handleFile{};
 		handleFile.writeOnMonaFile(MFormat);
 		handleFile.writeOnSMTLIBFile(smT); 
-		
+		delete untypedAST;
 		}
 	;
 
@@ -124,13 +124,13 @@ header	: tokWS2S tokSEMICOLON {}
 
 declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	      
-	| declaration {$$ = new DeclarationList(); 
+	| declaration {$$ = new DeclarationList();     
 	         	if ($1) $$->push_front($1);}
 	      
 	 ;
 declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}   
             
-	| tokGUIDE func_list tokSEMICOLON{} 
+	| tokGUIDE func_list tokSEMICOLON{}  
         	
 	| tokUNIVERSE univs tokSEMICOLON{}
               
@@ -164,21 +164,21 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
             
         | tokVERIFY optstring exp tokSEMICOLON {}      
                
-        | tokEXECUTE exp tokSEMICOLON {} 
+        | tokEXECUTE exp tokSEMICOLON {}  
                
-        | tokINCLUDE tokSTRING tokSEMICOLON {}
+        | tokINCLUDE tokSTRING tokSEMICOLON {}   
               
-		| tokLASTPOS name tokSEMICOLON {}
+		| tokLASTPOS name tokSEMICOLON {} 
 			
-		| tokALLPOS name tokSEMICOLON {}
+		| tokALLPOS name tokSEMICOLON {} 
 			
 		|tokTYPE name tokEQUAL variant_list tokSEMICOLON{}
 		
-		| tokINT name_where_list tokSEMICOLON {$$ = new Variable_Declaration(Integer,$2);}    //new rule
+		| tokINT name_where_list tokSEMICOLON {$$ = new Variable_Declaration{Integer,$2};}     //new rule
 		
-		| tokReal name_where_list tokSEMICOLON {$$ = new Variable_Declaration(Real,$2);}   //new rule
+		| tokReal name_where_list tokSEMICOLON {$$ = new Variable_Declaration{Real,$2};}   //new rule
 			
-		| tokBool name_where_list tokSEMICOLON {$$ = new Variable_Declaration(Boolean,$2);} //new rule
+		| tokBool name_where_list tokSEMICOLON {$$ = new Variable_Declaration{Boolean,$2};} //new rule
 	
 		
         ;
@@ -269,19 +269,19 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 
         | exp tokMODULO arith_exp  {$$ = new UntypedExp_Modul($1, $3);} 
               
-        | tokEMPTY{}    
+        | tokEMPTY{}     //no
 
-		| tokINT {$$ = new UntypedExp_Int(stoi(*$1));}   
+		| tokINT {$$ = new UntypedExp_Int(stoi(*$1));delete $1;}   
 		
 		|tokReal {$$=new UntypedExp_Real{$1};}
 
         | tokLBRACE set_body tokRBRACE{$$ = new UntypedExp_Set($2);} 
                
-        | exp tokUNION exp {}  
+        | exp tokUNION exp {}  //no
              
-        | exp tokINTER exp {}
+        | exp tokINTER exp {} //no
               
-        | exp tokSETMINUS exp {}
+        | exp tokSETMINUS exp {} //no 
               
 	| tokIMPORT tokLPAREN tokSTRING map_list tokRPAREN {}
 	       
@@ -297,9 +297,9 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA  
 	  name tokRPAREN{}
 		
-	| tokTREE tokLPAREN exp tokRPAREN{} 
+	| tokTREE tokLPAREN exp tokRPAREN{}  //no
 		
-	| tokTYPE tokLPAREN exp tokCOMMA name tokRPAREN{}
+	| tokTYPE tokLPAREN exp tokCOMMA name tokRPAREN{} //no
 		
 	| tokSOMETYPE tokLPAREN exp tokRPAREN{}
 		
@@ -313,7 +313,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
 	;
 	
-arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
+arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}  
 		
 	| arith_exp tokMINUS arith_exp {$$ = new ArithExp_Subtr($1, $3);}
 		
@@ -321,16 +321,17 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 		
 	| arith_exp tokSLASH arith_exp {$$ = new ArithExp_Div($1, $3);} 
 
-	| arith_exp tokMODULO arith_exp{$$=new ArithExp_Modul($1,$3);} 
+	| arith_exp tokMODULO arith_exp{$$=new ArithExp_Modul($1,$3);}   
               
 	| tokMINUS arith_exp {}
 	        
 	| tokINT
 	{
 		$$ = new ArithExp_Integer(stoi(*$1));
+		delete $1;
 	}
 
-	| tokReal{$$=new ArithExp_Real{$1};}
+	| tokReal{$$=new ArithExp_Real{$1};} 
 	
 	| dotExp {
 					if($1->kind==uDotName)
@@ -341,7 +342,7 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 					}
 		}
 	    
-	| tokLPAREN arith_exp tokRPAREN {}   
+	| tokLPAREN arith_exp tokRPAREN {}    
       
 	;
 
@@ -395,17 +396,7 @@ non_empty_set_body: name tokCOMMA non_empty_set_body{$3->push_back(new VarDecl{$
               
         ;
 
-//exp_list: non_empty_exp_list{} 
-	
-	//| /* empty */{}
-	
-	//;
 
-//non_empty_exp_list: exp tokCOMMA non_empty_exp_list{}  
-	
-//	| exp {}
-		
-//	;
 
 universe: tokLBRACKET name_list tokRBRACKET{} 
 	
@@ -439,7 +430,7 @@ func_list: func tokCOMMA func_list{}
 		
 	;
 
-func	: name tokARROW tokLPAREN name tokCOMMA name tokRPAREN{}
+func	: name tokARROW tokLPAREN name tokCOMMA name tokRPAREN{} //no
 	
 	;
 
@@ -527,6 +518,6 @@ int main(int argc, char **argv) {
 void yyerror(const char *msg) {
 	std::cout<<"Error near line "+to_string(yylineno)+": "+string(msg);
 	if(untypedAST!=nullptr)
-		delete untypedAST->declarations;
+		delete untypedAST;
 	exit(-1);
 }
