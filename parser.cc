@@ -2263,7 +2263,7 @@ yyreduce:
 
   case 75: /* exp: tokEMPTY  */
 #line 272 "parser.y"
-                  {}
+                  {(yyval.untypedExp) = new UntypedExp_Empty();}
 #line 2268 "parser.cc"
     break;
 
@@ -2287,19 +2287,19 @@ yyreduce:
 
   case 79: /* exp: exp tokUNION exp  */
 #line 280 "parser.y"
-                           {}
+                           {(yyval.untypedExp) = new UntypedExp_Union((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2292 "parser.cc"
     break;
 
   case 80: /* exp: exp tokINTER exp  */
 #line 282 "parser.y"
-                           {}
+                           {(yyval.untypedExp) = new UntypedExp_Inter((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2298 "parser.cc"
     break;
 
   case 81: /* exp: exp tokSETMINUS exp  */
 #line 284 "parser.y"
-                              {}
+                              {(yyval.untypedExp) = new UntypedExp_Setminus((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2304 "parser.cc"
     break;
 

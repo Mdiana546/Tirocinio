@@ -267,6 +267,26 @@ public:
 
 };
 
+class UntypedExp_Union: public UntypedExp_par_ee_two {
+public:
+  UntypedExp_Union(UntypedExp *exp1, UntypedExp *exp2) :
+    UntypedExp_par_ee_two(uUnion, exp1, exp2) {}
+
+};
+
+class UntypedExp_Inter: public UntypedExp_par_ee_two{
+public:
+  UntypedExp_Inter(UntypedExp *exp1, UntypedExp *exp2) :
+    UntypedExp_par_ee_two(uInter, exp1, exp2) {}
+
+};
+
+class UntypedExp_Setminus: public UntypedExp_par_ee_two {
+public:
+  UntypedExp_Setminus(UntypedExp *exp1, UntypedExp *exp2) :
+    UntypedExp_par_ee_two(uSetminus, exp1, exp2) {}
+
+};
 
 
 class UntypedExp_And: public UntypedExp_par_ee {
@@ -433,6 +453,16 @@ class UntypedExp_Call:public UntypedExp
 
   Name*name;
   ParList *parList;
+};
+
+class UntypedExp_Empty: public UntypedExp {
+public:
+  UntypedExp_Empty() :
+    UntypedExp(uEmpty) {}
+
+    MonaTypeTag chekType() override;
+    string setExpressionInString() override;
+
 };
 
 

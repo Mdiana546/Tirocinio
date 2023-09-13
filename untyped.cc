@@ -315,32 +315,31 @@ MonaTypeTag UntypedExp_par_ee_two::chekType()
         switch(e1)
         {
             case Varname1:
-                return Boolean;
+                if(kind!=uUnion && kind!=uInter && kind!=uSetminus)
+                   return Boolean;
              break;
              case Integer:
-                controlNameParameter();
-                return Boolean;
+                   if(kind!=uUnion && kind!=uInter && kind!=uSetminus){
+                      controlNameParameter();
+                      return Boolean;}
                break;
             case Real:
-                controlNameParameter();
-                return Boolean;
+                   if(kind!=uUnion && kind!=uInter && kind!=uSetminus){
+                        controlNameParameter();
+                        return Boolean;}
               break;
+            case Boolean:
+                if((exp1->kind!=uTrue && exp1->kind!=uFalse) && (exp2->kind==uTrue && exp2->kind==uFalse)&& (kind==uNotEqual || kind==uEqual)){
+                  controlNameParameter();
+                  return Boolean;
+                }
+                break;
             default:
-                if(kind==uEqual || kind==uNotEqual)
-                {
-                  switch(e1)
-                  {
-                    case Varname2:
-                      if(exp1->kind==uSet || exp2->kind==uSet)
-                        return Boolean;
-                      else
-                      {
-                        if(isAll1)
-                          controlNameParameter();
-                        return Boolean;
-                      }
-                    break;
-                  }
+                if(e1!=Varname0){
+                  if(kind==uEqual || kind==uNotEqual)
+                    return Boolean;
+                  else 
+                    return Varname2;
                 }
               break;
         }
@@ -383,6 +382,15 @@ string UntypedExp_par_ee_two::getSymbolOperator()
       break;
       case uEqual:
         return "=";
+      break;
+      case uUnion:
+        return " union ";
+      break;
+      case uInter:
+        return " inter ";
+      break;
+      case uSetminus:
+        return "\\";
       break;
       default:
         return "~=";
@@ -477,7 +485,7 @@ MonaTypeTag UntypedExp_par_ee::chekType()
 
           if(kind==uAnd || kind==uOr){
             
-            if((e1==Varname0 || e1==Boolean ||  e1==aPred) &&  (e2==Varname0 || e2==Boolean||  e2==aPred)){
+            if((e1==Varname0 || e1==Boolean) &&  (e2==Varname0 || e2==Boolean)){
                 return Boolean;
             }
           }
@@ -1030,6 +1038,16 @@ string UntypedExp_Call::setExpressionInString()
     }
 
       return *name->str+"("+list+")";
+}
+
+MonaTypeTag UntypedExp_Empty::chekType()
+{
+  return Varname2;
+}
+
+string UntypedExp_Empty::setExpressionInString()
+{
+  return "empty";
 }
 
 MonaTypeTag UntypedExp_Restrict::chekType()

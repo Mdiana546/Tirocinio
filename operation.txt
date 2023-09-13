@@ -20,4 +20,4 @@ ex1 m,p: p in A & all1 p1:p.a<p.b & p1<p1 & restrict(ex1 p5:p5<m);
 
 all1 p5: p5.flag & true;
 
-all1 p1:5+10<p1.a;
+all1 p,k: p = (myVar.a union myVar.b);

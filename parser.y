@@ -269,7 +269,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 
         | exp tokMODULO arith_exp  {$$ = new UntypedExp_Modul($1, $3);} 
               
-        | tokEMPTY{}     //no
+        | tokEMPTY{$$ = new UntypedExp_Empty();}  
 
 		| tokINT {$$ = new UntypedExp_Int(stoi(*$1));delete $1;}   
 		
@@ -277,11 +277,11 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 
         | tokLBRACE set_body tokRBRACE{$$ = new UntypedExp_Set($2);} 
                
-        | exp tokUNION exp {}  //no
+        | exp tokUNION exp {$$ = new UntypedExp_Union($1, $3);}
              
-        | exp tokINTER exp {} //no
+        | exp tokINTER exp {$$ = new UntypedExp_Inter($1, $3);}
               
-        | exp tokSETMINUS exp {} //no 
+        | exp tokSETMINUS exp {$$ = new UntypedExp_Setminus($1, $3);}
               
 	| tokIMPORT tokLPAREN tokSTRING map_list tokRPAREN {}
 	       
