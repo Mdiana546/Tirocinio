@@ -164,9 +164,11 @@ Name *name;
 UntypedExp_Dot*UntypedExpDotName;
 VarDeclList *varDeclList; 
 ParList*parList;
+BindExpList *bindExpList;
+BindExp *bindExp;
 
 
-#line 170 "parser.hh"
+#line 172 "parser.hh"
 
 };
 typedef union YYSTYPE YYSTYPE;

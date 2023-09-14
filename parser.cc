@@ -644,22 +644,22 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   105,   105,   122,   125,   127,   131,   133,   135,   137,
-     139,   141,   143,   145,   147,   149,   151,   153,   155,   157,
-     159,   161,   163,   165,   167,   169,   171,   173,   175,   177,
-     179,   181,   186,   188,   190,   192,   194,   196,   198,   200,
-     202,   204,   206,   208,   210,   212,   214,   216,   218,   220,
-     222,   224,   226,   228,   230,   232,   234,   236,   238,   240,
-     242,   244,   246,   248,   250,   252,   254,   256,   258,   260,
-     262,   264,   266,   268,   270,   272,   274,   276,   278,   280,
-     282,   284,   286,   288,   290,   292,   294,   297,   300,   302,
-     304,   306,   309,   311,   316,   318,   320,   322,   324,   326,
-     328,   334,   336,   345,   349,   351,   356,   358,   360,   362,
-     364,   366,   368,   370,   372,   374,   379,   381,   385,   389,
-     393,   395,   401,   403,   407,   412,   414,   418,   421,   427,
-     429,   433,   437,   439,   443,   445,   447,   451,   453,   457,
-     459,   463,   465,   467,   469,   471,   473,   477,   479,   483,
-     485,   487,   491,   493,   497,   499
+       0,   109,   109,   126,   129,   131,   135,   137,   139,   141,
+     143,   145,   147,   149,   151,   153,   155,   157,   159,   161,
+     163,   165,   167,   169,   171,   173,   175,   177,   179,   181,
+     183,   185,   190,   192,   194,   196,   198,   200,   202,   204,
+     206,   208,   210,   212,   214,   216,   218,   220,   222,   224,
+     226,   228,   230,   231,   233,   235,   237,   239,   241,   243,
+     245,   247,   249,   251,   253,   255,   257,   259,   261,   263,
+     265,   267,   269,   271,   273,   275,   277,   279,   281,   283,
+     285,   287,   289,   291,   293,   295,   297,   300,   303,   305,
+     307,   309,   312,   314,   319,   321,   323,   325,   327,   329,
+     331,   337,   339,   348,   352,   354,   359,   361,   363,   365,
+     367,   369,   371,   373,   375,   377,   382,   385,   390,   394,
+     398,   400,   406,   408,   412,   417,   419,   423,   426,   432,
+     434,   438,   442,   444,   448,   450,   452,   456,   458,   462,
+     464,   468,   470,   472,   474,   476,   478,   482,   484,   488,
+     490,   492,   496,   498,   502,   504
 };
 #endif
 
@@ -1809,7 +1809,7 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* start: header declarations  */
-#line 105 "parser.y"
+#line 109 "parser.y"
                              { 
 		
 		 untypedAST=new MonaUntypedAST((yyvsp[0].declList)); 
@@ -1829,590 +1829,590 @@ yyreduce:
     break;
 
   case 3: /* header: tokWS2S tokSEMICOLON  */
-#line 122 "parser.y"
+#line 126 "parser.y"
                                {}
 #line 1835 "parser.cc"
     break;
 
   case 4: /* declarations: declaration declarations  */
-#line 125 "parser.y"
+#line 129 "parser.y"
                                        {if ((yyvsp[-1].declaration)) (yyvsp[0].declList)->push_front((yyvsp[-1].declaration)); (yyval.declList) = (yyvsp[0].declList);}
 #line 1841 "parser.cc"
     break;
 
   case 5: /* declarations: declaration  */
-#line 127 "parser.y"
+#line 131 "parser.y"
                       {(yyval.declList) = new DeclarationList();     
 	         	if ((yyvsp[0].declaration)) (yyval.declList)->push_front((yyvsp[0].declaration));}
 #line 1848 "parser.cc"
     break;
 
   case 6: /* declaration: tokASSERT exp tokSEMICOLON  */
-#line 131 "parser.y"
+#line 135 "parser.y"
                                         {(yyval.declaration) = new Assertion_Declaration((yyvsp[-1].untypedExp));}
 #line 1854 "parser.cc"
     break;
 
   case 7: /* declaration: tokGUIDE func_list tokSEMICOLON  */
-#line 133 "parser.y"
+#line 137 "parser.y"
                                          {}
 #line 1860 "parser.cc"
     break;
 
   case 8: /* declaration: tokUNIVERSE univs tokSEMICOLON  */
-#line 135 "parser.y"
+#line 139 "parser.y"
                                         {}
 #line 1866 "parser.cc"
     break;
 
   case 9: /* declaration: tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON  */
-#line 137 "parser.y"
+#line 141 "parser.y"
                                                                          {(yyval.declaration) = new Default_Declaration(Varname1, (yyvsp[-4].name), (yyvsp[-1].untypedExp));}
 #line 1872 "parser.cc"
     break;
 
   case 10: /* declaration: tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON  */
-#line 139 "parser.y"
+#line 143 "parser.y"
                                                                          {(yyval.declaration) = new Default_Declaration(Varname2, (yyvsp[-4].name), (yyvsp[-1].untypedExp));}
 #line 1878 "parser.cc"
     break;
 
   case 11: /* declaration: tokCONST name tokEQUAL arith_exp tokSEMICOLON  */
-#line 141 "parser.y"
+#line 145 "parser.y"
                                                         {}
 #line 1884 "parser.cc"
     break;
 
   case 12: /* declaration: tokVAR0 name_where_list tokSEMICOLON  */
-#line 143 "parser.y"
+#line 147 "parser.y"
                                               {(yyval.declaration)=new Variable_Declaration{Varname0,(yyvsp[-1].varDeclList)};}
 #line 1890 "parser.cc"
     break;
 
   case 13: /* declaration: tokVAR1 universe name_where_list tokSEMICOLON  */
-#line 145 "parser.y"
+#line 149 "parser.y"
                                                        {(yyval.declaration) = new Variable_Declaration(Varname1,(yyvsp[-1].varDeclList));}
 #line 1896 "parser.cc"
     break;
 
   case 14: /* declaration: tokVAR2 universe name_where_list tokSEMICOLON  */
-#line 147 "parser.y"
+#line 151 "parser.y"
                                                         {(yyval.declaration)=new Variable_Declaration{Varname2,(yyvsp[-1].varDeclList)};}
 #line 1902 "parser.cc"
     break;
 
   case 15: /* declaration: tokTREE universe name_where_list tokSEMICOLON  */
-#line 149 "parser.y"
+#line 153 "parser.y"
                                                                 {}
 #line 1908 "parser.cc"
     break;
 
   case 16: /* declaration: tokPRED name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON  */
-#line 151 "parser.y"
+#line 155 "parser.y"
                                                                               {(yyval.declaration)=new Predicate_Declaration{(yyvsp[-6].name),(yyvsp[-4].parList),(yyvsp[-1].untypedExp)};}
 #line 1914 "parser.cc"
     break;
 
   case 17: /* declaration: tokPRED name tokEQUAL exp tokSEMICOLON  */
-#line 153 "parser.y"
+#line 157 "parser.y"
                                                   {(yyval.declaration)=new Predicate_Declaration{(yyvsp[-3].name),new ParList{} ,(yyvsp[-1].untypedExp)};}
 #line 1920 "parser.cc"
     break;
 
   case 18: /* declaration: tokPRED name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON  */
-#line 155 "parser.y"
+#line 159 "parser.y"
                                                                      {(yyval.declaration)=new Predicate_Declaration{(yyvsp[-5].name),new ParList{} ,(yyvsp[-1].untypedExp)};}
 #line 1926 "parser.cc"
     break;
 
   case 19: /* declaration: tokMACRO name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON  */
-#line 157 "parser.y"
+#line 161 "parser.y"
                                                                                 {(yyval.declaration)=new Macro_Declaration{(yyvsp[-6].name),(yyvsp[-4].parList),(yyvsp[-1].untypedExp)};}
 #line 1932 "parser.cc"
     break;
 
   case 20: /* declaration: tokMACRO name tokEQUAL exp tokSEMICOLON  */
-#line 159 "parser.y"
+#line 163 "parser.y"
                                                    {(yyval.declaration)=new Macro_Declaration{(yyvsp[-3].name),new ParList{},(yyvsp[-1].untypedExp)};}
 #line 1938 "parser.cc"
     break;
 
   case 21: /* declaration: tokMACRO name tokLPAREN tokRPAREN tokEQUAL exp tokSEMICOLON  */
-#line 161 "parser.y"
+#line 165 "parser.y"
                                                                        {(yyval.declaration)=new Macro_Declaration{(yyvsp[-5].name),new ParList{},(yyvsp[-1].untypedExp)};}
 #line 1944 "parser.cc"
     break;
 
   case 22: /* declaration: exp tokSEMICOLON  */
-#line 163 "parser.y"
+#line 167 "parser.y"
                            {(yyval.declaration) = new Expression_Declaration((yyvsp[-1].untypedExp));}
 #line 1950 "parser.cc"
     break;
 
   case 23: /* declaration: tokVERIFY optstring exp tokSEMICOLON  */
-#line 165 "parser.y"
+#line 169 "parser.y"
                                                {}
 #line 1956 "parser.cc"
     break;
 
   case 24: /* declaration: tokEXECUTE exp tokSEMICOLON  */
-#line 167 "parser.y"
+#line 171 "parser.y"
                                       {}
 #line 1962 "parser.cc"
     break;
 
   case 25: /* declaration: tokINCLUDE tokSTRING tokSEMICOLON  */
-#line 169 "parser.y"
+#line 173 "parser.y"
                                             {}
 #line 1968 "parser.cc"
     break;
 
   case 26: /* declaration: tokLASTPOS name tokSEMICOLON  */
-#line 171 "parser.y"
+#line 175 "parser.y"
                                                {}
 #line 1974 "parser.cc"
     break;
 
   case 27: /* declaration: tokALLPOS name tokSEMICOLON  */
-#line 173 "parser.y"
+#line 177 "parser.y"
                                               {}
 #line 1980 "parser.cc"
     break;
 
   case 28: /* declaration: tokTYPE name tokEQUAL variant_list tokSEMICOLON  */
-#line 175 "parser.y"
+#line 179 "parser.y"
                                                                 {}
 #line 1986 "parser.cc"
     break;
 
   case 29: /* declaration: tokINT name_where_list tokSEMICOLON  */
-#line 177 "parser.y"
+#line 181 "parser.y"
                                                       {(yyval.declaration) = new Variable_Declaration{Integer,(yyvsp[-1].varDeclList)};}
 #line 1992 "parser.cc"
     break;
 
   case 30: /* declaration: tokReal name_where_list tokSEMICOLON  */
-#line 179 "parser.y"
+#line 183 "parser.y"
                                                        {(yyval.declaration) = new Variable_Declaration{Real,(yyvsp[-1].varDeclList)};}
 #line 1998 "parser.cc"
     break;
 
   case 31: /* declaration: tokBool name_where_list tokSEMICOLON  */
-#line 181 "parser.y"
+#line 185 "parser.y"
                                                        {(yyval.declaration) = new Variable_Declaration{Boolean,(yyvsp[-1].varDeclList)};}
 #line 2004 "parser.cc"
     break;
 
   case 32: /* exp: name  */
-#line 186 "parser.y"
+#line 190 "parser.y"
                {(yyval.untypedExp) = new UntypedExp_Name(uName,(yyvsp[0].name));}
 #line 2010 "parser.cc"
     break;
 
   case 33: /* exp: name tokDOT tokINT  */
-#line 188 "parser.y"
+#line 192 "parser.y"
                                      {check_bits(*(yyvsp[0].st));(yyval.untypedExp)=new UntypedExp_PathName{uPathName,(yyvsp[-2].name),(yyvsp[0].st)};}
 #line 2016 "parser.cc"
     break;
 
   case 34: /* exp: tokLPAREN exp tokRPAREN  */
-#line 190 "parser.y"
+#line 194 "parser.y"
                                   {(yyval.untypedExp)=new UntypedExp_Paren{(yyvsp[-1].untypedExp)};}
 #line 2022 "parser.cc"
     break;
 
   case 35: /* exp: exp tokSUB exp  */
-#line 192 "parser.y"
+#line 196 "parser.y"
                         {}
 #line 2028 "parser.cc"
     break;
 
   case 36: /* exp: exp tokIN exp  */
-#line 194 "parser.y"
+#line 198 "parser.y"
                         {(yyval.untypedExp) = new UntypedExp_In((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2034 "parser.cc"
     break;
 
   case 37: /* exp: exp tokNOTIN exp  */
-#line 196 "parser.y"
+#line 200 "parser.y"
                           {(yyval.untypedExp) = new UntypedExp_NotIn((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2040 "parser.cc"
     break;
 
   case 38: /* exp: tokMIN exp  */
-#line 198 "parser.y"
+#line 202 "parser.y"
                     {}
 #line 2046 "parser.cc"
     break;
 
   case 39: /* exp: tokMAX exp  */
-#line 200 "parser.y"
+#line 204 "parser.y"
                     {}
 #line 2052 "parser.cc"
     break;
 
   case 40: /* exp: exp tokLESS exp  */
-#line 202 "parser.y"
+#line 206 "parser.y"
                            {(yyval.untypedExp) = new UntypedExp_Less((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2058 "parser.cc"
     break;
 
   case 41: /* exp: exp tokLESSEQ exp  */
-#line 204 "parser.y"
+#line 208 "parser.y"
                             {(yyval.untypedExp) = new UntypedExp_LessEq((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2064 "parser.cc"
     break;
 
   case 42: /* exp: exp tokGREATEREQ exp  */
-#line 206 "parser.y"
+#line 210 "parser.y"
                               {(yyval.untypedExp) = new UntypedExp_GreaterEq((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2070 "parser.cc"
     break;
 
   case 43: /* exp: exp tokGREATER exp  */
-#line 208 "parser.y"
+#line 212 "parser.y"
                              {(yyval.untypedExp) = new UntypedExp_Greater((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2076 "parser.cc"
     break;
 
   case 44: /* exp: exp tokEQUAL exp  */
-#line 210 "parser.y"
+#line 214 "parser.y"
                           {(yyval.untypedExp) = new UntypedExp_Equal((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2082 "parser.cc"
     break;
 
   case 45: /* exp: exp tokNOTEQUAL exp  */
-#line 212 "parser.y"
+#line 216 "parser.y"
                               {(yyval.untypedExp)=new UntypedExp_NotEqual((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2088 "parser.cc"
     break;
 
   case 46: /* exp: exp tokIMPL exp  */
-#line 214 "parser.y"
+#line 218 "parser.y"
                          {(yyval.untypedExp) = new UntypedExp_Impl((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2094 "parser.cc"
     break;
 
   case 47: /* exp: exp tokBIIMPL exp  */
-#line 216 "parser.y"
+#line 220 "parser.y"
                             {(yyval.untypedExp) = new UntypedExp_Biimpl((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2100 "parser.cc"
     break;
 
   case 48: /* exp: exp tokAND exp  */
-#line 218 "parser.y"
+#line 222 "parser.y"
                          {(yyval.untypedExp) = new UntypedExp_And((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2106 "parser.cc"
     break;
 
   case 49: /* exp: exp tokOR exp  */
-#line 220 "parser.y"
+#line 224 "parser.y"
                         {(yyval.untypedExp) = new UntypedExp_Or((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2112 "parser.cc"
     break;
 
   case 50: /* exp: tokNOT exp  */
-#line 222 "parser.y"
+#line 226 "parser.y"
                      {(yyval.untypedExp)=new UntypedExp_Not{(yyvsp[0].untypedExp)};}
 #line 2118 "parser.cc"
     break;
 
   case 51: /* exp: dotExp  */
-#line 224 "parser.y"
+#line 228 "parser.y"
                          {(yyval.untypedExp)=(yyvsp[0].UntypedExpDotName);}
 #line 2124 "parser.cc"
     break;
 
   case 52: /* exp: tokUNIVROOT tokLPAREN name tokRPAREN  */
-#line 226 "parser.y"
+#line 230 "parser.y"
                                                {}
 #line 2130 "parser.cc"
     break;
 
   case 53: /* exp: tokUNIVROOT  */
-#line 228 "parser.y"
+#line 231 "parser.y"
                       {}
 #line 2136 "parser.cc"
     break;
 
   case 54: /* exp: name tokUP  */
-#line 230 "parser.y"
+#line 233 "parser.y"
                      {(yyval.untypedExp) = new UntypedExp_NameUp((yyvsp[-1].name));}
 #line 2142 "parser.cc"
     break;
 
   case 55: /* exp: tokEX0 name_where_list tokCOLON exp  */
-#line 232 "parser.y"
+#line 235 "parser.y"
                                               {(yyval.untypedExp) = new UntypedExp_Ex0((yyvsp[-2].varDeclList), (yyvsp[0].untypedExp));}
 #line 2148 "parser.cc"
     break;
 
   case 56: /* exp: tokEX1 universe name_where_list tokCOLON exp  */
-#line 234 "parser.y"
+#line 237 "parser.y"
                                                        {(yyval.untypedExp) = new UntypedExp_Ex1((yyvsp[-2].varDeclList), (yyvsp[0].untypedExp));}
 #line 2154 "parser.cc"
     break;
 
   case 57: /* exp: tokEX2 universe name_where_list tokCOLON exp  */
-#line 236 "parser.y"
+#line 239 "parser.y"
                                                        {(yyval.untypedExp) = new UntypedExp_Ex2((yyvsp[-2].varDeclList), (yyvsp[0].untypedExp));}
 #line 2160 "parser.cc"
     break;
 
   case 58: /* exp: tokALL0 name_where_list tokCOLON exp  */
-#line 238 "parser.y"
+#line 241 "parser.y"
                                                {(yyval.untypedExp) = new UntypedExp_All0((yyvsp[-2].varDeclList), (yyvsp[0].untypedExp));}
 #line 2166 "parser.cc"
     break;
 
   case 59: /* exp: tokALL1 universe name_where_list tokCOLON exp  */
-#line 240 "parser.y"
+#line 243 "parser.y"
                                                         {(yyval.untypedExp) = new UntypedExp_All1((yyvsp[-2].varDeclList), (yyvsp[0].untypedExp));(yyval.untypedExp)->turnTrueIsAll1();}
 #line 2172 "parser.cc"
     break;
 
   case 60: /* exp: tokALL2 universe name_where_list tokCOLON exp  */
-#line 242 "parser.y"
+#line 245 "parser.y"
                                                         {(yyval.untypedExp) = new UntypedExp_All2((yyvsp[-2].varDeclList), (yyvsp[0].untypedExp));}
 #line 2178 "parser.cc"
     break;
 
   case 61: /* exp: tokLET0 defs tokIN exp  */
-#line 244 "parser.y"
-                                             {}
+#line 247 "parser.y"
+                                             {(yyval.untypedExp) = new UntypedExp_Let0((yyvsp[-2].bindExpList), (yyvsp[0].untypedExp));}
 #line 2184 "parser.cc"
     break;
 
   case 62: /* exp: tokLET1 defs tokIN exp  */
-#line 246 "parser.y"
-                                            {}
+#line 249 "parser.y"
+                                            {(yyval.untypedExp) = new UntypedExp_Let1((yyvsp[-2].bindExpList), (yyvsp[0].untypedExp));}
 #line 2190 "parser.cc"
     break;
 
   case 63: /* exp: tokLET2 defs tokIN exp  */
-#line 248 "parser.y"
-                                             {}
+#line 251 "parser.y"
+                                             {(yyval.untypedExp) = new UntypedExp_Let2((yyvsp[-2].bindExpList), (yyvsp[0].untypedExp));}
 #line 2196 "parser.cc"
     break;
 
   case 64: /* exp: name tokLPAREN name_where_list tokRPAREN  */
-#line 250 "parser.y"
+#line 253 "parser.y"
                                                    {(yyval.untypedExp)=new UntypedExp_Call{(yyvsp[-3].name),(yyvsp[-1].varDeclList)}; }
 #line 2202 "parser.cc"
     break;
 
   case 65: /* exp: name tokLPAREN tokRPAREN  */
-#line 252 "parser.y"
+#line 255 "parser.y"
                                            {(yyval.untypedExp)=new UntypedExp_Call{(yyvsp[-2].name),new VarDeclList()};}
 #line 2208 "parser.cc"
     break;
 
   case 66: /* exp: tokTRUE  */
-#line 254 "parser.y"
+#line 257 "parser.y"
                   {(yyval.untypedExp)=new UntypedExp_True();}
 #line 2214 "parser.cc"
     break;
 
   case 67: /* exp: tokFALSE  */
-#line 256 "parser.y"
+#line 259 "parser.y"
                    {(yyval.untypedExp) = new UntypedExp_False();}
 #line 2220 "parser.cc"
     break;
 
   case 68: /* exp: tokUNIVROOT tokLPAREN exp tokCOMMA universe tokRPAREN  */
-#line 258 "parser.y"
+#line 261 "parser.y"
                                                                 {}
 #line 2226 "parser.cc"
     break;
 
   case 69: /* exp: tokEMPTY tokLPAREN exp tokRPAREN  */
-#line 260 "parser.y"
+#line 263 "parser.y"
                                            {}
 #line 2232 "parser.cc"
     break;
 
   case 70: /* exp: exp tokPLUS arith_exp  */
-#line 262 "parser.y"
+#line 265 "parser.y"
                                 {(yyval.untypedExp) = new UntypedExp_Plus((yyvsp[-2].untypedExp), (yyvsp[0].arithExp));}
 #line 2238 "parser.cc"
     break;
 
   case 71: /* exp: exp tokMINUS arith_exp  */
-#line 264 "parser.y"
+#line 267 "parser.y"
                                  {(yyval.untypedExp) = new UntypedExp_Minus((yyvsp[-2].untypedExp), (yyvsp[0].arithExp));}
 #line 2244 "parser.cc"
     break;
 
   case 72: /* exp: exp tokSTAR arith_exp  */
-#line 266 "parser.y"
+#line 269 "parser.y"
                                 {(yyval.untypedExp) = new UntypedExp_Mult((yyvsp[-2].untypedExp), (yyvsp[0].arithExp));}
 #line 2250 "parser.cc"
     break;
 
   case 73: /* exp: exp tokSLASH arith_exp  */
-#line 268 "parser.y"
+#line 271 "parser.y"
                                  {(yyval.untypedExp) = new UntypedExp_Div((yyvsp[-2].untypedExp), (yyvsp[0].arithExp));}
 #line 2256 "parser.cc"
     break;
 
   case 74: /* exp: exp tokMODULO arith_exp  */
-#line 270 "parser.y"
+#line 273 "parser.y"
                                    {(yyval.untypedExp) = new UntypedExp_Modul((yyvsp[-2].untypedExp), (yyvsp[0].arithExp));}
 #line 2262 "parser.cc"
     break;
 
   case 75: /* exp: tokEMPTY  */
-#line 272 "parser.y"
+#line 275 "parser.y"
                   {(yyval.untypedExp) = new UntypedExp_Empty();}
 #line 2268 "parser.cc"
     break;
 
   case 76: /* exp: tokINT  */
-#line 274 "parser.y"
+#line 277 "parser.y"
                          {(yyval.untypedExp) = new UntypedExp_Int(stoi(*(yyvsp[0].st)));delete (yyvsp[0].st);}
 #line 2274 "parser.cc"
     break;
 
   case 77: /* exp: tokReal  */
-#line 276 "parser.y"
+#line 279 "parser.y"
                          {(yyval.untypedExp)=new UntypedExp_Real{(yyvsp[0].doubleVal)};}
 #line 2280 "parser.cc"
     break;
 
   case 78: /* exp: tokLBRACE set_body tokRBRACE  */
-#line 278 "parser.y"
+#line 281 "parser.y"
                                       {(yyval.untypedExp) = new UntypedExp_Set((yyvsp[-1].varDeclList));}
 #line 2286 "parser.cc"
     break;
 
   case 79: /* exp: exp tokUNION exp  */
-#line 280 "parser.y"
+#line 283 "parser.y"
                            {(yyval.untypedExp) = new UntypedExp_Union((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2292 "parser.cc"
     break;
 
   case 80: /* exp: exp tokINTER exp  */
-#line 282 "parser.y"
+#line 285 "parser.y"
                            {(yyval.untypedExp) = new UntypedExp_Inter((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2298 "parser.cc"
     break;
 
   case 81: /* exp: exp tokSETMINUS exp  */
-#line 284 "parser.y"
+#line 287 "parser.y"
                               {(yyval.untypedExp) = new UntypedExp_Setminus((yyvsp[-2].untypedExp), (yyvsp[0].untypedExp));}
 #line 2304 "parser.cc"
     break;
 
   case 82: /* exp: tokIMPORT tokLPAREN tokSTRING map_list tokRPAREN  */
-#line 286 "parser.y"
+#line 289 "parser.y"
                                                            {}
 #line 2310 "parser.cc"
     break;
 
   case 83: /* exp: tokEXPORT tokLPAREN tokSTRING tokCOMMA exp tokRPAREN  */
-#line 288 "parser.y"
+#line 291 "parser.y"
                                                               {}
 #line 2316 "parser.cc"
     break;
 
   case 84: /* exp: tokPREFIX tokLPAREN exp tokRPAREN  */
-#line 290 "parser.y"
+#line 293 "parser.y"
                                            {}
 #line 2322 "parser.cc"
     break;
 
   case 85: /* exp: tokINSTATESPACE tokLPAREN exp tokCOMMA name_list tokRPAREN  */
-#line 292 "parser.y"
+#line 295 "parser.y"
                                                                     {}
 #line 2328 "parser.cc"
     break;
 
   case 86: /* exp: tokVARIANT tokLPAREN exp tokCOMMA exp tokCOMMA name tokCOMMA name tokRPAREN  */
-#line 295 "parser.y"
+#line 298 "parser.y"
                                  {}
 #line 2334 "parser.cc"
     break;
 
   case 87: /* exp: tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA name tokRPAREN  */
-#line 298 "parser.y"
+#line 301 "parser.y"
                         {}
 #line 2340 "parser.cc"
     break;
 
   case 88: /* exp: tokTREE tokLPAREN exp tokRPAREN  */
-#line 300 "parser.y"
+#line 303 "parser.y"
                                          {}
 #line 2346 "parser.cc"
     break;
 
   case 89: /* exp: tokTYPE tokLPAREN exp tokCOMMA name tokRPAREN  */
-#line 302 "parser.y"
+#line 305 "parser.y"
                                                        {}
 #line 2352 "parser.cc"
     break;
 
   case 90: /* exp: tokSOMETYPE tokLPAREN exp tokRPAREN  */
-#line 304 "parser.y"
+#line 307 "parser.y"
                                              {}
 #line 2358 "parser.cc"
     break;
 
   case 91: /* exp: tokCONSTTREE tokLPAREN exp tokCOMMA name tokCOLON constnode tokRPAREN  */
-#line 307 "parser.y"
+#line 310 "parser.y"
                              {}
 #line 2364 "parser.cc"
     break;
 
   case 92: /* exp: tokTREEROOT tokLPAREN exp tokRPAREN  */
-#line 309 "parser.y"
+#line 312 "parser.y"
                                              {}
 #line 2370 "parser.cc"
     break;
 
   case 93: /* exp: tokRESTRICT tokLPAREN exp tokRPAREN  */
-#line 311 "parser.y"
+#line 314 "parser.y"
                                              {(yyval.untypedExp) = new UntypedExp_Restrict((yyvsp[-1].untypedExp));}
 #line 2376 "parser.cc"
     break;
 
   case 94: /* arith_exp: arith_exp tokPLUS arith_exp  */
-#line 316 "parser.y"
+#line 319 "parser.y"
                                        {(yyval.arithExp) = new ArithExp_Add((yyvsp[-2].arithExp), (yyvsp[0].arithExp));}
 #line 2382 "parser.cc"
     break;
 
   case 95: /* arith_exp: arith_exp tokMINUS arith_exp  */
-#line 318 "parser.y"
+#line 321 "parser.y"
                                        {(yyval.arithExp) = new ArithExp_Subtr((yyvsp[-2].arithExp), (yyvsp[0].arithExp));}
 #line 2388 "parser.cc"
     break;
 
   case 96: /* arith_exp: arith_exp tokSTAR arith_exp  */
-#line 320 "parser.y"
+#line 323 "parser.y"
                                       {(yyval.arithExp) = new ArithExp_Mult((yyvsp[-2].arithExp), (yyvsp[0].arithExp));}
 #line 2394 "parser.cc"
     break;
 
   case 97: /* arith_exp: arith_exp tokSLASH arith_exp  */
-#line 322 "parser.y"
+#line 325 "parser.y"
                                        {(yyval.arithExp) = new ArithExp_Div((yyvsp[-2].arithExp), (yyvsp[0].arithExp));}
 #line 2400 "parser.cc"
     break;
 
   case 98: /* arith_exp: arith_exp tokMODULO arith_exp  */
-#line 324 "parser.y"
+#line 327 "parser.y"
                                        {(yyval.arithExp)=new ArithExp_Modul((yyvsp[-2].arithExp),(yyvsp[0].arithExp));}
 #line 2406 "parser.cc"
     break;
 
   case 99: /* arith_exp: tokMINUS arith_exp  */
-#line 326 "parser.y"
+#line 329 "parser.y"
                              {}
 #line 2412 "parser.cc"
     break;
 
   case 100: /* arith_exp: tokINT  */
-#line 329 "parser.y"
+#line 332 "parser.y"
         {
 		(yyval.arithExp) = new ArithExp_Integer(stoi(*(yyvsp[0].st)));
 		delete (yyvsp[0].st);
@@ -2421,13 +2421,13 @@ yyreduce:
     break;
 
   case 101: /* arith_exp: tokReal  */
-#line 334 "parser.y"
+#line 337 "parser.y"
                  {(yyval.arithExp)=new ArithExp_Real{(yyvsp[0].doubleVal)};}
 #line 2427 "parser.cc"
     break;
 
   case 102: /* arith_exp: dotExp  */
-#line 336 "parser.y"
+#line 339 "parser.y"
                  {
 					if((yyvsp[0].UntypedExpDotName)->kind==uDotName)
 						(yyval.arithExp)=new AritExp_ConstDotName{(yyvsp[0].UntypedExpDotName)->dotName};
@@ -2440,327 +2440,329 @@ yyreduce:
     break;
 
   case 103: /* arith_exp: tokLPAREN arith_exp tokRPAREN  */
-#line 345 "parser.y"
+#line 348 "parser.y"
                                         {}
 #line 2446 "parser.cc"
     break;
 
   case 104: /* dotExp: name tokDOT name  */
-#line 349 "parser.y"
+#line 352 "parser.y"
                                  {(yyval.UntypedExpDotName)=new UntypedExp_DotName{new DotName{(yyvsp[-2].name),(yyvsp[0].name)}};}
 #line 2452 "parser.cc"
     break;
 
   case 105: /* dotExp: name tokDOT tokINT tokDOT name  */
-#line 351 "parser.y"
+#line 354 "parser.y"
                                                         {checkNameIntName(*(yyvsp[-2].st));(yyval.UntypedExpDotName)=new UntypedExp_DotNameNumber{new DotName{(yyvsp[-4].name),(yyvsp[0].name)},(yyvsp[-2].st)};}
 #line 2458 "parser.cc"
     break;
 
   case 106: /* par_list: tokVAR0 name tokCOMMA par_list  */
-#line 356 "parser.y"
+#line 359 "parser.y"
                                          {(yyvsp[0].parList)->push_front(new ParPred{Varname0,(yyvsp[-2].name)});(yyval.parList)=(yyvsp[0].parList);}
 #line 2464 "parser.cc"
     break;
 
   case 107: /* par_list: tokVAR1 name where tokCOMMA par_list  */
-#line 358 "parser.y"
+#line 361 "parser.y"
                                               {{(yyvsp[0].parList)->push_front(new ParPred{Varname1,(yyvsp[-3].name)});(yyval.parList)=(yyvsp[0].parList);}}
 #line 2470 "parser.cc"
     break;
 
   case 108: /* par_list: tokVAR2 name where tokCOMMA par_list  */
-#line 360 "parser.y"
+#line 363 "parser.y"
                                               {(yyvsp[0].parList)->push_front(new ParPred{Varname2,(yyvsp[-3].name)});(yyval.parList)=(yyvsp[0].parList);}
 #line 2476 "parser.cc"
     break;
 
   case 109: /* par_list: tokUNIVERSE name tokCOMMA par_list  */
-#line 362 "parser.y"
+#line 365 "parser.y"
                                              {}
 #line 2482 "parser.cc"
     break;
 
   case 110: /* par_list: name where tokCOMMA par_list  */
-#line 364 "parser.y"
+#line 367 "parser.y"
                                        {}
 #line 2488 "parser.cc"
     break;
 
   case 111: /* par_list: tokVAR0 name  */
-#line 366 "parser.y"
+#line 369 "parser.y"
                        {(yyval.parList)=new ParList();(yyval.parList)->push_front(new ParPred{Varname0,(yyvsp[0].name)});}
 #line 2494 "parser.cc"
     break;
 
   case 112: /* par_list: tokVAR1 name where  */
-#line 368 "parser.y"
+#line 371 "parser.y"
                              {(yyval.parList)=new ParList();(yyval.parList)->push_front(new ParPred{Varname1,(yyvsp[-1].name)});}
 #line 2500 "parser.cc"
     break;
 
   case 113: /* par_list: tokVAR2 name where  */
-#line 370 "parser.y"
+#line 373 "parser.y"
                             {(yyval.parList)=new ParList();(yyval.parList)->push_front(new ParPred{Varname2,(yyvsp[-1].name)});}
 #line 2506 "parser.cc"
     break;
 
   case 114: /* par_list: tokUNIVERSE name  */
-#line 372 "parser.y"
+#line 375 "parser.y"
                            {}
 #line 2512 "parser.cc"
     break;
 
   case 115: /* par_list: name where  */
-#line 374 "parser.y"
+#line 377 "parser.y"
                     {}
 #line 2518 "parser.cc"
     break;
 
   case 116: /* defs: def tokCOMMA defs  */
-#line 379 "parser.y"
-                           {}
-#line 2524 "parser.cc"
+#line 382 "parser.y"
+                           {(yyvsp[0].bindExpList)->push_front((yyvsp[-2].bindExp)); 
+		 (yyval.bindExpList) = (yyvsp[0].bindExpList);}
+#line 2525 "parser.cc"
     break;
 
   case 117: /* defs: def  */
-#line 381 "parser.y"
-              {}
-#line 2530 "parser.cc"
+#line 385 "parser.y"
+              {(yyval.bindExpList) = new BindExpList(); 
+		 (yyval.bindExpList)->push_front((yyvsp[0].bindExp));}
+#line 2532 "parser.cc"
     break;
 
   case 118: /* def: name tokEQUAL exp  */
-#line 385 "parser.y"
-                           {}
-#line 2536 "parser.cc"
+#line 390 "parser.y"
+                           {(yyval.bindExp) = new BindExp((yyvsp[-2].name), (yyvsp[0].untypedExp));}
+#line 2538 "parser.cc"
     break;
 
   case 119: /* set_body: non_empty_set_body  */
-#line 389 "parser.y"
+#line 394 "parser.y"
                             {}
-#line 2542 "parser.cc"
+#line 2544 "parser.cc"
     break;
 
   case 120: /* non_empty_set_body: name tokCOMMA non_empty_set_body  */
-#line 393 "parser.y"
+#line 398 "parser.y"
                                                     {(yyvsp[0].varDeclList)->push_back(new VarDecl{(yyvsp[-2].name),nullptr});(yyval.varDeclList)=(yyvsp[0].varDeclList);}
-#line 2548 "parser.cc"
+#line 2550 "parser.cc"
     break;
 
   case 121: /* non_empty_set_body: name  */
-#line 395 "parser.y"
+#line 400 "parser.y"
               {(yyval.varDeclList)=new VarDeclList{}; (yyval.varDeclList)->push_back(new VarDecl{(yyvsp[0].name),nullptr});}
-#line 2554 "parser.cc"
+#line 2556 "parser.cc"
     break;
 
   case 122: /* universe: tokLBRACKET name_list tokRBRACKET  */
-#line 401 "parser.y"
+#line 406 "parser.y"
                                            {}
-#line 2560 "parser.cc"
+#line 2562 "parser.cc"
     break;
 
   case 123: /* universe: %empty  */
-#line 403 "parser.y"
+#line 408 "parser.y"
                      {}
-#line 2566 "parser.cc"
+#line 2568 "parser.cc"
     break;
 
   case 124: /* name: tokNAME  */
-#line 408 "parser.y"
+#line 413 "parser.y"
                 {(yyval.name) = new Name((yyvsp[0].st));}
-#line 2572 "parser.cc"
+#line 2574 "parser.cc"
     break;
 
   case 125: /* name_list: name tokCOMMA name_list  */
-#line 412 "parser.y"
+#line 417 "parser.y"
                                   {}
-#line 2578 "parser.cc"
+#line 2580 "parser.cc"
     break;
 
   case 126: /* name_list: name  */
-#line 414 "parser.y"
+#line 419 "parser.y"
               {}
-#line 2584 "parser.cc"
+#line 2586 "parser.cc"
     break;
 
   case 127: /* name_where_list: name where tokCOMMA name_where_list  */
-#line 419 "parser.y"
+#line 424 "parser.y"
                 {(yyvsp[0].varDeclList)->push_front(new VarDecl((yyvsp[-3].name),(yyvsp[-2].untypedExp))); 
 		 (yyval.varDeclList) = (yyvsp[0].varDeclList);}
-#line 2591 "parser.cc"
+#line 2593 "parser.cc"
     break;
 
   case 128: /* name_where_list: name where  */
-#line 422 "parser.y"
+#line 427 "parser.y"
                 {(yyval.varDeclList) = new VarDeclList(); 
 		 (yyval.varDeclList)->push_front(new VarDecl((yyvsp[-1].name),(yyvsp[0].untypedExp)));}
-#line 2598 "parser.cc"
+#line 2600 "parser.cc"
     break;
 
   case 129: /* func_list: func tokCOMMA func_list  */
-#line 427 "parser.y"
+#line 432 "parser.y"
                                   {}
-#line 2604 "parser.cc"
+#line 2606 "parser.cc"
     break;
 
   case 130: /* func_list: func  */
-#line 429 "parser.y"
+#line 434 "parser.y"
               {}
-#line 2610 "parser.cc"
+#line 2612 "parser.cc"
     break;
 
   case 131: /* func: name tokARROW tokLPAREN name tokCOMMA name tokRPAREN  */
-#line 433 "parser.y"
+#line 438 "parser.y"
                                                               {}
-#line 2616 "parser.cc"
+#line 2618 "parser.cc"
     break;
 
   case 132: /* univs: univ tokCOMMA univs  */
-#line 437 "parser.y"
+#line 442 "parser.y"
                              {}
-#line 2622 "parser.cc"
+#line 2624 "parser.cc"
     break;
 
   case 133: /* univs: univ  */
-#line 439 "parser.y"
+#line 444 "parser.y"
               {}
-#line 2628 "parser.cc"
+#line 2630 "parser.cc"
     break;
 
   case 134: /* univ: name tokCOLON tokINT  */
-#line 443 "parser.y"
+#line 448 "parser.y"
                               {}
-#line 2634 "parser.cc"
+#line 2636 "parser.cc"
     break;
 
   case 135: /* univ: name tokCOLON name  */
-#line 445 "parser.y"
+#line 450 "parser.y"
                             {}
-#line 2640 "parser.cc"
+#line 2642 "parser.cc"
     break;
 
   case 136: /* univ: name  */
-#line 447 "parser.y"
+#line 452 "parser.y"
               {}
-#line 2646 "parser.cc"
+#line 2648 "parser.cc"
     break;
 
   case 137: /* where: tokWHERE exp  */
-#line 451 "parser.y"
+#line 456 "parser.y"
                       {(yyval.untypedExp)=(yyvsp[0].untypedExp);}
-#line 2652 "parser.cc"
+#line 2654 "parser.cc"
     break;
 
   case 138: /* where: %empty  */
-#line 453 "parser.y"
+#line 458 "parser.y"
                      {(yyval.untypedExp)=nullptr;}
-#line 2658 "parser.cc"
+#line 2660 "parser.cc"
     break;
 
   case 139: /* map_list: tokCOMMA name tokARROW name map_list  */
-#line 457 "parser.y"
+#line 462 "parser.y"
                                               {}
-#line 2664 "parser.cc"
+#line 2666 "parser.cc"
     break;
 
   case 140: /* map_list: %empty  */
-#line 459 "parser.y"
+#line 464 "parser.y"
                      {}
-#line 2670 "parser.cc"
+#line 2672 "parser.cc"
     break;
 
   case 141: /* variant_list: name tokLPAREN component_list tokRPAREN tokCOMMA variant_list  */
-#line 463 "parser.y"
+#line 468 "parser.y"
                                                                            {}
-#line 2676 "parser.cc"
+#line 2678 "parser.cc"
     break;
 
   case 142: /* variant_list: name tokLPAREN tokRPAREN tokCOMMA variant_list  */
-#line 465 "parser.y"
+#line 470 "parser.y"
                                                         {}
-#line 2682 "parser.cc"
+#line 2684 "parser.cc"
     break;
 
   case 143: /* variant_list: name tokCOMMA variant_list  */
-#line 467 "parser.y"
+#line 472 "parser.y"
                                     {}
-#line 2688 "parser.cc"
+#line 2690 "parser.cc"
     break;
 
   case 144: /* variant_list: name tokLPAREN component_list tokRPAREN  */
-#line 469 "parser.y"
+#line 474 "parser.y"
                                                  {}
-#line 2694 "parser.cc"
+#line 2696 "parser.cc"
     break;
 
   case 145: /* variant_list: name tokLPAREN tokRPAREN  */
-#line 471 "parser.y"
+#line 476 "parser.y"
                                   {}
-#line 2700 "parser.cc"
+#line 2702 "parser.cc"
     break;
 
   case 146: /* variant_list: name  */
-#line 473 "parser.y"
+#line 478 "parser.y"
               {}
-#line 2706 "parser.cc"
+#line 2708 "parser.cc"
     break;
 
   case 147: /* component_list: name tokCOLON name tokCOMMA component_list  */
-#line 477 "parser.y"
+#line 482 "parser.y"
                                                           {}
-#line 2712 "parser.cc"
+#line 2714 "parser.cc"
     break;
 
   case 148: /* component_list: name tokCOLON name  */
-#line 479 "parser.y"
+#line 484 "parser.y"
                             {}
-#line 2718 "parser.cc"
+#line 2720 "parser.cc"
     break;
 
   case 149: /* constnode: name tokLPAREN constnode_list tokRPAREN  */
-#line 483 "parser.y"
+#line 488 "parser.y"
                                                   {}
-#line 2724 "parser.cc"
+#line 2726 "parser.cc"
     break;
 
   case 150: /* constnode: name tokLPAREN tokRPAREN  */
-#line 485 "parser.y"
+#line 490 "parser.y"
                                   {}
-#line 2730 "parser.cc"
+#line 2732 "parser.cc"
     break;
 
   case 151: /* constnode: name  */
-#line 487 "parser.y"
+#line 492 "parser.y"
               {}
-#line 2736 "parser.cc"
+#line 2738 "parser.cc"
     break;
 
   case 152: /* constnode_list: constnode tokCOMMA constnode_list  */
-#line 491 "parser.y"
+#line 496 "parser.y"
                                                  {}
-#line 2742 "parser.cc"
+#line 2744 "parser.cc"
     break;
 
   case 153: /* constnode_list: constnode  */
-#line 493 "parser.y"
+#line 498 "parser.y"
                    {}
-#line 2748 "parser.cc"
+#line 2750 "parser.cc"
     break;
 
   case 154: /* optstring: tokSTRING  */
-#line 497 "parser.y"
+#line 502 "parser.y"
                     {}
-#line 2754 "parser.cc"
+#line 2756 "parser.cc"
     break;
 
   case 155: /* optstring: %empty  */
-#line 499 "parser.y"
+#line 504 "parser.y"
                       {}
-#line 2760 "parser.cc"
+#line 2762 "parser.cc"
     break;
 
 
-#line 2764 "parser.cc"
+#line 2766 "parser.cc"
 
       default: break;
     }
@@ -2953,7 +2955,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 504 "parser.y"
+#line 509 "parser.y"
 
 int main(int argc, char **argv) {
    if (argc > 1) {

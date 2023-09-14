@@ -102,6 +102,18 @@ public:
   DeclarationKind  kind;
 };
 
+class BindExp {
+public:
+  BindExp(Name *n, UntypedExp *e):
+    name(n), exp(e) {}
+  ~BindExp() {delete name; delete exp;}
+
+  Name *name;
+  UntypedExp *exp;
+};
+
+class BindExpList: public ListC<BindExp*> {};
+
 
 class VarDeclList: public ListC<VarDecl*> {};
 
@@ -141,6 +153,30 @@ public:
   VarDeclList *nameList;
 
 };
+
+class UntypedExp_par_bpe: public UntypedExp {
+public:
+  UntypedExp_par_bpe(UntypedExpNodeKind k, 
+		     BindExpList *bl, 
+		     UntypedExp *e) :
+    UntypedExp(k), bindList(bl), exp(e) {}
+  virtual ~UntypedExp_par_bpe() 
+  {delete bindList; delete exp;}
+  
+  MonaTypeTag chekType() override;
+  string setExpressionInString() override;
+  bool controlAndInsertBindList(MonaTypeTag);
+  void deleteLocalElementSymbolTable();
+  string getSymbolOperator();
+  void turnTrueIsAll1() override;
+
+  BindExpList *bindList;
+  UntypedExp *exp;
+};
+
+
+
+
 
 class UntypedExp_par_ee: public UntypedExp {
 public:
@@ -225,6 +261,31 @@ public:
 		  UntypedExp *exp) :
     UntypedExp_par_unpee(all2, d, exp) {} 
     
+};
+
+class UntypedExp_Let0: public UntypedExp_par_bpe {
+public:
+  UntypedExp_Let0(BindExpList *bindList, 
+		  UntypedExp *exp) :
+    UntypedExp_par_bpe(uLet0, bindList, exp) {}
+
+};
+
+class UntypedExp_Let1: public UntypedExp_par_bpe {
+public:
+  UntypedExp_Let1(BindExpList *bindList, 
+		  UntypedExp *exp) :
+    UntypedExp_par_bpe(uLet1, bindList, exp) {}
+
+};
+
+
+class UntypedExp_Let2: public UntypedExp_par_bpe {
+public:
+  UntypedExp_Let2(BindExpList *bindList, 
+		  UntypedExp *exp) :
+    UntypedExp_par_bpe(uLet2, bindList, exp) {}
+
 };
 
 

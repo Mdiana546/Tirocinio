@@ -1,5 +1,5 @@
 ws2s;
-var2 C1, C2, C3, C4, C5, C6, C7;
+var2 C1, C2, C3, C4, C5, C6, C7, C8;
 var1 myVar,myVar2 where myVar<myVar2;
 var2 A,B;
 var0 f,f2;
@@ -17,6 +17,6 @@ p in A & all1 p1:
  p in C6 & p1<p1 & restrict(ex1 p5:p5<m);
 all1 p5:
  p5 in C7 & true;
-ex2 p,k:
-p=(A inter (B\empty));
+all1 z:
+z<myVar2 & let1 p=myVar in  p in C8;
 

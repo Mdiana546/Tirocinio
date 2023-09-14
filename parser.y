@@ -46,6 +46,8 @@ Name *name;
 UntypedExp_Dot*UntypedExpDotName;
 VarDeclList *varDeclList; 
 ParList*parList;
+BindExpList *bindExpList;
+BindExp *bindExp;
 
 }
 
@@ -71,7 +73,7 @@ ParList*parList;
 %token tokWS1S tokWS2S tokTREEROOT tokCONSTTREE tokALLPOS
 %token<st> tokNAME
 %token <doubleVal>tokReal tokBool   
-%token  tokSTRING  
+%token  tokSTRING    
 %token <st> tokINT     
 
 %type <declList> declarations;
@@ -82,6 +84,8 @@ ParList*parList;
 %type<UntypedExpDotName>dotExp
 %type <varDeclList> name_where_list set_body non_empty_set_body;  
 %type <parList> par_list; 
+%type <bindExp> def;
+%type <bindExpList> defs;
 
 %nonassoc LOW    
 %nonassoc tokCOLON
@@ -130,15 +134,15 @@ declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	 ;
 declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}   
             
-	| tokGUIDE func_list tokSEMICOLON{}  
+	| tokGUIDE func_list tokSEMICOLON{}  //insert error
         	
-	| tokUNIVERSE univs tokSEMICOLON{}
+	| tokUNIVERSE univs tokSEMICOLON{}  //insert error
               
         | tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname1, $3, $6);}  
              
         | tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname2, $3, $6);}
               
-        | tokCONST name tokEQUAL arith_exp tokSEMICOLON {}
+        | tokCONST name tokEQUAL arith_exp tokSEMICOLON {} //insert error
              
         | tokVAR0 name_where_list tokSEMICOLON{$$=new Variable_Declaration{Varname0,$2};}
                 
@@ -146,7 +150,7 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
              
         | tokVAR2 universe name_where_list tokSEMICOLON {$$=new Variable_Declaration{Varname2,$3};} 
               
-		| tokTREE universe name_where_list tokSEMICOLON {}
+		| tokTREE universe name_where_list tokSEMICOLON {} //it is used in wsrt;
 		
         | tokPRED name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON {$$=new Predicate_Declaration{$2,$4,$7};}
              
@@ -162,9 +166,9 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
               
         | exp tokSEMICOLON {$$ = new Expression_Declaration($1);}       
             
-        | tokVERIFY optstring exp tokSEMICOLON {}      
+        | tokVERIFY optstring exp tokSEMICOLON {}   //no
                
-        | tokEXECUTE exp tokSEMICOLON {}  
+        | tokEXECUTE exp tokSEMICOLON {}   //i must read the page 33
                
         | tokINCLUDE tokSTRING tokSEMICOLON {}   
               
@@ -172,7 +176,7 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
 			
 		| tokALLPOS name tokSEMICOLON {} 
 			
-		|tokTYPE name tokEQUAL variant_list tokSEMICOLON{}
+		|tokTYPE name tokEQUAL variant_list tokSEMICOLON{} //it is used in WSRT
 		
 		| tokINT name_where_list tokSEMICOLON {$$ = new Variable_Declaration{Integer,$2};}     //new rule
 		
@@ -189,15 +193,15 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokLPAREN exp tokRPAREN {$$=new UntypedExp_Paren{$2};} 
          
-        | exp tokSUB exp{}
+        | exp tokSUB exp{} //no
            
         | exp tokIN exp {$$ = new UntypedExp_In($1, $3);} //new 
               
         | exp tokNOTIN exp{$$ = new UntypedExp_NotIn($1, $3);} //new 
            
-        | tokMIN exp{}  
+        | tokMIN exp{}  //no
              
-        | tokMAX exp{} 
+        | tokMAX exp{} //no
                
         | exp tokLESS  exp {$$ = new UntypedExp_Less($1, $3);} 
                
@@ -223,9 +227,8 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
         
   		| dotExp {$$=$1;}
   	
-        | tokUNIVROOT tokLPAREN name tokRPAREN {}  
-              
-        | tokUNIVROOT {}
+        | tokUNIVROOT tokLPAREN name tokRPAREN {} //no
+        | tokUNIVROOT {}//return var 1
                
         | name tokUP {$$ = new UntypedExp_NameUp($1);} //new 
              
@@ -241,11 +244,11 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
                
         | tokALL2 universe name_where_list tokCOLON exp {$$ = new UntypedExp_All2($3, $5);} 
               
-        | tokLET0 defs tokIN exp   %prec LOW {}
+        | tokLET0 defs tokIN exp   %prec LOW {$$ = new UntypedExp_Let0($2, $4);} 
               
-        | tokLET1 defs tokIN exp   %prec LOW{} 
+        | tokLET1 defs tokIN exp   %prec LOW{$$ = new UntypedExp_Let1($2, $4);} 
                
-        | tokLET2 defs tokIN exp   %prec LOW {}
+        | tokLET2 defs tokIN exp   %prec LOW {$$ = new UntypedExp_Let2($2, $4);} 
              
         | name tokLPAREN name_where_list tokRPAREN {$$=new UntypedExp_Call{$1,$3}; }
 
@@ -255,9 +258,9 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
             
         | tokFALSE {$$ = new UntypedExp_False();}  
              
-        | tokUNIVROOT tokLPAREN exp tokCOMMA universe tokRPAREN {}
+        | tokUNIVROOT tokLPAREN exp tokCOMMA universe tokRPAREN {} //no
               
-        | tokEMPTY tokLPAREN exp tokRPAREN {}
+        | tokEMPTY tokLPAREN exp tokRPAREN {}  //I must implement it
              
         | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);}
               
@@ -283,18 +286,18 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | exp tokSETMINUS exp {$$ = new UntypedExp_Setminus($1, $3);}
               
-	| tokIMPORT tokLPAREN tokSTRING map_list tokRPAREN {}
+	| tokIMPORT tokLPAREN tokSTRING map_list tokRPAREN {} //see more
 	       
-	| tokEXPORT tokLPAREN tokSTRING tokCOMMA exp tokRPAREN{}
+	| tokEXPORT tokLPAREN tokSTRING tokCOMMA exp tokRPAREN{} //see more
 	       
-	| tokPREFIX tokLPAREN exp tokRPAREN{}
+	| tokPREFIX tokLPAREN exp tokRPAREN{} //no
 		
-	| tokINSTATESPACE tokLPAREN exp tokCOMMA name_list tokRPAREN{}
+	| tokINSTATESPACE tokLPAREN exp tokCOMMA name_list tokRPAREN{} //no
 		
 	| tokVARIANT tokLPAREN exp tokCOMMA exp tokCOMMA name 
-	  tokCOMMA name tokRPAREN{}
+	  tokCOMMA name tokRPAREN{} //see  more
 		
-	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA  
+	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA   //see more
 	  name tokRPAREN{}
 		
 	| tokTREE tokLPAREN exp tokRPAREN{}  //no
@@ -304,9 +307,9 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 	| tokSOMETYPE tokLPAREN exp tokRPAREN{}
 		
 	| tokCONSTTREE tokLPAREN exp tokCOMMA name tokCOLON
-          constnode tokRPAREN{}
+          constnode tokRPAREN{} //see more 
 		
-	| tokTREEROOT tokLPAREN exp tokRPAREN{}
+	| tokTREEROOT tokLPAREN exp tokRPAREN{} //see more
 		   
         | tokRESTRICT tokLPAREN exp tokRPAREN{$$ = new UntypedExp_Restrict($3);}
         
@@ -376,13 +379,15 @@ par_list: tokVAR0 name tokCOMMA par_list {$4->push_front(new ParPred{Varname0,$2
 	;
 
 
-defs	: def tokCOMMA defs{}  
+defs	: def tokCOMMA defs{$3->push_front($1); 
+		 $$ = $3;}  
 	
-	| def {}
+	| def {$$ = new BindExpList(); 
+		 $$->push_front($1);}
 		
 	;
 
-def	: name tokEQUAL exp{}
+def	: name tokEQUAL exp{$$ = new BindExp($1, $3);}
 	      
 	;
 

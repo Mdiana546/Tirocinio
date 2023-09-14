@@ -302,8 +302,88 @@ void UntypedExp_par_unpee:: deleteElementSymbleTable()
     }
 }
 
+MonaTypeTag UntypedExp_par_bpe::chekType()
+{
+  bool result;
+      switch(kind)
+      {
+        case uLet0:
+          result=controlAndInsertBindList(Varname0);
+        break;
+        case uLet1:
+          result=controlAndInsertBindList(Varname1);
+          break;
+        case uLet2:
+          result=controlAndInsertBindList(Varname2);
+        break;
+      }
 
+      if(!result)
+        throw runtime_error{"local variable declaration error "};
+      
+    if(Boolean!=exp->chekType())
+       throw runtime_error{"error in the expression"};
 
+    deleteLocalElementSymbolTable();
+
+  return Boolean;
+
+}
+
+bool UntypedExp_par_bpe::controlAndInsertBindList(MonaTypeTag type)
+{
+    for(BindExp* bindExp:*bindList)
+    {
+      if(bindExp->exp->chekType()!=type)
+        return false;
+    }
+
+   for(BindExp* bindExp:*bindList)
+      symbleTable.insert(new SymbolTable::SymbolEntry{bindExp->name,type});
+
+  return true;
+}
+
+void UntypedExp_par_bpe::deleteLocalElementSymbolTable()
+{
+  for(BindExp* bindExp:*bindList)
+      symbleTable.remove(bindExp->name);
+}
+
+string UntypedExp_par_bpe::setExpressionInString()
+{
+    string result=getSymbolOperator();
+
+    for(BindExp *bindExp:*bindList)
+      result+=" ,"+*bindExp->name->str+"="+bindExp->exp->setExpressionInString(); 
+
+    auto commaPos=std::find(result.begin(),result.end(),',');
+    if(commaPos!=result.end())
+         result.erase(commaPos);
+
+    return result+" in "+exp->setExpressionInString();
+}
+
+string UntypedExp_par_bpe::getSymbolOperator()
+{
+  switch(kind)
+  {
+    case uLet0:
+      return "let0";
+    break;
+    case uLet1:
+      return "let1";
+    break;
+    default:
+      return "let2";
+  }
+}
+
+void UntypedExp_par_bpe::turnTrueIsAll1()
+{
+  UntypedExp::turnTrueIsAll1();
+  exp->turnTrueIsAll1();
+}
 
 MonaTypeTag UntypedExp_par_ee_two::chekType()
 {
