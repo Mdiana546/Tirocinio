@@ -166,17 +166,17 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
               
         | exp tokSEMICOLON {$$ = new Expression_Declaration($1);}       
             
-        | tokVERIFY optstring exp tokSEMICOLON {}   //no
+        | tokVERIFY optstring exp tokSEMICOLON { yyerror("verify command is not supported");}   //no
                
-        | tokEXECUTE exp tokSEMICOLON {}   //i must read the page 33
+        | tokEXECUTE exp tokSEMICOLON {/*$$ = new Execute_Declaration($2);*/ yyerror("execute command is not supported");} 
                
-        | tokINCLUDE tokSTRING tokSEMICOLON {}   
+        | tokINCLUDE tokSTRING name tokSTRING tokSEMICOLON {}  
               
-		| tokLASTPOS name tokSEMICOLON {} 
+		| tokLASTPOS name tokSEMICOLON {yyerror("latpos command is not supported");} //throw error
 			
-		| tokALLPOS name tokSEMICOLON {} 
+		| tokALLPOS name tokSEMICOLON {$$ = new AllPos_Declaration($2);} 
 			
-		|tokTYPE name tokEQUAL variant_list tokSEMICOLON{} //it is used in WSRT
+		|tokTYPE name tokEQUAL variant_list tokSEMICOLON{ yyerror("type command is not supported");} //it is used in WSRT
 		
 		| tokINT name_where_list tokSEMICOLON {$$ = new Variable_Declaration{Integer,$2};}     //new rule
 		
@@ -260,7 +260,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
              
         | tokUNIVROOT tokLPAREN exp tokCOMMA universe tokRPAREN {} //no
               
-        | tokEMPTY tokLPAREN exp tokRPAREN {}  //I must implement it
+        | tokEMPTY tokLPAREN exp tokRPAREN {$$ = new UntypedExp_EmptyPred($3);}  
              
         | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);}
               
@@ -286,30 +286,30 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | exp tokSETMINUS exp {$$ = new UntypedExp_Setminus($1, $3);}
               
-	| tokIMPORT tokLPAREN tokSTRING map_list tokRPAREN {} //see more
+	| tokIMPORT tokLPAREN tokSTRING name tokSTRING map_list tokRPAREN {yyerror("import command is not supported");}
 	       
-	| tokEXPORT tokLPAREN tokSTRING tokCOMMA exp tokRPAREN{} //see more
+	| tokEXPORT tokLPAREN tokSTRING name tokSTRING tokCOMMA exp tokRPAREN{/*$$ = new UntypedExp_Export{$4, $7};*/ yyerror("export command is not supported");} 
 	       
-	| tokPREFIX tokLPAREN exp tokRPAREN{} //no
+	| tokPREFIX tokLPAREN exp tokRPAREN{ yyerror("prefix command is not supported");} 
 		
-	| tokINSTATESPACE tokLPAREN exp tokCOMMA name_list tokRPAREN{} //no
+	| tokINSTATESPACE tokLPAREN exp tokCOMMA name_list tokRPAREN{ yyerror("in_state_space command is not supported");}
 		
 	| tokVARIANT tokLPAREN exp tokCOMMA exp tokCOMMA name 
-	  tokCOMMA name tokRPAREN{} //see  more
+	  tokCOMMA name tokRPAREN{ yyerror("variant command is not supported");} //see  more
 		
 	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA   //see more
-	  name tokRPAREN{}
+	  name tokRPAREN{yyerror("succ command is not supported");}
 		
-	| tokTREE tokLPAREN exp tokRPAREN{}  //no
+	| tokTREE tokLPAREN exp tokRPAREN{yyerror("tree command is not supported");}  //no
 		
 	| tokTYPE tokLPAREN exp tokCOMMA name tokRPAREN{} //no
 		
-	| tokSOMETYPE tokLPAREN exp tokRPAREN{}
+	| tokSOMETYPE tokLPAREN exp tokRPAREN{ yyerror("sometype command is not supported");}
 		
 	| tokCONSTTREE tokLPAREN exp tokCOMMA name tokCOLON
-          constnode tokRPAREN{} //see more 
+          constnode tokRPAREN{yyerror("const_tree command is not supported");} //see more 
 		
-	| tokTREEROOT tokLPAREN exp tokRPAREN{} //see more
+	| tokTREEROOT tokLPAREN exp tokRPAREN{yyerror("tree_root command is not supported");} //see more
 		   
         | tokRESTRICT tokLPAREN exp tokRPAREN{$$ = new UntypedExp_Restrict($3);}
         

@@ -1,8 +1,9 @@
 ws2s;
-var2 C1, C2, C3, C4, C5, C6, C7, C8;
+var2 C1, C2, C3, C4, C5, C6, C7;
 var1 myVar,myVar2 where myVar<myVar2;
 var2 A,B;
 var0 f,f2;
+allpos A;
 assert myVar2 in A;
 defaultwhere1(p)=all1 p2:
  p in C1 &  p in C2;
@@ -18,5 +19,5 @@ p in A & all1 p1:
 all1 p5:
  p5 in C7 & true;
 all1 z:
-z<myVar2 & let1 p=myVar in  p in C8;
+z<myVar2 & let1 p=myVar in p<myVar & empty(A);
 

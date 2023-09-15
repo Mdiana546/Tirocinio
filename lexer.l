@@ -100,6 +100,7 @@ endLine     [.*\n]
 "int"           return tokINT;  //new rule
 "real"          return tokReal; //new rule
 "bool"          return tokBool;  //nu rule
+"\""            return tokSTRING; 
 {RealNumeral}   {yylval.doubleVal=std::stod(yytext);return tokReal;}
 {numeral}      	{yylval.st=new std::string(yytext);return tokINT;}
 {name}		{yylval.st=new std::string(yytext);return tokNAME;}

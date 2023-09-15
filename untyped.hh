@@ -591,6 +591,18 @@ public:
   UntypedExp *exp;
 };
 
+class AllPos_Declaration: public Declaration {
+public:
+  AllPos_Declaration(Name *n):
+    Declaration(dAllPos), name(n) {}
+  virtual ~AllPos_Declaration() {delete name;}
+
+  void insertDeclarationInSymbolTable() override;
+  void insertDeclarationInString() override;
+
+  Name *name;
+};
+
 class Assertion_Declaration: public Declaration {
 public:
   Assertion_Declaration(UntypedExp *e) :
@@ -599,6 +611,18 @@ public:
  
     void insertDeclarationInSymbolTable() override;
     void insertDeclarationInString() override;
+  
+  UntypedExp *exp;
+};
+
+class Execute_Declaration: public Declaration {
+public:
+  Execute_Declaration(UntypedExp *e) :
+    Declaration(dExecute), exp(e) {}
+  virtual ~Execute_Declaration() {delete exp;}
+
+  void insertDeclarationInSymbolTable() override;
+  void insertDeclarationInString() override{}
   
   UntypedExp *exp;
 };
@@ -753,6 +777,21 @@ class UntypedExp_Paren:public UntypedExp
 
 };
 
+
+class UntypedExp_Export: public UntypedExp {
+public:
+  UntypedExp_Export(Name*f,UntypedExp *e) :
+    UntypedExp(uExport),exp{e},file{f}{}
+  virtual ~UntypedExp_Export() {delete exp,delete file;}
+
+  MonaTypeTag chekType() override;
+  string setExpressionInString() override {return "";} 
+
+
+  Name *file;
+  UntypedExp *exp;
+};
+
 class ArithExp_par_aa: public ArithExp {
 public:
 
@@ -868,6 +907,7 @@ public:
   MonaTypeTag chekType() override;
   string setExpressionInString() override;
   void turnTrueIsAll1() override;
+  string getSymbolOperator();
 
   UntypedExp *exp;
 };
@@ -877,6 +917,13 @@ public:
   UntypedExp_Not(UntypedExp *exp) :
     UntypedExp_par_e(uNot, exp) {}
 };
+
+class UntypedExp_EmptyPred: public UntypedExp_par_e {
+public:
+  UntypedExp_EmptyPred(UntypedExp *exp) :
+    UntypedExp_par_e(uEmptyPred, exp) {}
+};
+
 
 #endif
 

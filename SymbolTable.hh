@@ -11,7 +11,7 @@ enum MonaTypeTag {
   Varname0, Varname1, Varname2, VarnameTree,
   Parname0, Parname1, Parname2, ParnameU,
   Univname, Predname, Constname, Statespacename,Integer,Boolean,Real,
-  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred,aDec,aExp,aPred_Macro
+  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred,aDec,aExp,aPred_Macro,aAllPos
 };
 
 
@@ -75,6 +75,7 @@ public:
     };
 
 unordered_map<int, list<SymbolEntry*>> table;
+bool pos=false;
 
     void insert(SymbolEntry* entry);
     void remove(Name * name);

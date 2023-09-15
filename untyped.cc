@@ -51,6 +51,12 @@ void Variable_Declaration::insertDeclarationInSymbolTable()
     insertDecInSymbolTable();
 }
 
+void Execute_Declaration::insertDeclarationInSymbolTable(){
+
+    if(exp->chekType()!=Boolean)  
+      throw runtime_error{"formula error in declaration Execute"};
+}
+
 void Predicate_Macro_Declaration::insertDeclarationInSymbolTable()
 {
      if(!parList->empty()){
@@ -84,6 +90,25 @@ void Default_Declaration::insertDeclarationInSymbolTable()
     throw runtime_error{"formula error in"+getSymbolOperator()};
 
     symbleTable.remove(name);
+}
+
+void AllPos_Declaration::insertDeclarationInSymbolTable()
+{
+  if(symbleTable.pos){
+      throw runtime_error{"allpos has already been declared"};
+  }
+  else 
+  {
+    if(symbleTable.isPresentEntry(name))
+    {
+      if(symbleTable.lookup(name)->tag==Varname2)
+          symbleTable.pos=true;
+       else
+        throw runtime_error{*name->str+" isn't a var2"};
+    }
+    else 
+      throw runtime_error{*name->str+" hasn't been declared"};
+  }
 }
 
 void Assertion_Declaration::insertDeclarationInSymbolTable()
@@ -165,6 +190,11 @@ void Predicate_Macro_Declaration::insertDeclarationInString()
 
  }
 
+ void AllPos_Declaration::insertDeclarationInString()
+ {
+    MFormat+="allpos "+*name->str+";\n";
+ }
+
  string Default_Declaration::getSymbolOperator()
  {
     if(type=Varname1)
@@ -215,6 +245,14 @@ string UntypedExp_par_unpee::getSymbolOperator()
       break;
     }
     return "";
+}
+
+MonaTypeTag UntypedExp_Export::chekType()
+{
+  if(exp->chekType()!=Boolean)
+    throw runtime_error{"error formula in command export"};
+  
+  return Boolean;
 }
 
 string UntypedExp_par_unpee::setExpressionInString()
@@ -985,11 +1023,23 @@ string HandleDeclarationFormat::returnSmtLibDeclaration()
 MonaTypeTag UntypedExp_par_e::chekType()
 {
   MonaTypeTag e1=exp->chekType();
-
+  if(kind==uNot){
     if(e1==Boolean)
       return Boolean;
+  }else{
+      if(e1==Varname2)
+        return Boolean;
+  }
 
-    throw runtime_error{"incorrect use of -> not"};
+    throw runtime_error{"incorrect use of ->"+getSymbolOperator()};
+}
+
+string UntypedExp_par_e::getSymbolOperator()
+{
+  if(kind==uNot)
+    return "~";
+  else  
+    return "empty";
 }
 
 void UntypedExp_par_e::turnTrueIsAll1()
@@ -1001,7 +1051,10 @@ void UntypedExp_par_e::turnTrueIsAll1()
 string UntypedExp_par_e::setExpressionInString()
 {
   string e=exp->setExpressionInString();
- return "~"+e;
+  if(kind==uNot)
+    return "~"+e;
+  else
+    return "empty("+e+")";
   
 }
 
