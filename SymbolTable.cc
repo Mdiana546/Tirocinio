@@ -20,7 +20,7 @@ void SymbolTable::insert(SymbolEntry* entry)
 
     }
     else{
-        throw runtime_error{"element ->"+*entry->name->str+" is already present"};
+        throw runtime_error{"element \""+*entry->name->str+"\" is already present"};
     }
 }
 

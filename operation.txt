@@ -16,14 +16,14 @@ assert myVar2 in A;
 
 defaultwhere1(p)=all1 p2:p.a<p.b & p.d<p.e;
 
-macro prova=myVar in A;
+macro prova(var1 q)=q in B;
 
 all1 p1 where ex1 p2:p2>p1,p2,p3: p1.a<p1.b & p1<myVar & p1.a<5+10 & A={myVar,myVar2} & ~(p1.a+p1.b*p1.c>p1.b/p1.a);
 
-all2 C: C={myVar,myVar2} & f => myVar<myVar2 & prova();
-
-ex1 m,p: p in A & all1 p1:p.a<p.b & p1<p1 & restrict(ex1 p5:p5<m);
+all2 C: C={myVar,myVar2} & f => myVar<myVar2 & prova(myVar);
 
 all1 p5: p5.flag & true;
 
 all1 z: z<myVar2 & let1 p=myVar in p<myVar & empty(A) & root.a+(10*20)-30<root.b;
+
+let1 name=myVar2 in name<myVar;

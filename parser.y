@@ -12,6 +12,7 @@ void yyerror(const char *msg);
 extern string MFormat;
 extern string smT;
 extern int count; 
+extern Name*root;
  MonaUntypedAST* untypedAST; 
 
 
@@ -46,7 +47,7 @@ Name *name;
 UntypedExp_Dot*UntypedExpDotName;
 VarDeclList *varDeclList; 
 ParList*parList;
-BindExpList *bindExpList;
+BindExpList *bindExpList; 
 BindExp *bindExp;
 
 }
@@ -73,14 +74,14 @@ BindExp *bindExp;
 %token tokWS1S tokWS2S tokTREEROOT tokCONSTTREE tokALLPOS
 %token<st> tokNAME
 %token <doubleVal>tokReal tokBool   
-%token  tokSTRING    
+%token  tokSTRING     
 %token <st> tokINT     
 
-%type <declList> declarations;
-%type <declaration> declaration
-%type <untypedExp> exp where;
+%type <declList> declarations;  
+%type <declaration> declaration;  
+%type <untypedExp> exp where; 
 %type <arithExp> arith_exp;
-%type <name> name;
+%type <name> name; 
 %type<UntypedExpDotName>dotExp
 %type <varDeclList> name_where_list set_body non_empty_set_body;  
 %type <parList> par_list; 
@@ -119,6 +120,7 @@ start	: header declarations{
 		 HandleFiles handleFile{};
 		handleFile.writeOnMonaFile(MFormat);
 		handleFile.writeOnSMTLIBFile(smT); 
+		delete root;
 		delete untypedAST;
 		}
 	;
@@ -142,11 +144,11 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
              
         | tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname2, $3, $6);}
               
-        | tokCONST name tokEQUAL arith_exp tokSEMICOLON {} //insert code 
+        | tokCONST name tokEQUAL arith_exp tokSEMICOLON {yyerror("const command is not supported");} 
              
-        | tokVAR0 name_where_list tokSEMICOLON{$$=new Variable_Declaration{Varname0,$2};}
+        | tokVAR0 name_where_list tokSEMICOLON{$$=new Variable_Declaration{Varname0,$2};}  
                 
-        | tokVAR1 universe name_where_list tokSEMICOLON{$$ = new Variable_Declaration(Varname1,$3);} 
+        | tokVAR1 universe name_where_list tokSEMICOLON{$$ = new Variable_Declaration(Varname1,$3);}  
              
         | tokVAR2 universe name_where_list tokSEMICOLON {$$=new Variable_Declaration{Varname2,$3};} 
               
@@ -269,7 +271,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokEMPTY tokLPAREN exp tokRPAREN {$$ = new UntypedExp_EmptyPred($3);}  
              
-        | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);}
+        | exp tokPLUS arith_exp {$$ = new UntypedExp_Plus($1, $3);} 
               
         | exp tokMINUS arith_exp {$$ = new UntypedExp_Minus($1, $3);}
             
@@ -530,6 +532,7 @@ int main(int argc, char **argv) {
 void yyerror(const char *msg) {
 	std::cout<<"Error near line "+to_string(yylineno)+": "+string(msg);
 	if(untypedAST!=nullptr){
+		delete root;
 		delete untypedAST; 
 	}
 	exit(-1);
