@@ -11,13 +11,14 @@ enum MonaTypeTag {
   Varname0, Varname1, Varname2, VarnameTree,
   Parname0, Parname1, Parname2, ParnameU,
   Univname, Predname, Constname, Statespacename,Integer,Boolean,Real,
-  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred,aDec,aExp,aPred_Macro,aAllPos
+  aInteger,aReal,aConst,nu,aAdd,aDiv,aMult,aSubtr,aModul,aDotName,aDotNameNumber,aPred,aDec,aExp,aPred_Macro,aAllPos,
+  arParen
 };
 
 
 class Name {
 public:
-  Name() {} // dummy
+  Name() {} 
   Name(string *s) :
     str(s){}
   virtual ~Name(){delete str;}
@@ -61,7 +62,7 @@ public:
           Name*name;
           MonaTypeTag tag;
           SymbolEntry(Name*name,MonaTypeTag tag):name{name},tag{tag}{}
-          virtual ~SymbolEntry(){delete name;}
+          virtual ~SymbolEntry(){}
     };
 
 
@@ -69,13 +70,17 @@ public:
     {
       public:
         SymbolEntryPred(Name*name,MonaTypeTag tag,ParList*parList):SymbolEntry{name,tag},parList{parList}{}
-        virtual ~SymbolEntryPred(){delete parList;}
+        virtual ~SymbolEntryPred(){}
 
         ParList *parList;
     };
 
 unordered_map<int, list<SymbolEntry*>> table;
 bool pos=false;
+
+    SymbolTable();
+    SymbolTable(SymbolEntry*symbolEntry);
+    ~SymbolTable();
 
     void insert(SymbolEntry* entry);
     void remove(Name * name);

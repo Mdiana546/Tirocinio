@@ -1,5 +1,5 @@
 #include "untyped.hh"
-SymbolTable symbleTable{};
+SymbolTable symbleTable{new SymbolTable::SymbolEntry{new Name{new string{"root"}},Varname1}};
 string MFormat;
 HandleDeclarationFormat Hdeclaration{};
 string smT;
@@ -946,6 +946,7 @@ string ArithExp_ConstPathDotName::setArithString()
 {
   return *(dotName->name1->str)+"."+*path+"."+*(dotName->name2->str);
 }
+
 
 MonaTypeTag UntypedExp_Dot::chekType()
 {

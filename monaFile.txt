@@ -1,5 +1,5 @@
 ws2s;
-var2 C1, C2, C3, C4, C5, C6, C7;
+var2 C1, C2, C3, C4, C5, C6, C7, C8;
 var1 myVar,myVar2 where myVar<myVar2;
 var2 A,B;
 var0 f,f2;
@@ -19,5 +19,5 @@ p in A & all1 p1:
 all1 p5:
  p5 in C7 & true;
 all1 z:
-z<myVar2 & let1 p=myVar in p<myVar & empty(A);
+z<myVar2 & let1 p=myVar in p<myVar & empty(A) &  root in C8;
 

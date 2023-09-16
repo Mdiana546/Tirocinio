@@ -88,10 +88,10 @@ BindExp *bindExp;
 %type <bindExpList> defs;
 
 %nonassoc LOW    
-%nonassoc tokCOLON
-%right tokBIIMPL
-%right tokIMPL
-%left tokOR
+%nonassoc tokCOLON  
+%right tokBIIMPL   
+%right tokIMPL   
+%left tokOR  
 %left tokAND
 %nonassoc tokNOT
 %nonassoc tokIN tokNOTIN tokSUB
@@ -101,7 +101,7 @@ BindExp *bindExp;
 %left tokINTER
 %left tokSETMINUS
 %left tokPLUS tokMINUS
-%left tokSTAR tokSLASH tokMODULO   
+%left tokSTAR tokSLASH tokMODULO    
 %left tokDOT tokUP     
   
 %%
@@ -134,15 +134,15 @@ declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	 ;
 declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}   
             
-	| tokGUIDE func_list tokSEMICOLON{}  //insert error
+	| tokGUIDE func_list tokSEMICOLON{yyerror("guide  command is not supported");}
         	
-	| tokUNIVERSE univs tokSEMICOLON{}  //insert error
+	| tokUNIVERSE univs tokSEMICOLON{yyerror("universe command is not supported");} 
               
         | tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname1, $3, $6);}  
              
         | tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname2, $3, $6);}
               
-        | tokCONST name tokEQUAL arith_exp tokSEMICOLON {} //insert error
+        | tokCONST name tokEQUAL arith_exp tokSEMICOLON {} //insert code 
              
         | tokVAR0 name_where_list tokSEMICOLON{$$=new Variable_Declaration{Varname0,$2};}
                 
@@ -150,7 +150,7 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
              
         | tokVAR2 universe name_where_list tokSEMICOLON {$$=new Variable_Declaration{Varname2,$3};} 
               
-		| tokTREE universe name_where_list tokSEMICOLON {} //it is used in wsrt;
+		| tokTREE universe name_where_list tokSEMICOLON {yyerror("tree command is not supported");} //it is used in wsrt;
 		
         | tokPRED name tokLPAREN par_list tokRPAREN tokEQUAL exp tokSEMICOLON {$$=new Predicate_Declaration{$2,$4,$7};}
              
@@ -193,15 +193,15 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
               
         | tokLPAREN exp tokRPAREN {$$=new UntypedExp_Paren{$2};} 
          
-        | exp tokSUB exp{} //no
+        | exp tokSUB exp{yyerror("sub command is not supported");} //no
            
         | exp tokIN exp {$$ = new UntypedExp_In($1, $3);} //new 
               
         | exp tokNOTIN exp{$$ = new UntypedExp_NotIn($1, $3);} //new 
            
-        | tokMIN exp{}  //no
+        | tokMIN exp{yyerror("min command is not supported");}  //no
              
-        | tokMAX exp{} //no
+        | tokMAX exp{yyerror("max command is not supported");} //no
                
         | exp tokLESS  exp {$$ = new UntypedExp_Less($1, $3);} 
                
@@ -225,10 +225,17 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
                
         | tokNOT exp {$$=new UntypedExp_Not{$2};}
         
-  		| dotExp {$$=$1;}
+  		| dotExp {$$=$1;} 
   	
-        | tokUNIVROOT tokLPAREN name tokRPAREN {} //no
-        | tokUNIVROOT {}//return var 1
+        | tokUNIVROOT tokLPAREN name tokRPAREN {yyerror("root universe command is not supported");} 
+		
+        | tokUNIVROOT {$$ = new UntypedExp_Name{uName,new Name{new string{"root"}}};}
+
+		| tokUNIVROOT tokDOT tokINT{check_bits(*$3);$$=new UntypedExp_PathName{uPathName,new Name{new string{"root"}},$3};}
+
+		| tokUNIVROOT tokDOT name {$$=new UntypedExp_DotName{new DotName{new Name{new string{"root"}},$3}};}
+
+		|  tokUNIVROOT tokDOT tokINT tokDOT name{checkNameIntName(*$3);$$=new UntypedExp_DotNameNumber{new DotName{new Name{new string{"root"}},$5},$3};}
                
         | name tokUP {$$ = new UntypedExp_NameUp($1);} //new 
              
@@ -258,7 +265,7 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
             
         | tokFALSE {$$ = new UntypedExp_False();}  
              
-        | tokUNIVROOT tokLPAREN exp tokCOMMA universe tokRPAREN {} //no
+        | tokUNIVROOT tokLPAREN exp tokCOMMA universe tokRPAREN {yyerror("root universe  command is not supported");} //no
               
         | tokEMPTY tokLPAREN exp tokRPAREN {$$ = new UntypedExp_EmptyPred($3);}  
              
@@ -295,21 +302,21 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
 	| tokINSTATESPACE tokLPAREN exp tokCOMMA name_list tokRPAREN{ yyerror("in_state_space command is not supported");}
 		
 	| tokVARIANT tokLPAREN exp tokCOMMA exp tokCOMMA name 
-	  tokCOMMA name tokRPAREN{ yyerror("variant command is not supported");} //see  more
+	  tokCOMMA name tokRPAREN{ yyerror("variant command is not supported");}
 		
-	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA   //see more
+	| tokSUCC tokLPAREN exp tokCOMMA name tokCOMMA name tokCOMMA  
 	  name tokRPAREN{yyerror("succ command is not supported");}
 		
-	| tokTREE tokLPAREN exp tokRPAREN{yyerror("tree command is not supported");}  //no
+	| tokTREE tokLPAREN exp tokRPAREN{yyerror("tree command is not supported");}  
 		
-	| tokTYPE tokLPAREN exp tokCOMMA name tokRPAREN{} //no
+	| tokTYPE tokLPAREN exp tokCOMMA name tokRPAREN{yyerror("type command is not supported");} 
 		
 	| tokSOMETYPE tokLPAREN exp tokRPAREN{ yyerror("sometype command is not supported");}
 		
 	| tokCONSTTREE tokLPAREN exp tokCOMMA name tokCOLON
-          constnode tokRPAREN{yyerror("const_tree command is not supported");} //see more 
+          constnode tokRPAREN{yyerror("const_tree command is not supported");} 
 		
-	| tokTREEROOT tokLPAREN exp tokRPAREN{yyerror("tree_root command is not supported");} //see more
+	| tokTREEROOT tokLPAREN exp tokRPAREN{yyerror("tree_root command is not supported");}   
 		   
         | tokRESTRICT tokLPAREN exp tokRPAREN{$$ = new UntypedExp_Restrict($3);}
         
@@ -345,7 +352,7 @@ arith_exp: arith_exp tokPLUS arith_exp {$$ = new ArithExp_Add($1, $3);}
 					}
 		}
 	    
-	| tokLPAREN arith_exp tokRPAREN {}    
+	| tokLPAREN arith_exp tokRPAREN {$$=$2;}    
       
 	;
 
@@ -522,7 +529,8 @@ int main(int argc, char **argv) {
 
 void yyerror(const char *msg) {
 	std::cout<<"Error near line "+to_string(yylineno)+": "+string(msg);
-	if(untypedAST!=nullptr)
-		delete untypedAST;
+	if(untypedAST!=nullptr){
+		delete untypedAST; 
+	}
 	exit(-1);
 }

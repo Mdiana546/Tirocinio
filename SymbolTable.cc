@@ -1,6 +1,14 @@
 #include "SymbolTable.hh"
 #include<iostream>
 
+
+
+SymbolTable::SymbolTable(SymbolEntry*symbolEntry)
+{
+    insert(symbolEntry);
+}
+
+
 void SymbolTable::insert(SymbolEntry* entry)
 {
 
@@ -100,4 +108,15 @@ bool SymbolTable::isTagPresent(MonaTypeTag tag)
         }
     }
     return false;
+}
+
+SymbolTable::~SymbolTable(){
+    
+    for(auto const& map:table)
+    {
+        for(SymbolEntry*entry:map.second){
+                delete entry;
+        }
+                    
+    }
 }
