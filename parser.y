@@ -8,12 +8,12 @@
 #include "untyped.hh"
 #include "HandleFiles.hh" 
 
-void yyerror(const char *msg);
+void yyerror(const char *msg); 
 extern string MFormat;
 extern string smT;
-extern int count; 
+extern int count;  
 extern Name*root;
- MonaUntypedAST* untypedAST; 
+ MonaUntypedAST* untypedAST;              
 
 
 void check_bits(string s)
@@ -39,7 +39,7 @@ void checkNameIntName(string s)
 int intval; 
 double doubleVal; 
 std::string *st;   
-DeclarationList* declList;   
+DeclarationList* declList;      
 Declaration *declaration;
 UntypedExp *untypedExp; 
 ArithExp *arithExp;
@@ -102,7 +102,7 @@ BindExp *bindExp;
 %left tokINTER
 %left tokSETMINUS
 %left tokPLUS tokMINUS
-%left tokSTAR tokSLASH tokMODULO    
+%left tokSTAR tokSLASH tokMODULO         
 %left tokDOT tokUP     
   
 %%

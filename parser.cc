@@ -78,12 +78,12 @@
 #include "untyped.hh"
 #include "HandleFiles.hh" 
 
-void yyerror(const char *msg);
+void yyerror(const char *msg); 
 extern string MFormat;
 extern string smT;
-extern int count; 
+extern int count;  
 extern Name*root;
- MonaUntypedAST* untypedAST; 
+ MonaUntypedAST* untypedAST;              
 
 
 void check_bits(string s)

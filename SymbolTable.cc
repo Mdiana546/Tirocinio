@@ -12,16 +12,24 @@ SymbolTable::SymbolTable(SymbolEntry*symbolEntry)
 void SymbolTable::insert(SymbolEntry* entry)
 {
 
+        if(entry->global){
 
-    if(!isPresentEntry(entry->name))
-    {
+             if(isPresentEntry(entry->name))
+                throw runtime_error{"element \""+*entry->name->str+"\" is already present"};
+            else
+            {
+               int key=hashValue(entry->name);
+               table[key].push_front(entry);
+
+            }
+
+        }
+        else  
+        {
             int key=hashValue(entry->name);
-            table[key].push_back(entry);
+            table[key].push_front(entry);
+        }
 
-    }
-    else{
-        throw runtime_error{"element \""+*entry->name->str+"\" is already present"};
-    }
 }
 
 void SymbolTable::remove(Name*name)

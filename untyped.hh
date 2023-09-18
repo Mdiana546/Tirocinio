@@ -4,6 +4,7 @@
 #include "SymbolTable.hh"
 #include<list>
 #include<string>
+#include <set>
 #include<iostream>
 #include"HandleExpressionFormat.hh"
 #include <exception>
@@ -146,6 +147,7 @@ public:
   void insertDeclarationInString(string&);
   string getSymbolOperator();
   string setExpressionInString() override;
+  void controlDuplicate();
   MonaTypeTag chekType() override;
   
 
@@ -169,6 +171,7 @@ public:
   void deleteLocalElementSymbolTable();
   string getSymbolOperator();
   void turnTrueIsAll1() override;
+  void controlDuplicate();
 
   BindExpList *bindList;
   UntypedExp *exp;
@@ -538,6 +541,7 @@ public:
 
   void insertDeclarationInSymbolTable()override;
   void insertDeclarationInString()override;
+  void controlDuplicate();
   
   Name *name;
   ParList *parList;
@@ -569,6 +573,7 @@ public:
 void insertDeclarationInSymbolTable()override;
 void insertDeclarationInString()override;
 void insertDecInSymbolTable();
+void controlDuplicate();
 
   MonaTypeTag declKind;
   VarDeclList *decls;

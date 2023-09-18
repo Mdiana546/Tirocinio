@@ -1,4 +1,5 @@
 #include<list>
+#include<set>
 #include <iostream>
 using std::list;
 
@@ -12,3 +13,5 @@ class ListC:public list<T>
                 delete *it;
         }
 };
+
+

@@ -156,7 +156,7 @@ union YYSTYPE
 int intval; 
 double doubleVal; 
 std::string *st;   
-DeclarationList* declList;   
+DeclarationList* declList;      
 Declaration *declaration;
 UntypedExp *untypedExp; 
 ArithExp *arithExp;

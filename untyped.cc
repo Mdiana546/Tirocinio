@@ -60,6 +60,7 @@ void Execute_Declaration::insertDeclarationInSymbolTable(){
 
 void Predicate_Macro_Declaration::insertDeclarationInSymbolTable()
 {
+    controlDuplicate();
      if(!parList->empty()){
       for(ParPred*parPred:*parList)
         symbleTable.insert(new SymbolTable::SymbolEntry{parPred->name,parPred->type});
@@ -82,8 +83,22 @@ void Predicate_Macro_Declaration::insertDeclarationInSymbolTable()
       }
 
 
-      symbleTable.insert(new SymbolTable::SymbolEntryPred{name,aPred_Macro,parList});
+      symbleTable.insert(new SymbolTable::SymbolEntryPred{name,aPred_Macro,parList,true});
 
+}
+
+void Predicate_Macro_Declaration::controlDuplicate()
+{
+  struct Compare{bool operator()(const ParPred*first,const ParPred*second)const {return *(first->name->str)!=*(second->name->str);}};
+
+        set<ParPred*,Compare>setDuplicate{};
+
+        for(ParPred*parPred:*parList)
+          setDuplicate.insert(parPred);
+  
+      if(setDuplicate.size()!=parList->size())
+        throw runtime_error{"you have entered two identical declarations in variabile declaration"};
+  
 }
 
 void Default_Declaration::insertDeclarationInSymbolTable()
@@ -223,7 +238,6 @@ MonaTypeTag UntypedExp_par_unpee::chekType()
   deleteElementSymbleTable();
 
   if(tag!=Boolean){
-    string symbolOPerator=getSymbolOperator();
     throw runtime_error{"Error creating formula in "+getSymbolOperator()};
   }
 return tag;
@@ -296,13 +310,29 @@ void UntypedExp_All1::turnTrueIsAll1()
 
 void Variable_Declaration::insertDecInSymbolTable()
 {
+   controlDuplicate();
    for(VarDecl*dec : *decls)
     {
-        symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,declKind});
+        symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,declKind,true});
         if(dec->where!=nullptr)
           dec->where->chekType();
     }
 }
+
+void Variable_Declaration::controlDuplicate()
+{
+struct Compare{bool operator()(const VarDecl*first,const VarDecl*second)const {return *(first->name->str)!=*(second->name->str);}};
+
+  set<VarDecl*,Compare>setDuplicate{};
+
+          for(VarDecl*varDecl:*decls)
+                setDuplicate.insert(varDecl);
+
+      if(setDuplicate.size()!=decls->size())
+        throw runtime_error{"you have entered two identical declarations in variabile declaration"};
+
+}
+
 
 void UntypedExp_par_unpee::insertDecInSymbolTable()
 {
@@ -330,6 +360,7 @@ void UntypedExp_par_unpee::insertDecInSymbolTable()
         break;
       }
 
+    controlDuplicate();
     for(VarDecl*dec : *nameList)
         {
           symbleTable.insert(new SymbolTable::SymbolEntry{dec->name,type});
@@ -337,6 +368,19 @@ void UntypedExp_par_unpee::insertDecInSymbolTable()
                 dec->where->chekType();
               
         }
+}
+
+void UntypedExp_par_unpee::controlDuplicate()
+{
+  struct Compare{bool operator()(const VarDecl*first,const VarDecl*second)const {return *(first->name->str)!=*(second->name->str);}};
+
+  set<VarDecl*,Compare>setDuplicate{};
+
+      for(VarDecl*varDecl:*nameList)
+        setDuplicate.insert(varDecl);
+
+    if(setDuplicate.size()!=nameList->size())
+      throw runtime_error{"you have entered two identical declarations in "+getSymbolOperator()};
 }
 
 void UntypedExp_par_unpee:: deleteElementSymbleTable()
@@ -383,10 +427,25 @@ bool UntypedExp_par_bpe::controlAndInsertBindList(MonaTypeTag type)
         return false;
     }
 
+    controlDuplicate();
    for(BindExp* bindExp:*bindList)
       symbleTable.insert(new SymbolTable::SymbolEntry{bindExp->name,type});
 
   return true;
+}
+
+void UntypedExp_par_bpe::controlDuplicate()
+{
+  struct Compare{bool operator()(const BindExp*first,const BindExp*second)const {return *(first->name->str)!=*(second->name->str);}};
+
+  set<BindExp*,Compare>setDuplicate{};
+
+      for(BindExp*bindExp:*bindList)
+        setDuplicate.insert(bindExp);
+
+    if(setDuplicate.size()!=bindList->size())
+      throw runtime_error{"you have entered two identical declarations in "+getSymbolOperator()};
+
 }
 
 void UntypedExp_par_bpe::deleteLocalElementSymbolTable()

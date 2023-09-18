@@ -61,7 +61,8 @@ public:
         public:
           Name*name;
           MonaTypeTag tag;
-          SymbolEntry(Name*name,MonaTypeTag tag):name{name},tag{tag}{}
+          bool global;
+          SymbolEntry(Name*name,MonaTypeTag tag,bool global =false):name{name},tag{tag},global{global}{}
           virtual ~SymbolEntry(){}
     };
 
@@ -69,7 +70,7 @@ public:
     class SymbolEntryPred:public SymbolEntry
     {
       public:
-        SymbolEntryPred(Name*name,MonaTypeTag tag,ParList*parList):SymbolEntry{name,tag},parList{parList}{}
+        SymbolEntryPred(Name*name,MonaTypeTag tag,ParList*parList,bool global =false):SymbolEntry{name,tag,global},parList{parList}{}
         virtual ~SymbolEntryPred(){}
 
         ParList *parList;
