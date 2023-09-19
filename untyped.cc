@@ -1,5 +1,5 @@
 #include "untyped.hh"
-Name*root=new Name{new string{"root"}};
+Name *root=new Name{new string{"root"}};
 SymbolTable symbleTable{new SymbolTable::SymbolEntry{root,Varname1,true}};
 string MFormat;
 HandleDeclarationFormat Hdeclaration{};
@@ -9,6 +9,7 @@ int cc=1;
 
 void MonaUntypedAST::typeCheckDeclarations()
 {
+
   for(Declaration * dec:*declarations)
   {
     if(dec->kind!=dExpression)
@@ -19,7 +20,7 @@ void MonaUntypedAST::typeCheckDeclarations()
 
 }
 
-void MonaUntypedAST::createStrings()
+void MonaUntypedAST::createStrings() 
 {
     for(Declaration * dec:*declarations)
      {

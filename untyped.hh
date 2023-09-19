@@ -5,14 +5,14 @@
 #include<list>
 #include<string>
 #include <set>
-#include<iostream>
-#include"HandleExpressionFormat.hh"
+#include<iostream> 
+#include"HandleExpressionFormat.hh" 
 #include <exception>
 using std::string;
 using std::list;
 using std::cout;
-using std::endl;
-using std::runtime_error;
+using std::endl; 
+using std::runtime_error; 
 
 
 
@@ -625,7 +625,7 @@ public:
   Execute_Declaration(UntypedExp *e) :
     Declaration(dExecute), exp(e) {}
   virtual ~Execute_Declaration() {delete exp;}
-
+string MFormat;
   void insertDeclarationInSymbolTable() override;
   void insertDeclarationInString() override{}
   
@@ -857,7 +857,7 @@ public:
     ArithExp(aInteger),n{n}{}
 
   MonaTypeTag evaluate()override;
-  string setArithString() override;
+  string setArithString() override; 
   int n;
 };
 
@@ -928,8 +928,6 @@ public:
   UntypedExp_EmptyPred(UntypedExp *exp) :
     UntypedExp_par_e(uEmptyPred, exp) {}
 };
-
-
 
 #endif
 

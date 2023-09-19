@@ -1,7 +1,7 @@
 %{
 #include<iostream>
 #include<cstdio>
-#include <string>
+#include <string> 
 #include<list>
 #include <fstream>
 #include "lexer.hh"
@@ -11,9 +11,8 @@
 void yyerror(const char *msg); 
 extern string MFormat;
 extern string smT;
-extern int count;  
-extern Name*root;
- MonaUntypedAST* untypedAST;              
+extern Name*root; 
+MonaUntypedAST* untypedAST;                
 
 
 void check_bits(string s)

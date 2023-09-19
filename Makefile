@@ -1,10 +1,18 @@
 CC = g++
-OPT = -O3
-output: lexer.cc parser.cc
-	$(CC) $(OPT) $^ HandleExpressionFormat.cc HandleFiles.cc  untyped.cc SymbolTable.cc  -o $@
 
-lexer.hh lexer.cc: lexer.l
-	flex --header-file=lexer.hh -o lexer.cc lexer.l 
+OBJ = lexer.o parser.o HandleExpressionFormat.o SymbolTable.o untyped.o HandleFiles.o
 
-parser.hh parser.cc: parser.y
-	bison -d -o parser.cc parser.y
+TARGET = output
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) -o $@ $^
+	
+%.o: %.cc %.hh
+	$(CC) -c -o $@ $<
+	
+clean:
+	rm -f $(OBJ) $(TARGET)
+
+

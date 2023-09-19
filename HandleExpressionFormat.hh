@@ -4,7 +4,7 @@
 #include<stack>
 #include <iostream>
 #include <sstream>
-#include<algorithm>
+#include<algorithm> 
 #include <set>
 #define lessEqual '#'
 #define greaterEqual '@'

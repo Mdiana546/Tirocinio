@@ -2,7 +2,7 @@
 #include<iostream>
 
 
-
+ 
 SymbolTable::SymbolTable(SymbolEntry*symbolEntry)
 {
     insert(symbolEntry);
