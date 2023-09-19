@@ -1,6 +1,6 @@
 ws2s;
-var2 C1, C2, C3, C4, C5, C6, C7, C8;
-var1 myVar,myVar2 where myVar<myVar2;
+var2 C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11;
+var1 myVar,myVar2 where myVar<myVar2,q;
 var2 A,B;
 var0 f,f2;
 allpos A;
@@ -14,8 +14,14 @@ p2>p1,p2,p3:
 all2 C:
 C={myVar2,myVar} & f => myVar<myVar2 & prova(myVar) & myVar in A;
 all1 p5,prova:
- p5 in C6 & true &  prova in C7;
+ p5 in C6 & true &  prova in C7 &  root in C8;
 all1 z:
-z<myVar2 & let1 p=myVar in p<myVar & empty(A) &  root in C8;
-let1 name=myVar2 in name<myVar;
+z<myVar2 & let1 p=myVar in p<myVar & empty(A) &  root in C9;
+let1 myVar=myVar2 ,name=myVar2 in all1 myVar:
+ myVar in C10 & name<myVar & myVar<myVar2;
+all2 myVar:
+myVar2 in myVar & (all1 myVar:
+ myVar in C11);
+ex1 p1:
+myVar in A;
 

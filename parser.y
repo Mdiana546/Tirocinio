@@ -102,7 +102,7 @@ BindExp *bindExp;
 %left tokINTER
 %left tokSETMINUS
 %left tokPLUS tokMINUS
-%left tokSTAR tokSLASH tokMODULO         
+%left tokSTAR tokSLASH tokMODULO            
 %left tokDOT tokUP     
   
 %%
@@ -136,11 +136,11 @@ declarations : declaration declarations{if ($1) $2->push_front($1); $$ = $2;}
 	 ;
 declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}   
             
-	| tokGUIDE func_list tokSEMICOLON{yyerror("guide  command is not supported");}
+	| tokGUIDE func_list tokSEMICOLON{yyerror("guide  command is not supported");}  
         	
 	| tokUNIVERSE univs tokSEMICOLON{yyerror("universe command is not supported");} 
               
-        | tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname1, $3, $6);}  
+        | tokDEFAULT1 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname1, $3, $6);}   
              
         | tokDEFAULT2 tokLPAREN name tokRPAREN tokEQUAL exp tokSEMICOLON {$$ = new Default_Declaration(Varname2, $3, $6);}
               
@@ -150,7 +150,7 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
                 
         | tokVAR1 universe name_where_list tokSEMICOLON{$$ = new Variable_Declaration(Varname1,$3);}  
              
-        | tokVAR2 universe name_where_list tokSEMICOLON {$$=new Variable_Declaration{Varname2,$3};} 
+        | tokVAR2 universe name_where_list tokSEMICOLON {$$=new Variable_Declaration{Varname2,$3};}   
               
 		| tokTREE universe name_where_list tokSEMICOLON {yyerror("tree command is not supported");} //it is used in wsrt;
 		
@@ -171,10 +171,10 @@ declaration : tokASSERT exp tokSEMICOLON{$$ = new Assertion_Declaration($2);}
         | tokVERIFY optstring exp tokSEMICOLON { yyerror("verify command is not supported");}   //no
                
         | tokEXECUTE exp tokSEMICOLON {/*$$ = new Execute_Declaration($2);*/ yyerror("execute command is not supported");} 
-               
+                   
         | tokINCLUDE tokSTRING name tokSTRING tokSEMICOLON {}  
-              
-		| tokLASTPOS name tokSEMICOLON {yyerror("latpos command is not supported");} //throw error
+               
+		| tokLASTPOS name tokSEMICOLON {yyerror("latpos command is not supported");} //throw error 
 			
 		| tokALLPOS name tokSEMICOLON {$$ = new AllPos_Declaration($2);} 
 			
@@ -197,13 +197,13 @@ exp     : name {$$ = new UntypedExp_Name(uName,$1);}
          
         | exp tokSUB exp{yyerror("sub command is not supported");} //no
            
-        | exp tokIN exp {$$ = new UntypedExp_In($1, $3);} //new 
+        | exp tokIN exp {$$ = new UntypedExp_In($1, $3);} //new  
               
         | exp tokNOTIN exp{$$ = new UntypedExp_NotIn($1, $3);} //new 
            
         | tokMIN exp{yyerror("min command is not supported");}  //no
              
-        | tokMAX exp{yyerror("max command is not supported");} //no
+        | tokMAX exp{yyerror("max command is not supported");} //no 
                
         | exp tokLESS  exp {$$ = new UntypedExp_Less($1, $3);} 
                

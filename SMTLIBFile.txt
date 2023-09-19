@@ -14,5 +14,11 @@
 (define-fun C7((data Data) (data0 Data) (data1 Data)) Bool 
 (< (a data) (b data)))
 (define-fun C8((data Data) (data0 Data) (data1 Data)) Bool 
+(< (a data) (b data)))
+(define-fun C9((data Data) (data0 Data) (data1 Data)) Bool 
 (< (- (+ (a data) (* 10 20)) 30) (b data)))
+(define-fun C10((data Data) (data0 Data) (data1 Data)) Bool 
+(< (a data) (b data)))
+(define-fun C11((data Data) (data0 Data) (data1 Data)) Bool 
+(< (a data) (b data)))
 

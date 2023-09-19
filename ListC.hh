@@ -3,6 +3,18 @@
 #include <iostream>
 using std::list;
 
+
+template<typename T>
+class Compare{
+    public:
+        bool operator()(const T& first,const T& second) const
+        {
+            return *(first->name->str)!=*(second->name->str);
+        }
+};
+
+
+
 template<typename T>
 class ListC:public list<T>
 {

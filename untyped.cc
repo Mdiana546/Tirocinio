@@ -1,6 +1,6 @@
 #include "untyped.hh"
 Name*root=new Name{new string{"root"}};
-SymbolTable symbleTable{new SymbolTable::SymbolEntry{root,Varname1}};
+SymbolTable symbleTable{new SymbolTable::SymbolEntry{root,Varname1,true}};
 string MFormat;
 HandleDeclarationFormat Hdeclaration{};
 string smT;
@@ -89,15 +89,14 @@ void Predicate_Macro_Declaration::insertDeclarationInSymbolTable()
 
 void Predicate_Macro_Declaration::controlDuplicate()
 {
-  struct Compare{bool operator()(const ParPred*first,const ParPred*second)const {return *(first->name->str)!=*(second->name->str);}};
 
-        set<ParPred*,Compare>setDuplicate{};
+        set<ParPred*,Compare<ParPred*>>setDuplicate;
 
         for(ParPred*parPred:*parList)
           setDuplicate.insert(parPred);
   
       if(setDuplicate.size()!=parList->size())
-        throw runtime_error{"you have entered two identical declarations in variabile declaration"};
+        throw runtime_error{"you have entered two identical declarations in predicate"};
   
 }
 
@@ -321,12 +320,11 @@ void Variable_Declaration::insertDecInSymbolTable()
 
 void Variable_Declaration::controlDuplicate()
 {
-struct Compare{bool operator()(const VarDecl*first,const VarDecl*second)const {return *(first->name->str)!=*(second->name->str);}};
 
-  set<VarDecl*,Compare>setDuplicate{};
+  set<VarDecl*,Compare<VarDecl*>>setDuplicate;
 
-          for(VarDecl*varDecl:*decls)
-                setDuplicate.insert(varDecl);
+      for(VarDecl*varDecl:*decls)
+          setDuplicate.insert(varDecl);
 
       if(setDuplicate.size()!=decls->size())
         throw runtime_error{"you have entered two identical declarations in variabile declaration"};
@@ -372,12 +370,12 @@ void UntypedExp_par_unpee::insertDecInSymbolTable()
 
 void UntypedExp_par_unpee::controlDuplicate()
 {
-  struct Compare{bool operator()(const VarDecl*first,const VarDecl*second)const {return *(first->name->str)!=*(second->name->str);}};
+  set<VarDecl*,Compare<VarDecl*>>setDuplicate;
 
-  set<VarDecl*,Compare>setDuplicate{};
 
       for(VarDecl*varDecl:*nameList)
         setDuplicate.insert(varDecl);
+
 
     if(setDuplicate.size()!=nameList->size())
       throw runtime_error{"you have entered two identical declarations in "+getSymbolOperator()};
@@ -436,11 +434,10 @@ bool UntypedExp_par_bpe::controlAndInsertBindList(MonaTypeTag type)
 
 void UntypedExp_par_bpe::controlDuplicate()
 {
-  struct Compare{bool operator()(const BindExp*first,const BindExp*second)const {return *(first->name->str)!=*(second->name->str);}};
 
-  set<BindExp*,Compare>setDuplicate{};
+  set<BindExp*,Compare<BindExp*>>setDuplicate;
 
-      for(BindExp*bindExp:*bindList)
+    for(BindExp*bindExp:*bindList)
         setDuplicate.insert(bindExp);
 
     if(setDuplicate.size()!=bindList->size())
