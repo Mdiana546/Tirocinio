@@ -1,3 +1,6 @@
+#ifndef __HANDLE_FILES
+#define __HANDLE_FILES
+
 #include<iostream>
 #include<fstream>
 #include <string>
@@ -16,3 +19,4 @@ void writeOnMonaFile(string&);
 void writeOnSMTLIBFile(string&);
 virtual ~ HandleFiles();
 };
+#endif

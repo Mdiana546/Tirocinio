@@ -1,4 +1,5 @@
-/*I see where insert const*/
+#ifndef __HANDLE_EXPRESSION_FORMAT
+#define __HANDLE_EXPRESSION_FORMAT
 
 #include<string>
 #include<stack>
@@ -68,3 +69,5 @@ virtual ~HanldeExpressionFormat();
 
 
 };
+
+#endif

@@ -1,3 +1,7 @@
+#ifndef __LISTC
+#define __LISTC
+
+
 #include<list>
 #include<set>
 #include <iostream>
@@ -26,4 +30,4 @@ class ListC:public list<T>
         }
 };
 
-
+#endif
