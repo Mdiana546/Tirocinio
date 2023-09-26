@@ -17,6 +17,7 @@ void MonaUntypedAST::typeCheckDeclarations()
     else
          MonaTypeTag tag=(static_cast<Expression_Declaration*>(dec))->exp->chekType();
   }
+  
 
 }
 

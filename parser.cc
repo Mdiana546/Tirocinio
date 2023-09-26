@@ -66,6 +66,7 @@
 
 
 
+
 /* First part of user prologue.  */
 #line 1 "parser.y"
 
@@ -82,8 +83,8 @@ void yyerror(const char *msg);
 extern string MFormat;
 extern string smT;
 extern Name*root; 
-MonaUntypedAST* untypedAST;                
-
+MonaUntypedAST* untypedAST;  
+              
 
 void check_bits(string s)
 {

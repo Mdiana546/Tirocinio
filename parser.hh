@@ -41,7 +41,7 @@
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
-#if YYDEBUG
+#if YYDEBUG 
 extern int yydebug;
 #endif
 

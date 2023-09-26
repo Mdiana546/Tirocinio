@@ -22,6 +22,4 @@ let1 myVar=myVar2 ,name=myVar2 in all1 myVar:
 all2 myVar:
 myVar2 in myVar & (all1 myVar:
  myVar in C11);
-ex1 p1:
-myVar in A;
 

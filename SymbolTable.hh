@@ -21,7 +21,7 @@ public:
   Name() {} 
   Name(string *s) :
     str(s){}
-  virtual ~Name(){delete str;}
+  virtual ~Name(){delete str;} 
 
 
   string *str;

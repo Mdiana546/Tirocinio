@@ -12,8 +12,8 @@ void yyerror(const char *msg);
 extern string MFormat;
 extern string smT;
 extern Name*root; 
-MonaUntypedAST* untypedAST;                
-
+MonaUntypedAST* untypedAST;  
+              
 
 void check_bits(string s)
 {
@@ -121,7 +121,7 @@ start	: header declarations{
 		handleFile.writeOnSMTLIBFile(smT); 
 		delete root;
 		delete untypedAST;
-		}
+		}   
 	;
 
 header	: tokWS2S tokSEMICOLON {}   

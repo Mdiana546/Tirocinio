@@ -5,7 +5,7 @@
  
 SymbolTable::SymbolTable(SymbolEntry*symbolEntry)
 {
-    insert(symbolEntry);
+    insert(symbolEntry); 
 }
 
 
